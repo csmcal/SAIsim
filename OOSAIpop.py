@@ -26,18 +26,6 @@ class individual(object):
 		# where chomosome homologs = [mutist, InvList]
 		self.genome = genome
 
-		# for chromosome in genome:
-		# 	for homolog in chromosome:
-		# 		# Each homolog will 
-		# 		homolog = homolo
-		# self.mutationsHom1 = mutationsHom1
-		# self.__mutPositionsHom1 = [m[0] for m in mutationsHom1]
-		# self.inversionsHom1 = inversionsHom1
-		# self.__invPositionsHom1 = [i[0] for i in inversionsHom1]
-		# self.mutationsHom2 = mutationsHom2
-		# self.__mutPositionsHom2 = [m[0] for m in mutationsHom2]
-		# self.inversionsHom2 = inversionsHom2
-		# self.__invPositionsHom2 = [i[0] for i in inversionsHom2]
 
 	# For getting the insertion index of a position from a list of [position,..] lists
 	def __getInsInd(self,mutInvList,mutInvPos):
@@ -62,9 +50,9 @@ class individual(object):
 		mutEffects = []
 		while (min(1-base,base) < offset) or (offset < max(base-1,-base)):
 			offset = np.random.normal(scale=self.mutEffectDiffSD)
-		# return [base-offset,base+offset]
-		# For modeling effects multiplicatively?
-		# return [1-base-offset,1+base+offset]
+
+		# # For modeling effects multiplicatively?
+		# return [base+offset,base+offset]
 
 		# Survival mult., Quality additive
 		return [1-base+offset,base+offset]
@@ -84,15 +72,6 @@ class individual(object):
 		print self.genome[chromIndex][homIndex][0]
 		# Record the mutation data
 		self.record[1] += [mutation[0:3]+[chromIndex]]
-
-		# if np.random.randint(0,2):
-		# 	index = bis.bisect(self.__mutPositionsHom1,mutPos)
-		# 	self.__mutPositionsHom1[index:index] = mutPos
-		# 	self.mutationsHom1[index:index] = mutation
-		# else:
-		# 	index = bis.bisect(self.__mutPositionsHom2,mutPos)
-		# 	self.__mutPositionsHom2[index:index] = mutPos
-		# 	self.mutationsHom2[index:index] = mutation
 		return
 
 	# Generates and inserts an inversion into the genome, umless there is no open region >= minInvLen
@@ -133,42 +112,9 @@ class individual(object):
 		inversion = [min(posA,posB),max(posA,posB),ID]
 		index = openRegIndexes[regChoice]
 		chromHomInv[index:index] = [inversion]
-		# print "Inversion Mutant"
-		# print inversion
-		# print index
-		# print chromHomInv
 		# Record the inversion data
 		self.record[3] += [inversion[0:2]+[chromIndex]]
 		return
-
-	# #Generates an inversion of the form [position1, position2]
-	# def mutateInv(self,ID):
-	# 	# Pick a chromosome
-	# 	chromIndex = np.random.randint(0,len(self.genome))
-	# 	# Put it on one of the two homologs
-	# 	homIndex = np.random.randint(0,2)
-	# 	chromHomInv = self.genome[chromIndex][homIndex][1]
-	# 	# Generate the inversion
-	# 	# First position must be at least minimum length from the end
-	# 	pos1 = np.random.ranf()*(1-self.minInvLen)
-	# 	index = self.__getInsInd(chromHomInv,pos1)
-	# 	# print chromHomInv
-	# 	# print pos1
-	# 	# print index
-	# 	# Resample first position so not in a current inversion, or would span into a subsequent
-	# 	while ((index > 0) and (pos1 < chromHomInv[index-1][1])) or ((index < len(chromHomInv)-1) and (pos1 + self.minInvLen > chromHomInv[index][0])):
-	# 		pos1 = np.random.ranf()*(1-self.minInvLen)
-	# 		index = self.__getInsInd(chromHomInv,pos1)
-	# 	# Finish generating the inversion
-	# 	if index == len(chromHomInv):
-	# 		pos2 = pos1 + np.random.uniform(self.minInvLen,1-pos1)
-	# 	else:
-	# 		pos2 = pos1 + np.random.uniform(self.minInvLen,chromHomInv[index][0]-pos1)
-	# 	# inversion = [pos1,pos2,ID]
-	# 	inversion = [pos1,pos2]
-	# 	# Add the inversion into the inversion list, the passed reference should update the class variable
-	# 	chromHomInv[index:index] = [inversion]
-	# 	return
 
 	# For updating the repQuality and survival if pre-calculated
 	def updatePhenotypes(self):
@@ -198,66 +144,6 @@ class individual(object):
 				# For modeling effects multiplicatively? - requires changing effect generation
 				# quality *= mut[2]
 		return quality
-
-	# # Removes recombination event combinations that would cause aneuploidy
-	# def __removeConflictEvents(inversion, recombPositions):
-	# 	eventsInside = []
-	# 	eventIndex = 0
-	# 	while recombPositions[eventIndex] < inversion[0]:
-	# 		eventIndex += 1
-	# 	while recombPositions[eventIndex] < inversion[1]:
-	# 		eventsInside += [eventIndex]
-	# 	if eventsInside
-
-	# # Model independently per chromosome, currently doesn't redraw if recombination events fail
-	# def genGamete(self):
-	# 	for chrom in self.genome:
-	# 		numRecomb = np.random.poisson(self.recombRate)
-	# 		recombPositions = np.random.ranf(numRecomb)
-	# 		# Generate regions in which odd crossover # generates aneuploidy
-	# 		# This may be bologically unrealistic as approximately equivalent inversions
-	# 		#  can generate aneuploidy in very small quantities
-	# 		aneuploidReg = []
-	# 		invHom1 = chrom[0][1]
-	# 		invHom2 = chrom[1][1]
-	# 		ind1 = 0
-	# 		ind2 = 0
-	# 		breakPos = min(invHom1[ind1][0],invHom2[ind2][0])
-	# 		while ind1 < len(invHom1)-1 and ind2 < len(invHom2)-1:
-	# 			start1 = invHom1[ind1][0]
-	# 			start2 = invHom2[ind2][0]
-	# 			end1 = invHom1[ind1][1]
-	# 			end2 = invHom2[ind2][1]
-	# 			if start2 < start1:
-	# 				if end1 <= start1:
-	# 					if breakPos > start2:
-	# 						aneuploidReg += [[max(),]]
-	# 			elif start1 == start2:
-	# 				if end1 == end2:
-	# 					ind1 += 1
-	# 					ind2 += 1
-	# 				elif invHom2[ind2][1] < invHom1[ind1][1]:
-	# 					if breakPos > 
-	# 						aneuploidReg += [[max(),]]
-	# 					breakPos = invHom2[ind2][1]
-	# 			elif invHom1[ind1][0] < invHom2[ind2][0]:
-	# 				if invHom2[ind2][1] < invHom1[ind1][1]:
-
-	# 			else:
-
-
-	# 		# Construct a recombinant gamete from the recombination positions
-	# 		currHom = np.random.randint(0,2)
-	# 		for recPos
-
-	# 		for inversion in invHom1:
-	# 			if inversion in invHom2:
-	# 				remainingInv.remove(inversion)
-	# 			else:
-	# 				eventsInside = []
-	# 				eventIndex = 0
-	# 				while < inversion[0]:
-	# 					eventIndex += 1
 
 	# Takes two inversion lists for homologous chromosomes,
 	# indexes of the closest inversions to start <= the position of interest,
@@ -471,18 +357,6 @@ class simSAIpopulation(object):
 					fatherIndex = f
 					maxScore = score
 			father = self.males[fatherIndex]
-
-			# encounteredMales = []
-			# for f in encounteredMaleIndexes:
-			# 	encounteredMales += [self.males[f]]
-			# fatherIndex = 0
-			# maxScore = encounteredMales[0].repQuality() + np.random.normal(scale=self.choiceNoiseSD)
-			# for i in range(1,len(encounteredMales)):
-			# 	score = encounteredMales[i].repQuality() + np.random.normal(scale=self.choiceNoiseSD)
-			# 	if score > maxScore:
-			# 		fatherIndex = i
-			# 		maxScore = score
-			# father = encounteredMales[fatherIndex]
 
 			# Generate the genome of the new member from the parents
 			genome = []

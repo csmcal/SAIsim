@@ -1,0 +1,1 @@
+# SAIsim is intended to forward model mutations that cause universal survival cost but provide male reproductive benefit and their interactions with paracentric inversions in populations.
