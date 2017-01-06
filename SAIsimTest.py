@@ -29,16 +29,17 @@ encounterNum = 2
 choiceNoiseSD = .5
 
 # The probability that a gene undergoes conversion in a heterozygous gamete,
-#  which one is converted is selected at random
-conversionRate = 
+#  which one is converted is selected at random, treated independently from number of crossover events
+conversionRate = 10.0**-2.0
 
 # Inversion record buffer represents how far from inversion edges to examine mutation effects
 invRecBuffer = .1
 
-numGens = 10
+numGens = 100
 
 
-pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, recombRate, encounterNum, choiceNoiseSD)
-# pop.stepNGens(numGens)
-pop.recordNGens(numGens)
+pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
+pop.stepNGens(numGens)
+# pop.recordNGens(numGens)
 pop.printRecord()
+# pop.testSharedData()
