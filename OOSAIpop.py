@@ -151,9 +151,6 @@ class individual(object):
 	# Takes a chromosome and returns the chromosome with converted mutations
 	# May want to allow for a boolean hasConversion to turn this off in the simulation
 	def __convertChrom(self,chrom):
-		# # This first copy step is necessary independent of conversion activity, 
-		# # to prevent changes to shared-referent chromosomes
-		# chrom = [[list(parChrom[0][0]),list(parChrom[0][1])],[list(parChrom[1][0]),list(parChrom[1][1])]]
 		homInd1 = 0
 		homInd2 = 0
 		# Check for heterozygosity and add/remove mutations following conversionRate probability
@@ -172,6 +169,8 @@ class individual(object):
 						chrom[1][0][homInd2-1:homInd2-1] = [mut1]
 						homInd2 += 1
 						homInd1 += 1
+				else:
+					homInd1 += 1
 			if mut1[0] > mut2[0]:
 				if np.random.ranf < self.conversionRate:
 					if np.random.randint(2):
@@ -180,6 +179,8 @@ class individual(object):
 						chrom[0][0][homInd1-1:homInd1-1] = [mut2]
 						homInd1 += 1
 						homInd2 += 1
+				else:
+					homInd2 += 1
 		# Deal with the remaining mutations
 		# when one chromosome has no mutations it is dealt with here immediately
 		while homInd1 < len(chrom[0][0]):
@@ -189,6 +190,8 @@ class individual(object):
 				else:
 					chrom[1][0] += [chrom[0][0][homInd1]]
 					homInd1 += 1
+			else:
+				homInd1 += 1
 		while homInd2 < len(chrom[1][0]):
 			if np.random.ranf < self.conversionRate:
 				if np.random.randint(2):
@@ -196,6 +199,8 @@ class individual(object):
 				else:
 					chrom[0][0] += [chrom[1][0][homInd2]]
 					homInd2 += 1
+			else:
+				homInd2 += 1
 		return chrom
 
 
@@ -371,7 +376,7 @@ class simSAIpopulation(object):
 		self.females = []
 		# Record keeping variables, record data structure defined in __updateRecord
 		self.invRecBuffer = invRecBuffer
-		self.record = [[],[],[],[],[]]
+		self.record = [[],[],[],[],[],[],[],[]]
 		self.age = 0
 		# Generate a set of 'size' individuals with random sex and no mutations or inversions
 		# Do differently for manually specified initial population
@@ -433,13 +438,14 @@ class simSAIpopulation(object):
 							firstMutEncounter[mut[3]] = False
 							# Flip the mutation across the center
 							mut[0] = 2*invCenter-mut[0]
+						print mut
 			# elif invCounts[i] > 2*self.size:
 			# 	print "Error: more inversions than alleles possible for ID " + str(i)
 		return inversionRemoved
 
 	# Simulating a single generational step
 	def step(self):
-		# print "Generation " + str(self.age)
+		print "Generation " + str(self.age) + " Reproduction"
 		# Pick mothers
 		femaleSurvivals = []
 		for female in self.females:
@@ -501,6 +507,7 @@ class simSAIpopulation(object):
 		# Update the age of the population
 		self.age = self.age + 1
 
+		print "Generation " + str(self.age) + " Mutation"
 		# Sprinkle on mutations
 		wholePop = self.males + self.females
 		# Add new SA mutations
@@ -510,7 +517,7 @@ class simSAIpopulation(object):
 			self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age]]
 			self.__mutIDcount += 1
 			# self.record[2] += [[0]*self.age]
-			self.record[2] += [0]
+			self.record[2] += [[0]]
 		# Add new inversions
 		numInvMuts = np.random.poisson(self.expectedNumInvMut)
 		indivWithInvMut = np.random.randint(self.size, size=numMuts)
@@ -522,27 +529,31 @@ class simSAIpopulation(object):
 				self.__invIDcount += 1
 				# self.record[4] += [[0]*self.age]
 				# self.record[4] += [(self.age,0)]
-				self.record[4] += [0]
+				self.record[4] += [[0]]
+				self.record[5] += [[0]]
+				self.record[6] += [[0]]
+				self.record[7] += [[0]]
 		# Could update phenotype values here
 		return
 
-	# For keeping a record updated every generation, associated with using [[0]*self.age] in step
-	# There's a length difference in record [0] and [2] if every generation isn't recorded
-	def __updateRecordPerStep(self):
-		#Count the number of each mutation/ID
-		mutCounts = [0]*self.__mutIDcount
-		invCounts = [0]*self.__invIDcount
-		for indiv in self.males + self.females:
-			for chrom in indiv.genome:
-				for hom in chrom:
-					for mut in hom[0]:
-						mutCounts[mut[3]] += 1
-					for inv in hom[1]:
-						invCounts[inv[2]] += 1
-		for i in range(self.__mutIDcount):
-			self.record[2][i] += [mutCounts[i]]
-		for j in range(self.__invIDcount):
-			self.record[4][j] += [invCounts[j]]
+	# # For keeping a record updated every generation, associated with using [[0]*self.age] in step
+	# # There's a length difference in record [0] and [2] if every generation isn't recorded
+	# def __updateRecordPerStep(self):
+	# 	print "Record Update"
+	# 	#Count the number of each mutation/ID
+	# 	mutCounts = [0]*self.__mutIDcount
+	# 	invCounts = [0]*self.__invIDcount
+	# 	for indiv in self.males + self.females:
+	# 		for chrom in indiv.genome:
+	# 			for hom in chrom:
+	# 				for mut in hom[0]:
+	# 					mutCounts[mut[3]] += 1
+	# 				for inv in hom[1]:
+	# 					invCounts[inv[2]] += 1
+	# 	for i in range(self.__mutIDcount):
+	# 		self.record[2][i] += [mutCounts[i]]
+	# 	for j in range(self.__invIDcount):
+	# 		self.record[4][j] += [invCounts[j]]
 
 	# For updating all recorded information on the population, record structured as:
 	# [0] a list of ages at which an update was made
@@ -598,10 +609,17 @@ class simSAIpopulation(object):
 			self.record[2][i] += [mutCounts[i]]
 		for j in range(self.__invIDcount):
 			count = invCounts[j]
-			self.record[4][j] += [count]
-			self.record[5][j] += [numMutInBuffer[j]/(float(count))]
-			self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
-			self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
+			# If no members of the inversion ID left, record averages as -1 ?
+			if count == 0:
+				self.record[4][j] += [count]
+				self.record[5][j] += [-1]
+				self.record[6][j] += [-1]
+				self.record[7][j] += [-1]
+			else:
+				self.record[4][j] += [count]
+				self.record[5][j] += [numMutInBuffer[j]/(float(count))]
+				self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
+				self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
 
 	# For simulating a number of generations sequentially
 	def stepNGens(self, numGenerations):

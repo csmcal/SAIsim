@@ -23,7 +23,7 @@ minInvLen = .1
 recombRate = 1 
 
 # Must be <= pop size
-encounterNum = 2
+encounterNum = 4
 
 # SD for the normally distributed additive noise to male quality in the female choice
 choiceNoiseSD = .5
@@ -36,10 +36,10 @@ conversionRate = 10.0**-2.0
 invRecBuffer = .1
 
 
-numGens = 100
+numGens = 10
 
 pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
-pop.stepNGens(numGens)
-# pop.recordNGens(numGens)
+# pop.stepNGens(numGens)
+pop.recordNGens(numGens)
 pop.printRecord()
 # pop.testSharedData()
