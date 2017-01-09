@@ -28,15 +28,15 @@ encounterNum = 2
 # SD for the normally distributed additive noise to male quality in the female choice
 choiceNoiseSD = .5
 
-# The probability that a gene undergoes conversion in a heterozygous gamete,
+# The probability per instance of heterozygosity that a gene undergoes conversion in a heterozygous gamete,
 #  which one is converted is selected at random, treated independently from number of crossover events
 conversionRate = 10.0**-2.0
 
 # Inversion record buffer represents how far from inversion edges to examine mutation effects
 invRecBuffer = .1
 
-numGens = 100
 
+numGens = 100
 
 pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
 pop.stepNGens(numGens)

@@ -29,7 +29,7 @@ encounterNum = 100
 choiceNoiseSD = .5
 
 # The probability that a gene undergoes conversion in a heterozygous gamete,
-#  which one is converted is selected at random
+#  which one is converted is selected at random, treated independently from number of crossover events
 conversionRate = 10.0**-4.0
 
 # Inversion record buffer represents how far from inversion edges to examine mutation effects
