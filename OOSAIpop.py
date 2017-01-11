@@ -224,8 +224,7 @@ class individual(object):
 		else:
 			end1 = invHom1[ind1][1]
 			end2 = invHom2[ind2][1]
-			# WHAT TO DO WITH CROSSOVERS == ONE END OF AN INVERSION
-			# Currently, inversions are counted as [1,2)  (?)
+			# Currently, inversions are counted as [1,2), so crossovers are inside or not following such
 			if recPos < end1:
 				if recPos < end2:
 					return min(end1,end2)
@@ -517,7 +516,7 @@ class simSAIpopulation(object):
 			self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age]]
 			self.__mutIDcount += 1
 			# self.record[2] += [[0]*self.age]
-			self.record[2] += [[0]]
+			self.record[2] += [[0 for t in range(len(self.record[0]))]]
 		# Add new inversions
 		numInvMuts = np.random.poisson(self.expectedNumInvMut)
 		indivWithInvMut = np.random.randint(self.size, size=numMuts)
@@ -529,10 +528,10 @@ class simSAIpopulation(object):
 				self.__invIDcount += 1
 				# self.record[4] += [[0]*self.age]
 				# self.record[4] += [(self.age,0)]
-				self.record[4] += [[0]]
-				self.record[5] += [[0]]
-				self.record[6] += [[0]]
-				self.record[7] += [[0]]
+				self.record[4] += [[0 for t in range(len(self.record[0]))]]
+				self.record[5] += [[0 for t in range(len(self.record[0]))]]
+				self.record[6] += [[0 for t in range(len(self.record[0]))]]
+				self.record[7] += [[0 for t in range(len(self.record[0]))]]
 		# Could update phenotype values here
 		return
 
@@ -627,14 +626,24 @@ class simSAIpopulation(object):
 			self.step()
 		return
 
+	# For running a step and then updating the record.
+	# CONSIDER JUST MAKING __updateRecord PUBLIC
 	def recordStep(self):
 		self.step()
 		self.__updateRecord()
 		return
 
+	# For simulating a number of generations sequentially, recording after each
 	def recordNGens(self, numGenerations):
 		for i in range(numGenerations):
 			self.step()
+			self.__updateRecord()
+		return
+
+	# For simulating setSize*setNum generations sequentially, recording every setSize'th generation
+	def recordEveryNGens(self, setSize, setNum):
+		for i in range(setNum):
+			self.stepNGens(setSize)
 			self.__updateRecord()
 		return
 
@@ -642,41 +651,105 @@ class simSAIpopulation(object):
 		print self.record
 		return
 
+	# Takes a filename and mutation ID
+	# Writes a tab delineated file of the generation and count data for that mutation
+	def writeMutation(self,filename,ID):
+		outfile = open(filename, 'w')
+		# outfile.write('Mutation '+str(ID)+'\n')
+		outfile.write('Generation\tCount\n')
+		outfile.write(str(self.record[0][0]) + '\t' + str(self.record[2][ID][0]) + '\n')
+		outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
+		for t in range(1,len(self.record[0])):
+			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[2][ID][t]) + '\n')
+		outfile.close()
+
+	# Takes a filename and inversion ID
+	# Writes a tab delineated file of the generation, count, 
+	#  average number of mutations in buffer, average cumulative survival,
+	#  and average cumulative effect data for that inversion
+	def writeInversion(self,filename,ID):
+		outfile = open(filename, 'w')
+		# outfile.write('Inversion '+str(ID)+'\n')
+		outfile.write('Generation\tCount\tAvgNumMut\tAvgSurEff\tAvgRepEff\n')
+		outfile.write(str(self.record[0][0]) + '\t' + str(self.record[4][ID][0]) + '\t' + str(self.record[5][ID][0]) + '\t' + str(self.record[6][ID][0]) + '\t' + str(self.record[7][ID][0]) + '\n')
+		# May want to find a way to acount for the number of mutations in the inversion and their effects upon generation
+		outfile.write(str(self.record[3][ID][3]) + '\t' + str(1) + '\t' + 'NA' + '\t' + 'NA' + '\t' + 'NA' + '\n')
+		for t in range(1,len(self.record[0])):
+			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t' + str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t' + str(self.record[7][ID][t]) + '\n')
+		outfile.close()
+
+	# Takes a filename and writes a tab delineated file of the position, effect, chromosome,
+	#   and initial generation data for all mutations
+	def writeMutCharTable(self,filename):
+		outfile = open(filename, 'w')
+		outfile.write('Position\tSurEffect\nRepEffect\nChromosome\nInitGen\n')
+		for m in range(len(self.record[1])):
+			line = ''
+			for datum in self.record[1][m]:
+				line += str(datum) + '\t')
+			outfile.write(line[:-1] + '\n')
+		outfile.close()
+
+	# Takes a filename and writes a tab delineated file of the positions, chromosome,
+	#   and initial generation data for all inversions
+	def writeInvCharTable(self,filename):
+		outfile = open(filename, 'w')
+		outfile.write('Position1\tPosition2\nChromosome\nInitGen\n')
+		for i in range(len(self.record[3])):
+			line = ''
+			for datum in self.record[3][i]:
+				line += str(datum) + '\t')
+			outfile.write(line[:-1] + '\n')
+		outfile.close()
+
+	# Writes a summary file for the
+	def writeSummary(self,filename):
+		return
+
 	# Writes record to outfiles as such:
 	# One summary document
-	# R tables with generation and count data for every mutation
-	# R tables with generation, count, etc. additional data for every inversion
-	def writeRecordRtables(self,outFilePrefix):
+	# Tab delineated table of mutation characteristics for all mutations
+	# Tab delineated table of inversion characteristics for all inversions
+	# Tab delineated table with generation and count data for every mutation
+	# Tab delineated table with generation, count, etc. additional data for every inversion
+	def writeRecordTables(self,outFilePrefix):
+		self.writeSummary(outFilePrefix+'Summ.txt')
+		self.writeMutCharTable(outFilePrefix+'MutSumm.txt')
+		self.writeInvCharTable(outFilePrefix+'InvSumm.txt')
+		for mutID in range(self.__mutIDcount):
+			filename = outFilePrefix+'Mut'+str(mutID)+'.txt'
+			self.writeMutation(self,filename,mutID)
+		for invID in range(self.__invIDcount):
+			filename = outFilePrefix+'Inv'+str(invID)+'.txt'
+			self.writeMutation(self,filename,invID)
 		return
 
-	# Scratch for testing mutation data change (due to shared reference)
-	def testSharedData(self):
-		mutCounts = [0]*self.__mutIDcount
-		for indiv in self.males + self.females:
-			for chrom in indiv.genome:
-				for hom in chrom:
-					for mut in hom[0]:
-						mutCounts[mut[3]] += 1
-		for i in range(self.__mutIDcount):
-			if mutCounts[i] == 2*self.size:
-				# self.record[1][i] = mut
-				# mut[2] = 'test'
-				print 'Starting test for ID '+ str(i)
-				# print mut
-				# print self.record[1][i]
-				firstEncounter = True
-				for indiv in self.males + self.females:
-					for chrom in indiv.genome:
-						for hom in chrom:
-							for mut in hom[0]:
-								if mut[3] == i:
-									if firstEncounter:
-										mut[2] = 'test'
-										firstEncounter = False
-									print mut
-		return
-
-
+	# # Scratch for testing mutation data change (due to shared reference)
+	# def testSharedData(self):
+	# 	mutCounts = [0]*self.__mutIDcount
+	# 	for indiv in self.males + self.females:
+	# 		for chrom in indiv.genome:
+	# 			for hom in chrom:
+	# 				for mut in hom[0]:
+	# 					mutCounts[mut[3]] += 1
+	# 	for i in range(self.__mutIDcount):
+	# 		if mutCounts[i] == 2*self.size:
+	# 			# self.record[1][i] = mut
+	# 			# mut[2] = 'test'
+	# 			print 'Starting test for ID '+ str(i)
+	# 			# print mut
+	# 			# print self.record[1][i]
+	# 			firstEncounter = True
+	# 			for indiv in self.males + self.females:
+	# 				for chrom in indiv.genome:
+	# 					for hom in chrom:
+	# 						for mut in hom[0]:
+	# 							if mut[3] == i:
+	# 								if firstEncounter:
+	# 									mut[2] = 'test'
+	# 									firstEncounter = False
+	# 								print mut
+	# 	return
 
 
 
