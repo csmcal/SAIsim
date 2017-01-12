@@ -3,7 +3,7 @@
 #     in Inversions in a forward Population simulation
 # Ideally, models large inversion polymorphisms in populations with high reproductive skew
 
-# REWRITE WITH NUMPY ARRAYS/VECTORS
+# REWRITE WITH NUMPY ARRAYS/VECTORS?
 
 import numpy as np
 
@@ -12,15 +12,16 @@ import numpy as np
 # recombRate is the expected number of recombination events per chromosome per reproductive event
 # meanMutEffect is the expected effect size of a new mutation
 # mutEffectDiffSD is the SD of the difference in survival/rep effect size of a new mutation (normal dist)
-# 2 copies of a single chormosome,
-# CONSIDER INSTEAD: genome = [[[chr1hom1],[chr1hom2]],[[chr2hom1],[chr2hom2]],..] (implement if time)
+# genome defaults to 2 copies of a single chormosome,
+# ideally: genome = [[[chr1hom1],[chr1hom2]],[[chr2hom1],[chr2hom2]],..]
 class individual(object):
 	"""individuals represent members of simSAIpopulations"""
-	def __init__(self, sex, mutEffectDiffSD, recombRate, minInvLen, genome = [[[[],[]],[[],[]]]]):
+	def __init__(self, sex, mutEffectDiffSD, recombRate, conversionRate, minInvLen, genome = [[[[],[]],[[],[]]]]):
 		# super(individual, self).__init__()
 		self.sex = sex
 		self.mutEffectDiffSD = mutEffectDiffSD
 		self.recombRate = recombRate
+		self.conversionRate = conversionRate
 		self.minInvLen = minInvLen
 		# genome = [[[chr1hom1],[chr1hom2]],[[chr2hom1],[chr2hom2]],..]
 		# where chomosome homologs = [mutist, InvList]
@@ -29,13 +30,15 @@ class individual(object):
 
 	# For getting the insertion index of a position from a list of [position,..] lists
 	def __getInsInd(self,mutInvList,mutInvPos):
-		i = 0 
+		i = 0
 		while (i < len(mutInvList)) and (mutInvList[i][0] <= mutInvPos):
 			i += 1
 		return i
 
+	# For inserting a mutation/inversion into a corresponding list
+	# May rely on passing the list as a reference (doesn't currently)
 	def __insert(self,mutInvList,mutInv):
-		i = 0 
+		i = 0
 		while (i < len(mutInvList)) and (mutInvList[i][0] <= mutInv[0]):
 			i += 1
 		mutInvList[i:i] = [mutInv]
@@ -67,22 +70,22 @@ class individual(object):
 		chromIndex = np.random.randint(0,len(self.genome))
 		# Put it on one of the two homologs
 		homIndex = np.random.randint(0,2)
-		print self.genome[chromIndex][homIndex][0]
+		# print self.genome[chromIndex][homIndex][0]
 		self.genome[chromIndex][homIndex][0] = self.__insert(self.genome[chromIndex][homIndex][0],mutation)
-		print self.genome[chromIndex][homIndex][0]
-		# Record the mutation data
-		self.record[1] += [mutation[0:3]+[chromIndex]]
-		return
+		# print self.genome[chromIndex][homIndex][0]
+		# Return the mutation data for recording
+		return mutation[0:3]+[chromIndex]
 
-	# Generates and inserts an inversion into the genome, umless there is no open region >= minInvLen
-	# Removes resampling 
+	# Generates and inserts an inversion into the genome, unless there is no open region >= minInvLen
+	# Inversions cover the region [pos1,pos2)
+	# Does not use resampling 
 	def mutateInv(self,ID):
 		# Pick a chromosome
 		chromIndex = np.random.randint(0,len(self.genome))
 		# Put it on one of the two homologs
 		homIndex = np.random.randint(0,2)
 		chromHomInv = self.genome[chromIndex][homIndex][1]
-		# Pick where the in
+		# Pick where the insertion may be placed
 		openRegLengths = []
 		openRegStarts = []
 		openRegIndexes = []
@@ -101,7 +104,7 @@ class individual(object):
 			openRegLengths += [length]
 			openRegStarts += [potentialStart]
 			openRegIndexes += [index]
-		# If there is no space for a new inversion >= minInvLen, don't add one
+		# If there is no space for a new inversion >= minInvLen, don't add one, return None
 		if len(openRegStarts) == 0:
 			return
 		# Now sample which open region to add the inversion to
@@ -112,11 +115,11 @@ class individual(object):
 		inversion = [min(posA,posB),max(posA,posB),ID]
 		index = openRegIndexes[regChoice]
 		chromHomInv[index:index] = [inversion]
-		# Record the inversion data
-		self.record[3] += [inversion[0:2]+[chromIndex]]
-		return
+		# Return the inversion data to record
+		return inversion[0:2]+[chromIndex]
 
 	# For updating the repQuality and survival if pre-calculated
+	# Not currently used (obviously)
 	def updatePhenotypes(self):
 		return
 
@@ -145,6 +148,62 @@ class individual(object):
 				# quality *= mut[2]
 		return quality
 
+	# Takes a chromosome and returns the chromosome with converted mutations
+	# May want to allow for a boolean hasConversion to turn this off in the simulation
+	def __convertChrom(self,chrom):
+		homInd1 = 0
+		homInd2 = 0
+		# Check for heterozygosity and add/remove mutations following conversionRate probability
+		# Relies on the invariant that earlier indexed mutations have earlier position
+		while homInd1 < len(chrom[0][0]) and homInd2 < len(chrom[1][0]):
+			mut1 = chrom[0][0][homInd1]
+			mut2 = chrom[1][0][homInd2]
+			if mut1[0] == mut2[0]:
+				homInd1 += 1
+				homInd2 += 1
+			if mut1[0] < mut2[0]:
+				if np.random.ranf < self.conversionRate:
+					if np.random.randint(2):
+						chrom[0][0][homInd1:homInd1+1] = []
+					else:
+						chrom[1][0][homInd2-1:homInd2-1] = [mut1]
+						homInd2 += 1
+						homInd1 += 1
+				else:
+					homInd1 += 1
+			if mut1[0] > mut2[0]:
+				if np.random.ranf < self.conversionRate:
+					if np.random.randint(2):
+						chrom[1][0][homInd2:homInd2+1] = []
+					else:
+						chrom[0][0][homInd1-1:homInd1-1] = [mut2]
+						homInd1 += 1
+						homInd2 += 1
+				else:
+					homInd2 += 1
+		# Deal with the remaining mutations
+		# when one chromosome has no mutations it is dealt with here immediately
+		while homInd1 < len(chrom[0][0]):
+			if np.random.ranf < self.conversionRate:
+				if np.random.randint(2):
+					chrom[0][0][homInd1:homInd1+1] = []
+				else:
+					chrom[1][0] += [chrom[0][0][homInd1]]
+					homInd1 += 1
+			else:
+				homInd1 += 1
+		while homInd2 < len(chrom[1][0]):
+			if np.random.ranf < self.conversionRate:
+				if np.random.randint(2):
+					chrom[1][0][homInd2:homInd2+1] = []
+				else:
+					chrom[0][0] += [chrom[1][0][homInd2]]
+					homInd2 += 1
+			else:
+				homInd2 += 1
+		return chrom
+
+
 	# Takes two inversion lists for homologous chromosomes,
 	# indexes of the closest inversions to start <= the position of interest,
 	# and the position of interest
@@ -165,8 +224,7 @@ class individual(object):
 		else:
 			end1 = invHom1[ind1][1]
 			end2 = invHom2[ind2][1]
-			# WHAT TO DO WITH CROSSOVERS == ONE END OF AN INVERSION
-			# Currently, inversions are counted as [1,2)  (?)
+			# Currently, inversions are counted as [1,2), so crossovers are inside or not following such
 			if recPos < end1:
 				if recPos < end2:
 					return min(end1,end2)
@@ -184,14 +242,18 @@ class individual(object):
 	# just throws out all recombination events in an aneuploidy-causing region if they are odd in number
 	def genGamete(self):
 		gamGenome = []
-		for chrom in self.genome:
+		for parChrom in self.genome:
 			numRecomb = np.random.poisson(self.recombRate)
 			currHom1 = bool(np.random.randint(2))
+			# This first copy step is necessary independent of conversion activity, 
+			# to prevent changes to shared-referent chromosomes
+			chrom = [[list(parChrom[0][0]),list(parChrom[0][1])],[list(parChrom[1][0]),list(parChrom[1][1])]]
+			chrom = self.__convertChrom(chrom)
 			if numRecomb == 0:
 				if currHom1:
-					gamGenome += [chrom[0][:]]
+					gamGenome += [chrom[0]]
 				else:
-					gamGenome += [chrom[1][:]]
+					gamGenome += [chrom[1]]
 			else:
 				recombPositions = np.random.ranf(numRecomb)
 				
@@ -280,15 +342,20 @@ class individual(object):
 
 		
 # The object representing the population under simulation, contains methods for stepping through generations
+# size is the population size
 # mutRate is the expected number of new mutations per chromosome per reproductive event
 # mutRateInv is the expected number of new inversions per chromosome per reproductive event
+# mutEffectDiffSD is the SD of normally distributed offset of survival/rep mutation effects from [x,1-x], with x = uniform[0,1)
+# minInvLen is the minimum length of a new inversion
+# conversionRate is the probability heterozygous locus that a conversion occurs, direction is random
 # recombRate is the expected number of recombination events per chromosome per reproductive event
-# meanMutEffect is the expected effect size of a new mutation
-# mutEffectDiffSD is the SD of the difference in survival/rep effect size of a new mutation (normal dist)
-# record is a general variable for storing generation statistics about the population
+# encounterNum is the number of males a female chooses from in a reproductive event
+# choiceNoiseSD is the SD for the normally distributed additive noise to male quality in the female choice
+# record is a general variable for storing generation statistics about the population, more description in __updateRecord
+# invRecBuffer is the distance outside of inversion boundaries in which to consider mutations associated with an inversion
 class simSAIpopulation(object):
 	"""simSAIpopulation represents sexually reproducing populations for sexually antagonistic inversion simulation"""
-	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, recombRate, encounterNum, choiceNoiseSD):
+	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer, record = [[],[],[],[],[],[],[],[]]):
 		# super(simSAIpopulation, self).__init__()
 		self.size = size
 		self.mutRate = mutRate
@@ -300,34 +367,91 @@ class simSAIpopulation(object):
 		self.__invIDcount = 0
 		self.mutEffectDiffSD = mutEffectDiffSD
 		self.minInvLen = minInvLen
+		self.conversionRate = conversionRate
 		self.recombRate = recombRate
 		self.encounterNum = encounterNum
 		self.choiceNoiseSD = choiceNoiseSD
 		self.males = []
 		self.females = []
-		# Record keeping variables
-		self.record = [[],[],[],[]]
+		# Record keeping variables, record data structure defined in __updateRecord
+		self.invRecBuffer = invRecBuffer
+		self.record = record
 		self.age = 0
 		# Generate a set of 'size' individuals with random sex and no mutations or inversions
-		numMales = np.random.binomial(self.size,0.5)
-		self.males = [individual('M',mutEffectDiffSD,recombRate,minInvLen) for i in range(numMales)]
-		self.females = [individual('F',mutEffectDiffSD,recombRate,minInvLen) for j in range(self.size-numMales)]
+		# Do differently for manually specified initial population
+		# numMales = np.random.binomial(self.size,0.5)
+		numMales = int(self.size/2)
+		self.males = [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen) for i in range(numMales)]
+		self.females = [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen) for j in range(self.size-numMales)]
+		self.__updateRecord()
 
+	# For changing the population size during simulation
+	def setSize(self,newSize):
+		self.size = newSize
+		return
 
-	# # Generates a new individual from a reproductive event
-	# def __genChild(mother,father):
-	# 	mother = self.females
-	# 	return
+	# Removes inversions that are fixed in the population,
+	# changes the position of internal mutations to reflect true position (flips around the center of the inversion)
+	# the old position of the mutations is lost
+	# WORTH IMPROVING PERFORMANCE: merge with record keeping in record generations? also reduce loop number
+	def __removeFixedInv(self):
+		wholePop = self.males + self.females
+		invCounts = [0]*self.__invIDcount
+		invPos = []*self.__invIDcount
+		# All mutations are passed as references, so don't want to change more than one
+		firstMutEncounter = [True]*self.__mutIDcount
+
+		inversionRemoved = False
+		# Generate count and position data
+		for i in range(len(wholePop)):
+			for c in range(len(indiv.genome)):
+				for h in range(2):
+					chromHomInv = wholePop[i].genome[c][h][1]
+					for invIndex in range(len(chromHomInv)):
+						inversion = chromHomInv[invIndex]
+						invCounts[inversion[2]] += 1
+						invPos[inversion[2]] += [[i,c,h,invIndex]]
+		for ID in range(self.__invIDcount):
+			if invCounts[ID] == 2*self.size:
+				inversionRemoved = True
+				inversion = self.record[3][ID]
+				length = self.record[3][ID][1] - self.record[3][ID][0]
+				invCenter = self.record[3][ID][0] + length/2.0
+				for [i,c,h,invIndex] in invPos[ID]:
+					# Remove the inversion
+					wholePop[i].genome[c][h][1][invIndex:invIndex+1] = []
+					# Rearrange the mutation positions to reflect the loss of inversion data
+					mutHom = wholePop[i].genome[c][h][0]
+					index = 0
+					mutInside = []
+					while index < len(mutHom) and mutHom[index][0] < inversion[0]:
+						index += 1
+					startIndex = index
+					while index < len(mutHom) and mutHom[index][0] < inversion[1]:
+						mutInside = [mutHom[index]] + mutInside
+						index += 1
+					# Replace the mutations inside with ones in inverted order
+					mutHom[startIndex:index] = mutInside
+					# Flip the mutation positions around the center of the removed inversion
+					for mut in mutInside:
+						if firstMutEncounter[mut[3]]:
+							firstMutEncounter[mut[3]] = False
+							# Flip the mutation across the center
+							mut[0] = 2*invCenter-mut[0]
+						print mut
+			# elif invCounts[i] > 2*self.size:
+			# 	print "Error: more inversions than alleles possible for ID " + str(i)
+		return inversionRemoved
 
 	# Simulating a single generational step
 	def step(self):
-		print "Generation " + str(self.age)
+		# print "Generation " + str(self.age) + " Reproduction"
 		# Pick mothers
 		femaleSurvivals = []
 		for female in self.females:
 			# print female.genome
 			femaleSurvivals += [female.survival()]
-		print "Female Survivals:" + str(femaleSurvivals)
+		# print "Female Survivals:" + str(femaleSurvivals)
 		femaleSurvivals = [s/sum(femaleSurvivals) for s in femaleSurvivals]
 		motherIndexes = np.random.choice(len(femaleSurvivals),self.size,p=femaleSurvivals)
 
@@ -338,12 +462,14 @@ class simSAIpopulation(object):
 			# print male.genome
 			maleSurvivals += [male.survival()]
 			# maleGenQuality += [male.repQuality()]
-		print "Male Survivals:" + str(maleSurvivals)
+		# print "Male Survivals:" + str(maleSurvivals)
 		maleSurvivals = [s/sum(maleSurvivals) for s in maleSurvivals]
 
 		# Populate the next generation by choosing fathers per mother and generating child genomes
 		newMales = []
 		newFemales = []
+		# numMales = 0
+		# numExpectedMales = int(self.size/2)
 		for motherIndex in motherIndexes:
 			mother = self.females[motherIndex]
 
@@ -369,55 +495,134 @@ class simSAIpopulation(object):
 			# print genome
 
 			# Instantiate the new population member with a random sex
-			if np.random.randint(0,2):
-				newFemales += [individual('F',self.mutEffectDiffSD,self.recombRate,self.minInvLen,genome)]
+			if np.random.randint(2):
+				newFemales += [individual('F',self.mutEffectDiffSD,self.recombRate,self.conversionRate,self.minInvLen,genome)]
 			else:
-				newMales += [individual('M',self.mutEffectDiffSD,self.recombRate,self.minInvLen,genome)]
+				newMales += [individual('M',self.mutEffectDiffSD,self.recombRate,self.conversionRate,self.minInvLen,genome)]
 
 		self.females = newFemales
 		self.males = newMales
 
+		# Remove fixed inversions and rearrange internal mutations
+		# self.__removeFixedInv()
+
+		# Update the age of the population
+		self.age = self.age + 1
+
+		# print "Generation " + str(self.age) + " Mutation"
 		# Sprinkle on mutations
 		wholePop = self.males + self.females
 		# Add new SA mutations
 		numMuts = np.random.poisson(self.expectedNumMut)
 		indivWithMut = np.random.randint(self.size, size=numMuts)
 		for i in indivWithMut:
-			wholePop[i].mutate(self.__mutIDcount)
+			self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age]]
 			self.__mutIDcount += 1
+			# self.record[2] += [[0]*self.age]
+			self.record[2] += [[0 for t in range(len(self.record[0]))]]
 		# Add new inversions
 		numInvMuts = np.random.poisson(self.expectedNumInvMut)
 		indivWithInvMut = np.random.randint(self.size, size=numMuts)
 		for i in indivWithInvMut:
-			wholePop[i].mutateInv(self.__invIDcount)
-			self.__invIDcount += 1
-
-		self.age = self.age + 1
+			# Must account for failure due to no space on the genome
+			invData = wholePop[i].mutateInv(self.__invIDcount)
+			if not invData is None:
+				self.record[3] += [invData + [self.age]]
+				self.__invIDcount += 1
+				# self.record[4] += [[0]*self.age]
+				# self.record[4] += [(self.age,0)]
+				self.record[4] += [[0 for t in range(len(self.record[0]))]]
+				self.record[5] += [[0 for t in range(len(self.record[0]))]]
+				self.record[6] += [[0 for t in range(len(self.record[0]))]]
+				self.record[7] += [[0 for t in range(len(self.record[0]))]]
 		# Could update phenotype values here
 		return
 
-	def __updateRecord():
-		#Count the number of each mutation/ID
-		mutCounts = [0]*self.age
-		invCounts = [0]*self.age
+	# # For keeping a record updated every generation, associated with using [[0]*self.age] in step
+	# # There's a length difference in record [0] and [2] if every generation isn't recorded
+	# def __updateRecordPerStep(self):
+	# 	print "Record Update"
+	# 	#Count the number of each mutation/ID
+	# 	mutCounts = [0]*self.__mutIDcount
+	# 	invCounts = [0]*self.__invIDcount
+	# 	for indiv in self.males + self.females:
+	# 		for chrom in indiv.genome:
+	# 			for hom in chrom:
+	# 				for mut in hom[0]:
+	# 					mutCounts[mut[3]] += 1
+	# 				for inv in hom[1]:
+	# 					invCounts[inv[2]] += 1
+	# 	for i in range(self.__mutIDcount):
+	# 		self.record[2][i] += [mutCounts[i]]
+	# 	for j in range(self.__invIDcount):
+	# 		self.record[4][j] += [invCounts[j]]
+
+	# For updating all recorded information on the population, record structured as:
+	# [0] a list of ages at which an update was made
+	# [1] a list of all mutations, indexed by ID, with each entry as 
+	#      [position,survival effect,reproductive effect,chromosome,age at which mutation occured]
+	# [2] a list of counts, indexed by ID, of the mutation at each age noted in [0]
+	# [3] a list of all inversions, indexed by ID, with each entry as 
+	#      [start position,end position,chromosome,age at which mutation occured]
+	# [4] a list of counts, indexed by ID, of the inversion at each age noted in [0]
+	# [5] a list of average count of mutations within the buffer region across the entire population,
+	#      indexed by ID, of each inversion at each age noted in [0]
+	# [6] a list of average survival effect within buffer region across the entire population,
+	#      indexed by ID, of each inversion at each age noted in [0]
+	# [7] a list of average reproductive effect within buffer region across the entire population,
+	#      indexed by ID, of each inversion at each age noted in [0]
+	def __updateRecord(self):
+	 	# print "Record Update"
+		# Record the age of the record update
+		self.record[0] += [self.age]
+		# Count the number of each mutation/ID
+		mutCounts = [0]*self.__mutIDcount
+		invCounts = [0]*self.__invIDcount
+		numMutInBuffer = [0]*self.__invIDcount
+		# survEffectTotalInBuffer = [0]*self.__invIDcount
+		survEffectTotalInBufferMultiplicative = [0]*self.__invIDcount
+		reprEffectTotalInBuffer = [0]*self.__invIDcount
 		for indiv in self.males + self.females:
 			for chrom in indiv.genome:
 				for hom in chrom:
 					for mut in hom[0]:
 						mutCounts[mut[3]] += 1
+					lowerMutInd = 0
+					upperMutInd = 0
 					for inv in hom[1]:
 						invCounts[inv[2]] += 1
-		for i in mutCounts:
-			currentRec = 
-			self.record[0][i] += [self.age,]
-		for j in self.__invIDcount:
-			self.record[1][i] += [self.age,]
-
-	# For getting mutation/inversion statistics from a step of the simulation
-	# returns the 
-	def getStdStats(self):
-		stats = []
-		return stats
+						while lowerMutInd < len(hom[0]) and hom[0][lowerMutInd][0] < inv[0]-self.invRecBuffer:
+							lowerMutInd += 1
+						while upperMutInd < len(hom[0]) and hom[0][upperMutInd][0] < inv[1]+self.invRecBuffer:
+							upperMutInd += 1
+						mutInside = hom[0][lowerMutInd:upperMutInd]
+						# Account for multiplicative survival effects - average effect is average of multiplied effects
+						numMutInside = 0
+						thisSurvEffect = 1
+						thisReprEffect = 0
+						for mut in mutInside:
+							numMutInside += 1
+							thisSurvEffect *= mut[1]
+							thisReprEffect += mut[2]
+						numMutInBuffer[inv[2]] += numMutInside
+						survEffectTotalInBufferMultiplicative[inv[2]] += thisSurvEffect
+						reprEffectTotalInBuffer[inv[2]] += thisReprEffect
+		# Update the record, get averages for record[5,6,7]
+		for i in range(self.__mutIDcount):
+			self.record[2][i] += [mutCounts[i]]
+		for j in range(self.__invIDcount):
+			count = invCounts[j]
+			# If no members of the inversion ID left, record averages as -1 ?
+			if count == 0:
+				self.record[4][j] += [count]
+				self.record[5][j] += [-1]
+				self.record[6][j] += [-1]
+				self.record[7][j] += [-1]
+			else:
+				self.record[4][j] += [count]
+				self.record[5][j] += [numMutInBuffer[j]/(float(count))]
+				self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
+				self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
 
 	# For simulating a number of generations sequentially
 	def stepNGens(self, numGenerations):
@@ -425,21 +630,145 @@ class simSAIpopulation(object):
 			self.step()
 		return
 
+	# For running a step and then updating the record.
+	# CONSIDER JUST MAKING __updateRecord PUBLIC
 	def recordStep(self):
+		self.step()
+		self.__updateRecord()
+		return
 
-
+	# For simulating a number of generations sequentially, recording after each
 	def recordNGens(self, numGenerations):
 		for i in range(numGenerations):
 			self.step()
-			self.record += [self.getStdStats]
+			self.__updateRecord()
 		return
 
-	# Writes record to an outfile
-	def writeData(self,outFileName):
+	# For simulating setSize*setNum generations sequentially, recording every setSize'th generation
+	def recordEveryNGens(self, setSize, setNum):
+		for i in range(setNum):
+			self.stepNGens(setSize)
+			self.__updateRecord()
 		return
 
-	def testStop(self):
+	def printRecord(self):
+		print self.record
 		return
+
+	# Takes a filename and mutation ID
+	# Writes a tab delineated file of the generation and count data for that mutation
+	def writeMutation(self,filename,ID):
+		outfile = open(filename, 'w')
+		# outfile.write('Mutation '+str(ID)+'\n')
+		outfile.write('Generation\tCount\n')
+		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[2][ID][0]) + '\n')
+		# outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
+		# for t in range(1,len(self.record[0])):
+		for t in range(len(self.record[0])):
+			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[2][ID][t]) + '\n')
+		outfile.close()
+
+	# Takes a filename and inversion ID
+	# Writes a tab delineated file of the generation, count, 
+	#  average number of mutations in buffer, average cumulative survival,
+	#  and average cumulative effect data for that inversion
+	def writeInversion(self,filename,ID):
+		outfile = open(filename, 'w')
+		# outfile.write('Inversion '+str(ID)+'\n')
+		outfile.write('Generation\tCount\tAvgNumMut\tAvgSurEff\tAvgRepEff\n')
+		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[4][ID][0]) + '\t' + str(self.record[5][ID][0]) + '\t' + str(self.record[6][ID][0]) + '\t' + str(self.record[7][ID][0]) + '\n')
+		# # May want to find a way to acount for the number of mutations in the inversion and their effects upon generation
+		# outfile.write(str(self.record[3][ID][3]) + '\t' + str(1) + '\t' + 'NA' + '\t' + 'NA' + '\t' + 'NA' + '\n')
+		# for t in range(1,len(self.record[0])):
+		for t in range(len(self.record[0])):
+			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t' + str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t' + str(self.record[7][ID][t]) + '\n')
+		outfile.close()
+
+	# Takes a filename and writes a tab delineated file of the position, effect, chromosome,
+	#   and initial generation data for all mutations
+	def writeMutCharTable(self,filename):
+		outfile = open(filename, 'w')
+		outfile.write('Position\tSurEffect\tRepEffect\tChromosome\tInitGen\n')
+		for m in range(len(self.record[1])):
+			line = ''
+			for datum in self.record[1][m]:
+				line += str(datum) + '\t'
+			outfile.write(line[:-1] + '\n')
+		outfile.close()
+
+	# Takes a filename and writes a tab delineated file of the positions, chromosome,
+	#   and initial generation data for all inversions
+	def writeInvCharTable(self,filename):
+		outfile = open(filename, 'w')
+		outfile.write('Position1\tPosition2\tChromosome\tInitGen\n')
+		for i in range(len(self.record[3])):
+			line = ''
+			for datum in self.record[3][i]:
+				line += str(datum) + '\t'
+			outfile.write(line[:-1] + '\n')
+		outfile.close()
+
+	# Writes a summary file for the
+	def writeSummary(self,filename):
+		outfile = open(filename, 'w')
+		outfile.write('Parameter\tValue\n')
+		outfile.write('Size\t'+str(self.size)+'\n')
+		outfile.write('MutationRate\t'+str(self.mutRate)+'\n')
+		outfile.write('InversionMutationRate\t'+str(self.mutRateInv)+'\n')
+		outfile.write('MutationEffectOffsetSD\t'+str(self.mutEffectDiffSD)+'\n')
+		outfile.write('MinimumInversionLength\t'+str(self.minInvLen)+'\n')
+		outfile.write('ConversionRate\t'+str(self.conversionRate)+'\n')
+		outfile.write('RecombinationRate\t'+str(self.recombRate)+'\n')
+		outfile.write('EncounterNumber\t'+str(self.encounterNum)+'\n')
+		outfile.write('FemaleChoiceNoiseSD\t'+str(self.choiceNoiseSD)+'\n')
+		outfile.write('InversionRecordBuffer\t'+str(self.invRecBuffer)+'\n')
+		outfile.close()
+		return
+
+	# Writes record to outfiles as such:
+	# One summary document
+	# Tab delineated table of mutation characteristics for all mutations
+	# Tab delineated table of inversion characteristics for all inversions
+	# Tab delineated table with generation and count data for every mutation
+	# Tab delineated table with generation, count, etc. additional data for every inversion
+	def writeRecordTables(self,outFilePrefix):
+		self.writeSummary(outFilePrefix+'ParamSumm.txt')
+		self.writeMutCharTable(outFilePrefix+'MutSumm.txt')
+		self.writeInvCharTable(outFilePrefix+'InvSumm.txt')
+		for mutID in range(self.__mutIDcount):
+			filename = outFilePrefix+'Mut'+str(mutID)+'.txt'
+			self.writeMutation(filename,mutID)
+		for invID in range(self.__invIDcount):
+			filename = outFilePrefix+'Inv'+str(invID)+'.txt'
+			self.writeInversion(filename,invID)
+		return
+
+	# # Scratch for testing mutation data change (due to shared reference)
+	# def testSharedData(self):
+	# 	mutCounts = [0]*self.__mutIDcount
+	# 	for indiv in self.males + self.females:
+	# 		for chrom in indiv.genome:
+	# 			for hom in chrom:
+	# 				for mut in hom[0]:
+	# 					mutCounts[mut[3]] += 1
+	# 	for i in range(self.__mutIDcount):
+	# 		if mutCounts[i] == 2*self.size:
+	# 			# self.record[1][i] = mut
+	# 			# mut[2] = 'test'
+	# 			print 'Starting test for ID '+ str(i)
+	# 			# print mut
+	# 			# print self.record[1][i]
+	# 			firstEncounter = True
+	# 			for indiv in self.males + self.females:
+	# 				for chrom in indiv.genome:
+	# 					for hom in chrom:
+	# 						for mut in hom[0]:
+	# 							if mut[3] == i:
+	# 								if firstEncounter:
+	# 									mut[2] = 'test'
+	# 									firstEncounter = False
+	# 								print mut
+	# 	return
 
 
 

@@ -22,13 +22,21 @@ minInvLen = .1
 # parameter = 1 gives 1 Morgan chromosome arm
 recombRate = 1 
 
-numGens = 50000
-
 # Must be <= pop size
 encounterNum = 100
 
 # SD for the normally distributed additive noise to male quality in the female choice
 choiceNoiseSD = .5
 
-pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, recombRate, encounterNum, choiceNoiseSD)
+# The probability that a gene undergoes conversion in a heterozygous gamete,
+#  which one is converted is selected at random, treated independently from number of crossover events
+conversionRate = 10.0**-4.0
+
+# Inversion record buffer represents how far from inversion edges to examine mutation effects
+invRecBuffer = .1
+
+
+numGens = 50000
+
+pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
 pop.recordNGens(numGens)
