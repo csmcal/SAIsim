@@ -355,7 +355,7 @@ class individual(object):
 # invRecBuffer is the distance outside of inversion boundaries in which to consider mutations associated with an inversion
 class simSAIpopulation(object):
 	"""simSAIpopulation represents sexually reproducing populations for sexually antagonistic inversion simulation"""
-	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer):
+	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer, record = [[],[],[],[],[],[],[],[]]):
 		# super(simSAIpopulation, self).__init__()
 		self.size = size
 		self.mutRate = mutRate
@@ -375,11 +375,12 @@ class simSAIpopulation(object):
 		self.females = []
 		# Record keeping variables, record data structure defined in __updateRecord
 		self.invRecBuffer = invRecBuffer
-		self.record = [[],[],[],[],[],[],[],[]]
+		self.record = record
 		self.age = 0
 		# Generate a set of 'size' individuals with random sex and no mutations or inversions
 		# Do differently for manually specified initial population
-		numMales = np.random.binomial(self.size,0.5)
+		# numMales = np.random.binomial(self.size,0.5)
+		numMales = int(self.size/2)
 		self.males = [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen) for i in range(numMales)]
 		self.females = [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen) for j in range(self.size-numMales)]
 		self.__updateRecord()
@@ -444,7 +445,7 @@ class simSAIpopulation(object):
 
 	# Simulating a single generational step
 	def step(self):
-		print "Generation " + str(self.age) + " Reproduction"
+		# print "Generation " + str(self.age) + " Reproduction"
 		# Pick mothers
 		femaleSurvivals = []
 		for female in self.females:
@@ -467,6 +468,8 @@ class simSAIpopulation(object):
 		# Populate the next generation by choosing fathers per mother and generating child genomes
 		newMales = []
 		newFemales = []
+		# numMales = 0
+		# numExpectedMales = int(self.size/2)
 		for motherIndex in motherIndexes:
 			mother = self.females[motherIndex]
 
@@ -506,7 +509,7 @@ class simSAIpopulation(object):
 		# Update the age of the population
 		self.age = self.age + 1
 
-		print "Generation " + str(self.age) + " Mutation"
+		# print "Generation " + str(self.age) + " Mutation"
 		# Sprinkle on mutations
 		wholePop = self.males + self.females
 		# Add new SA mutations
@@ -569,6 +572,7 @@ class simSAIpopulation(object):
 	# [7] a list of average reproductive effect within buffer region across the entire population,
 	#      indexed by ID, of each inversion at each age noted in [0]
 	def __updateRecord(self):
+	 	# print "Record Update"
 		# Record the age of the record update
 		self.record[0] += [self.age]
 		# Count the number of each mutation/ID
@@ -657,9 +661,10 @@ class simSAIpopulation(object):
 		outfile = open(filename, 'w')
 		# outfile.write('Mutation '+str(ID)+'\n')
 		outfile.write('Generation\tCount\n')
-		outfile.write(str(self.record[0][0]) + '\t' + str(self.record[2][ID][0]) + '\n')
-		outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
-		for t in range(1,len(self.record[0])):
+		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[2][ID][0]) + '\n')
+		# outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
+		# for t in range(1,len(self.record[0])):
+		for t in range(len(self.record[0])):
 			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[2][ID][t]) + '\n')
 		outfile.close()
 
@@ -671,10 +676,11 @@ class simSAIpopulation(object):
 		outfile = open(filename, 'w')
 		# outfile.write('Inversion '+str(ID)+'\n')
 		outfile.write('Generation\tCount\tAvgNumMut\tAvgSurEff\tAvgRepEff\n')
-		outfile.write(str(self.record[0][0]) + '\t' + str(self.record[4][ID][0]) + '\t' + str(self.record[5][ID][0]) + '\t' + str(self.record[6][ID][0]) + '\t' + str(self.record[7][ID][0]) + '\n')
-		# May want to find a way to acount for the number of mutations in the inversion and their effects upon generation
-		outfile.write(str(self.record[3][ID][3]) + '\t' + str(1) + '\t' + 'NA' + '\t' + 'NA' + '\t' + 'NA' + '\n')
-		for t in range(1,len(self.record[0])):
+		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[4][ID][0]) + '\t' + str(self.record[5][ID][0]) + '\t' + str(self.record[6][ID][0]) + '\t' + str(self.record[7][ID][0]) + '\n')
+		# # May want to find a way to acount for the number of mutations in the inversion and their effects upon generation
+		# outfile.write(str(self.record[3][ID][3]) + '\t' + str(1) + '\t' + 'NA' + '\t' + 'NA' + '\t' + 'NA' + '\n')
+		# for t in range(1,len(self.record[0])):
+		for t in range(len(self.record[0])):
 			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t' + str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t' + str(self.record[7][ID][t]) + '\n')
 		outfile.close()
 
@@ -682,11 +688,11 @@ class simSAIpopulation(object):
 	#   and initial generation data for all mutations
 	def writeMutCharTable(self,filename):
 		outfile = open(filename, 'w')
-		outfile.write('Position\tSurEffect\nRepEffect\nChromosome\nInitGen\n')
+		outfile.write('Position\tSurEffect\tRepEffect\tChromosome\tInitGen\n')
 		for m in range(len(self.record[1])):
 			line = ''
 			for datum in self.record[1][m]:
-				line += str(datum) + '\t')
+				line += str(datum) + '\t'
 			outfile.write(line[:-1] + '\n')
 		outfile.close()
 
@@ -694,16 +700,29 @@ class simSAIpopulation(object):
 	#   and initial generation data for all inversions
 	def writeInvCharTable(self,filename):
 		outfile = open(filename, 'w')
-		outfile.write('Position1\tPosition2\nChromosome\nInitGen\n')
+		outfile.write('Position1\tPosition2\tChromosome\tInitGen\n')
 		for i in range(len(self.record[3])):
 			line = ''
 			for datum in self.record[3][i]:
-				line += str(datum) + '\t')
+				line += str(datum) + '\t'
 			outfile.write(line[:-1] + '\n')
 		outfile.close()
 
 	# Writes a summary file for the
 	def writeSummary(self,filename):
+		outfile = open(filename, 'w')
+		outfile.write('Parameter\tValue\n')
+		outfile.write('Size\t'+str(self.size)+'\n')
+		outfile.write('MutationRate\t'+str(self.mutRate)+'\n')
+		outfile.write('InversionMutationRate\t'+str(self.mutRateInv)+'\n')
+		outfile.write('MutationEffectOffsetSD\t'+str(self.mutEffectDiffSD)+'\n')
+		outfile.write('MinimumInversionLength\t'+str(self.minInvLen)+'\n')
+		outfile.write('ConversionRate\t'+str(self.conversionRate)+'\n')
+		outfile.write('RecombinationRate\t'+str(self.recombRate)+'\n')
+		outfile.write('EncounterNumber\t'+str(self.encounterNum)+'\n')
+		outfile.write('FemaleChoiceNoiseSD\t'+str(self.choiceNoiseSD)+'\n')
+		outfile.write('InversionRecordBuffer\t'+str(self.invRecBuffer)+'\n')
+		outfile.close()
 		return
 
 	# Writes record to outfiles as such:
@@ -713,15 +732,15 @@ class simSAIpopulation(object):
 	# Tab delineated table with generation and count data for every mutation
 	# Tab delineated table with generation, count, etc. additional data for every inversion
 	def writeRecordTables(self,outFilePrefix):
-		self.writeSummary(outFilePrefix+'Summ.txt')
+		self.writeSummary(outFilePrefix+'ParamSumm.txt')
 		self.writeMutCharTable(outFilePrefix+'MutSumm.txt')
 		self.writeInvCharTable(outFilePrefix+'InvSumm.txt')
 		for mutID in range(self.__mutIDcount):
 			filename = outFilePrefix+'Mut'+str(mutID)+'.txt'
-			self.writeMutation(self,filename,mutID)
+			self.writeMutation(filename,mutID)
 		for invID in range(self.__invIDcount):
 			filename = outFilePrefix+'Inv'+str(invID)+'.txt'
-			self.writeMutation(self,filename,invID)
+			self.writeInversion(filename,invID)
 		return
 
 	# # Scratch for testing mutation data change (due to shared reference)
