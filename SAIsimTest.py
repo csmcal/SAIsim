@@ -36,12 +36,12 @@ conversionRate = 10.0**-2.0
 invRecBuffer = .1
 
 
-numGens = 10
+numGens = 500
 
 # Now run the simulator session in length and recording intervals as desired using above parameters
 pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
-pop.recordEveryNGens(10,200)
-# pop.recordNGens(numGens)
+# pop.recordEveryNGens(10,200)
+pop.recordNGens(numGens)
 # pop.printRecord()
 pop.writeRecordTables('testOutput/test1/Test1')

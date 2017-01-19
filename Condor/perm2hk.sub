@@ -1,0 +1,70 @@
+# perm2hk.sub
+# Submit file for running scantwopermhk from r/qtl
+# Defaults to 100 batches of 10 scantwopermhk permutations on week 4
+# Use -append "arguments=<argument list>" for non-defaults
+
+#Consider using DAGMan for pipelining
+#condor_submit_dag dag_file_name
+#
+#JOB A submit_file_a
+#SCRIPT POST A post_script.sh args
+#JOB B submit_file_b
+#PARENT A CHILD B
+
+
+#
+# Specify the HTCondor Universe (vanilla is the default and is used
+#  for almost all jobs), the desired name of the HTCondor log file,
+#  and the desired name of the standard error file.  
+#  Wherever you see $(Cluster), HTCondor will insert the queue number
+#  assigned to this set of jobs at the time of submission.
+
+universe = vanilla
+log = perm2hk_$(Cluster).log
+error = perm2hk_$(Cluster)_$(Process).err
+
+
+#
+# Specify your executable (single binary or a script that runs several
+#  commands), arguments, and a files for HTCondor to store standard
+#  output (or "screen output").
+#  $(Process) will be a integer number for each job, starting with "0"
+#  and increasing for the relevant number of jobs.
+
+executable = perm2hk.sh
+arguments = "$(Process) goughF2_genpr_v4.2.RData 4 10 wk4"
+output = perm2hk_$(Cluster)_$(Process).out
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+
+
+#
+# Specify that HTCondor should transfer files to and from the
+#  computer where each job runs. The last of these lines *would* be
+#  used if there were any other files needed for the executable to run.
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = goughF2_procSmRate.RData, perm2hk.R, perm2hk.sh, http://proxy.chtc.wisc.edu/SQUID/cmcallester/R.tar.gz
+
+
+#
+# Tell HTCondor what amount of compute resources
+#  each job will need on the computer where it runs.
+
+request_cpus = 1
+request_memory = 2GB
+request_disk = 100MB
+
+#
+# Tell HTCondor to run 100 instances of our job:
+
+#queue 1
+
+
+#To submit jobs based on a list of random seed values, you'll want to use the
+#following queue statement at the end of your submit file:
+#queue seed from seedlist (can be a file path to a csv list)
+#And then use the variable $(seed) in the submit file, wherever you want to have
+#that unique value. Like:
+#arguments = $(seed)
+

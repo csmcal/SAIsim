@@ -3,6 +3,21 @@
 #     in Inversions in a forward Population simulation
 # Ideally, models large inversion polymorphisms in populations with high reproductive skew
 
+
+
+# class InputError(Exception):
+#     """Exception raised for errors in the input.
+
+#     Attributes:
+#         expression -- input expression in which the error occurred
+#         message -- explanation of the error
+#     """
+
+#     def __init__(self, expression, message):
+#         self.expression = expression
+#         self.message = message
+
+
 # REWRITE WITH NUMPY ARRAYS/VECTORS?
 
 import numpy as np
@@ -16,13 +31,16 @@ import numpy as np
 # ideally: genome = [[[chr1hom1],[chr1hom2]],[[chr2hom1],[chr2hom2]],..]
 class individual(object):
 	"""individuals represent members of simSAIpopulations"""
-	def __init__(self, sex, mutEffectDiffSD, recombRate, conversionRate, minInvLen, genome = [[[[],[]],[[],[]]]]):
+	def __init__(self, sex, mutEffectDiffSD, recombRate, conversionRate, minInvLen,
+			isFly, genome = [[[[],[]],[[],[]]]]):
 		# super(individual, self).__init__()
 		self.sex = sex
 		self.mutEffectDiffSD = mutEffectDiffSD
 		self.recombRate = recombRate
 		self.conversionRate = conversionRate
 		self.minInvLen = minInvLen
+		# CONSIDER JUST PASSING VARIABLES WHEN NEEDED
+		self.isFly = isFly
 		# genome = [[[chr1hom1],[chr1hom2]],[[chr2hom1],[chr2hom2]],..]
 		# where chomosome homologs = [mutist, InvList]
 		self.genome = genome
@@ -248,8 +266,10 @@ class individual(object):
 			# This first copy step is necessary independent of conversion activity, 
 			# to prevent changes to shared-referent chromosomes
 			chrom = [[list(parChrom[0][0]),list(parChrom[0][1])],[list(parChrom[1][0]),list(parChrom[1][1])]]
-			chrom = self.__convertChrom(chrom)
-			if numRecomb == 0:
+			# Perform fly-specific non-recombination non-conversion check for males
+			if self.sex == 'F' or (not self.isFly):
+				chrom = self.__convertChrom(chrom)
+			if numRecomb == 0 or (self.isFly and self.sex == 'M'):
 				if currHom1:
 					gamGenome += [chrom[0]]
 				else:
@@ -345,17 +365,21 @@ class individual(object):
 # size is the population size
 # mutRate is the expected number of new mutations per chromosome per reproductive event
 # mutRateInv is the expected number of new inversions per chromosome per reproductive event
-# mutEffectDiffSD is the SD of normally distributed offset of survival/rep mutation effects from [x,1-x], with x = uniform[0,1)
+# mutEffectDiffSD is the SD of normally distributed offset of survival/rep mutation effects
+#    offsetting from [x,1-x], with x = uniform[0,1)
 # minInvLen is the minimum length of a new inversion
 # conversionRate is the probability heterozygous locus that a conversion occurs, direction is random
 # recombRate is the expected number of recombination events per chromosome per reproductive event
 # encounterNum is the number of males a female chooses from in a reproductive event
 # choiceNoiseSD is the SD for the normally distributed additive noise to male quality in the female choice
-# record is a general variable for storing generation statistics about the population, more description in __updateRecord
-# invRecBuffer is the distance outside of inversion boundaries in which to consider mutations associated with an inversion
+# record is a general variable for storing generation statistics about the population, see __updateRecord
+# invRecBuffer is the distance outside of inversion boundaries in which to record mutations for an inversion
+# CONSIDER USING A 'PARAMETERS' PASSED LIST
 class simSAIpopulation(object):
-	"""simSAIpopulation represents sexually reproducing populations for sexually antagonistic inversion simulation"""
-	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer, record = [[],[],[],[],[],[],[],[]]):
+	"""simSAIpopulation represents populations for sexually antagonistic inversion simulation"""
+	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate,
+			recombRate, encounterNum, choiceNoiseSD, invRecBuffer, isFly = True, randomSex = True,
+			genomes = [], sexes = [], record = [[],[],[],[],[],[],[],[]]):
 		# super(simSAIpopulation, self).__init__()
 		self.size = size
 		self.mutRate = mutRate
@@ -373,17 +397,118 @@ class simSAIpopulation(object):
 		self.choiceNoiseSD = choiceNoiseSD
 		self.males = []
 		self.females = []
+		# For modeling D.mel specific recombination/other biology
+		self.isFly = isFly
 		# Record keeping variables, record data structure defined in __updateRecord
 		self.invRecBuffer = invRecBuffer
 		self.record = record
 		self.age = 0
-		# Generate a set of 'size' individuals with random sex and no mutations or inversions
-		# Do differently for manually specified initial population
-		# numMales = np.random.binomial(self.size,0.5)
-		numMales = int(self.size/2)
-		self.males = [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen) for i in range(numMales)]
-		self.females = [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen) for j in range(self.size-numMales)]
-		self.__updateRecord()
+		# Handling input and default populations
+		numGenomes = len(genomes)
+		if numGenomes > size:
+			raise InputError(genomes,'More genomes provided than population size')
+		elif len(sexes) != 0 or len(sexes) != numGenomes:
+			raise InputError(sexes,'Sexes must be of equal length to genomes')
+		else:
+			for i in range(numGenomes):
+				if sexes[i] == 'F':
+					self.females += [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,genomes[i])]
+				else:
+					self.males += [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen,genomes[i])]
+			numLeft = size-numGenomes
+			if len(self.females) < 1:
+				numLeft -= 1
+				self.females += [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen)]
+			if len(self.males) < 1:
+				numLeft -= 1
+				self.males += [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen)]
+			# Generate the remaining set of 'size' individuals
+			#   with random or equal probability sex and no mutations or inversions
+			if randomSex:
+				numMales = np.random.binomial(numLeft,0.5)
+			else:
+				numMales = int(numLeft/2)
+			self.males += [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen,isFly) for i in range(numMales)]
+			self.females += [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,isFly) for j in range(numLeft-numMales)]
+			self.__updateRecord()
+
+	class InputError(Exception):
+		"""Exception raised for errors in the input.
+
+		Attributes:
+			expression -- input expression in which the error occurred
+			message -- explanation of the error
+		"""
+
+		def __init__(self, expression, message):
+			self.expression = expression
+			self.message = message
+
+	# For generating a set of genomes, sexes, and a record from specified mutations and inversions, 
+	# input lists formatted as described in self.record but with count instead of initial generation:
+	# mutList: a list of all mutations, indexed by ID, with each entry as 
+	#      [position,survival effect,reproductive effect,chromosome,initial count]
+	# populates the remaining genome slots with genomes to which mutations are randomly assigned from the count pools
+	# Currently doesn't allow description of prior record
+	# How to model starting with mutations specific to sexes?
+	# Limit the number of further genomes to generate? How will this interact with having at least 1 'M'/'F'?
+	@staticmethod
+	def genGenomesSexes(size, mutList, invList, randomSex = True,
+			genomes = [], sexes = []):
+		# Handling input
+		numGenomes = len(genomes)
+		if numGenomes > size:
+			raise InputError(genomes,'More genomes provided than population size')
+		# Either require equal length sexes and genomes or just that sexes is smaller than population size
+		#   and allows for one of each sex?
+		elif len(sexes) != 0 or len(sexes) != numGenomes:
+			raise InputError(sexes,'Sexes must be of equal length to genomes')
+		# Generate the remaining sexes list
+		numFemales = 0
+		numMales = 0
+		for sex in sexes:
+			if sex == 'M':
+				numMales += 1
+			elif sex == 'F':
+				numFemales += 1
+			else:
+				raise InputError(sexes,'Sexes must only contain \'F\' and \'M\' elements')
+		if numMales == 0:
+			sexes += ['M']
+			numMales += 1
+		if numFemales == 0:
+			sexes += ['F']
+			numFemales += 1
+		numRemaining = size - numFemales - numMales
+		if numRemaining < 0:
+			raise InputError(sexes,'Sexes must allow at least one \'F\' and \'M\' in the population')
+		# Reuse numMales for the number of males to be added
+		if randomSex:
+			numMales = np.random.binomial(numRemaining,0.5)
+		else:
+			numMales = int(numRemaining/2)
+		sexes += ['M' for i in range(numMales)]
+		sexes += ['F' for i in range(numRemaining-numMales)]
+		# Generate the remaining genomes
+		newGenomes = []
+		numNewGenomes = size-numGenomes
+		posOrderedMut = []
+		posOrderedInv = []
+		# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
+		#   for 0th generation update
+		record = [[],[],[],[],[],[],[],[]]
+		for m in range(len(mutList)):
+			count = mutList[m][4]
+			if count >
+			mutation = mutList[m][0:3]+[m]
+			record[1] += [mutList[m][0:4]+[0]]
+			record[2] += [[]]
+		for i in range(len(invList)):
+			mutation = mutList[m][0:3]+[m]
+			record[1] += [mutList[m][0:4]+[0]]
+			record[2] += [[]]
+
+		return (genomes,sexes,record)
 
 	# For changing the population size during simulation
 	def setSize(self,newSize):
@@ -496,15 +621,15 @@ class simSAIpopulation(object):
 
 			# Instantiate the new population member with a random sex
 			if np.random.randint(2):
-				newFemales += [individual('F',self.mutEffectDiffSD,self.recombRate,self.conversionRate,self.minInvLen,genome)]
+				newFemales += [individual('F',self.mutEffectDiffSD,self.recombRate,self.conversionRate,self.minInvLen,self.isFly,genome)]
 			else:
-				newMales += [individual('M',self.mutEffectDiffSD,self.recombRate,self.conversionRate,self.minInvLen,genome)]
+				newMales += [individual('M',self.mutEffectDiffSD,self.recombRate,self.conversionRate,self.minInvLen,self.isFly,genome)]
 
 		self.females = newFemales
 		self.males = newMales
 
 		# Remove fixed inversions and rearrange internal mutations
-		# self.__removeFixedInv()
+		self.__removeFixedInv()
 
 		# Update the age of the population
 		self.age = self.age + 1
@@ -538,25 +663,6 @@ class simSAIpopulation(object):
 		# Could update phenotype values here
 		return
 
-	# # For keeping a record updated every generation, associated with using [[0]*self.age] in step
-	# # There's a length difference in record [0] and [2] if every generation isn't recorded
-	# def __updateRecordPerStep(self):
-	# 	print "Record Update"
-	# 	#Count the number of each mutation/ID
-	# 	mutCounts = [0]*self.__mutIDcount
-	# 	invCounts = [0]*self.__invIDcount
-	# 	for indiv in self.males + self.females:
-	# 		for chrom in indiv.genome:
-	# 			for hom in chrom:
-	# 				for mut in hom[0]:
-	# 					mutCounts[mut[3]] += 1
-	# 				for inv in hom[1]:
-	# 					invCounts[inv[2]] += 1
-	# 	for i in range(self.__mutIDcount):
-	# 		self.record[2][i] += [mutCounts[i]]
-	# 	for j in range(self.__invIDcount):
-	# 		self.record[4][j] += [invCounts[j]]
-
 	# For updating all recorded information on the population, record structured as:
 	# [0] a list of ages at which an update was made
 	# [1] a list of all mutations, indexed by ID, with each entry as 
@@ -571,6 +677,7 @@ class simSAIpopulation(object):
 	#      indexed by ID, of each inversion at each age noted in [0]
 	# [7] a list of average reproductive effect within buffer region across the entire population,
 	#      indexed by ID, of each inversion at each age noted in [0]
+	# ADD: pop size for changing pop size?
 	def __updateRecord(self):
 	 	# print "Record Update"
 		# Record the age of the record update
@@ -683,6 +790,14 @@ class simSAIpopulation(object):
 		for t in range(len(self.record[0])):
 			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t' + str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t' + str(self.record[7][ID][t]) + '\n')
 		outfile.close()
+
+	# Takes a filename and writes a tab delineated file of the freuency by generation and ID
+	#   with generation in the first column
+	# def writeAllMutFreqTable(self,filename):
+
+	# Takes a filename and writes a tab delineated file of the freuency by generation and ID
+	#   with generation in the first column
+	# def writeAllInvFreqTable(self,filename):
 
 	# Takes a filename and writes a tab delineated file of the position, effect, chromosome,
 	#   and initial generation data for all mutations
