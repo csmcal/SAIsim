@@ -38,5 +38,5 @@ invRecBuffer = .1
 
 numGens = 50000
 
-pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
+pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
 pop.recordNGens(numGens)

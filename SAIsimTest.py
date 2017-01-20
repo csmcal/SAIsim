@@ -35,11 +35,18 @@ conversionRate = 10.0**-2.0
 # Inversion record buffer represents how far from inversion edges to examine mutation effects
 invRecBuffer = .1
 
+initMutList = [[0.5,0.95,0.1,0,40]]
+initInvList = [[0.01,0.06,0,60]]
+genomes = []
+sexes = []
 
 numGens = 500
 
 # Now run the simulator session in length and recording intervals as desired using above parameters
-pop = sim.simSAIpopulation(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate, encounterNum, choiceNoiseSD, invRecBuffer)
+(genomes,sexes,record) = sim.SAIpop.genGenomesSexes(size,initMutList,initInvList)
+pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
+	encounterNum, choiceNoiseSD, invRecBuffer, genomes=genomes,sexes=sexes,record=record)
+# pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)
 pop.recordNGens(numGens)
