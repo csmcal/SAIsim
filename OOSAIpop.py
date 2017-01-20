@@ -4,20 +4,6 @@
 # Ideally, models large inversion polymorphisms in populations with high reproductive skew
 
 
-
-# class InputError(Exception):
-#     """Exception raised for errors in the input.
-
-#     Attributes:
-#         expression -- input expression in which the error occurred
-#         message -- explanation of the error
-#     """
-
-#     def __init__(self, expression, message):
-#         self.expression = expression
-#         self.message = message
-
-
 # REWRITE WITH NUMPY ARRAYS/VECTORS?
 
 import numpy as np
@@ -387,9 +373,11 @@ class SAIpop(object):
 		self.mutRateInv = mutRateInv
 		self.expectedNumMut = mutRate * size
 		self.expectedNumInvMut = mutRateInv * size
-		# Keep trck of next mutation (or inversion?) ID
-		self.__mutIDcount = 0
-		self.__invIDcount = 0
+		# Keep trck of next mutation (or inversion) ID
+		# self.__mutIDcount = 0
+		# self.__invIDcount = 0
+		self.__mutIDcount = len(record[1])
+		self.__invIDcount = len(record[3])
 		self.mutEffectDiffSD = mutEffectDiffSD
 		self.minInvLen = minInvLen
 		self.conversionRate = conversionRate
@@ -412,9 +400,9 @@ class SAIpop(object):
 		# Handling input and default populations
 		numGenomes = len(genomes)
 		if numGenomes > size:
-			raise InputError(genomes,'More genomes provided than population size')
-		elif len(sexes) != 0 or len(sexes) != numGenomes:
-			raise InputError(sexes,'Sexes must be of equal length to genomes')
+			raise SAIpop.InputError(genomes,'More genomes provided than population size')
+		elif len(sexes) != 0 and len(sexes) != numGenomes:
+			raise SAIpop.InputError(sexes,'Sexes must be of equal length to genomes')
 		else:
 			if numGenomes > 0:
 				# Ignore numChrom if genomes pre-specified, peg it to the number of chormosomes in genomes[0]
@@ -457,6 +445,8 @@ class SAIpop(object):
 		"""
 
 		def __init__(self, expression, message):
+			# super(self).__init__(message)
+			Exception.__init__(self,message)
 			self.expression = expression
 			self.message = message
 
@@ -480,11 +470,11 @@ class SAIpop(object):
 			# Ignore numChrom if genomes pre-specified, peg it to the number of chormosomes in genomes[0]
 			numChrom = len(genomes[0])
 			if numGenomes > size:
-				raise InputError(genomes,'More genomes provided than population size')
+				raise SAIpop.InputError(genomes,'More genomes provided than population size')
 		# Either require equal length sexes and genomes or just that sexes is smaller than population size
 		#   and allows for one of each sex?
-		elif len(sexes) != 0 or len(sexes) != numGenomes:
-			raise InputError(sexes,'Sexes must be of equal length to genomes')
+		if len(sexes) != 0 and len(sexes) != numGenomes:
+			raise SAIpop.InputError(sexes,'Sexes must be of equal length to genomes')
 
 		# Generate the remaining sexes list
 		numFemales = 0
@@ -495,27 +485,30 @@ class SAIpop(object):
 			elif sex == 'F':
 				numFemales += 1
 			else:
-				raise InputError(sexes,'Sexes must only contain \'F\' and \'M\' elements')
+				raise SAIpop.InputError(sexes,'Sexes must only contain \'F\' and \'M\' elements')
+		newSexes = []
 		if numMales == 0:
-			sexes += ['M']
+			newSexes += ['M']
 			numMales += 1
 		if numFemales == 0:
-			sexes += ['F']
+			newSexes += ['F']
 			numFemales += 1
 		numRemaining = size - numFemales - numMales
 		if numRemaining < 0:
-			raise InputError(sexes,'Sexes must allow at least one \'F\' and \'M\' in the population')
+			raise SAIpop.InputError(sexes,'Sexes must allow at least one \'F\' and \'M\' in the population')
 		# Reuse numMales for the number of males to be added
 		if randomSex:
 			numMales = np.random.binomial(numRemaining,0.5)
 		else:
 			numMales = int(numRemaining/2)
-		sexes += ['M' for i in range(numMales)]
-		sexes += ['F' for i in range(numRemaining-numMales)]
+		newSexes += ['M' for i in range(numMales)]
+		newSexes += ['F' for i in range(numRemaining-numMales)]
+		np.random.shuffle(newSexes)
+		sexes += newSexes
 
 		# Generate the remaining genomes
 		numNewGenomes = size-numGenomes
-		newGenomes = [[[[[],[]],[[],[]]] for i in range(numChrom)]) for j in range(numNewGenomes)]
+		newGenomes = [[[[[],[]],[[],[]]] for i in range(numChrom)] for j in range(numNewGenomes)]
 		# Will need to have separate lists per chromosome within these
 		posOrderedMut = [[] for i in range(numChrom)]
 		posOrderedInv = [[] for i in range(numChrom)]
@@ -527,7 +520,7 @@ class SAIpop(object):
 		for m in range(numMut):
 			count = mutList[m][4]
 			if count > numNewGenomes:
-				raise InputError(mutList,'Mutation counts must be less than the remaining population size')
+				raise SAIpop.InputError(mutList,'Mutation counts must be less than the remaining population size')
 			mutation = mutList[m][0:3]+[m]
 			chrom = mutList[m][3]
 			record[1] += [mutList[m][0:4]+[0]]
@@ -536,14 +529,14 @@ class SAIpop(object):
 			i = 0
 			while (i < len(posOrderedMut[chrom])) and (posOrderedMut[chrom][i][0][0] < mutation[0]):
 				i += 1
-			posOrderedMut[chrom][i:i] = [(mutation,chrom,count)]
+			posOrderedMut[chrom][i:i] = [(mutation,count)]
 		numInv = len(invList)
 		for i in range(numInv):
-			count = invList[m][4]
+			count = invList[m][3]
 			if count > numNewGenomes:
-				raise InputError(invList,'Inversion counts must be less than the remaining population size')
+				raise SAIpop.InputError(invList,'Inversion counts must be less than the remaining population size')
 			inversion = invList[i][0:2]+[i]
-			chrom = [invList[i][3]
+			chrom = invList[i][2]
 			record[3] += [invList[i][0:3]+[0]]
 			record[4] += [[]]
 			record[5] += [[]]
@@ -554,24 +547,25 @@ class SAIpop(object):
 			while (i < len(posOrderedInv[chrom])) and (posOrderedInv[chrom][i][0][1] <= inversion[0]):
 				i += 1
 			if i < len(posOrderedInv[chrom]) and posOrderedInv[chrom][i+1][0][0] <= inversion[1]:
-				raise InputError(invList,'Inversions cannot overlap')
-			posOrderedInv[chrom][i:i] = [(inversion,chrom,count)]
+				raise SAIpop.InputError(invList,'Inversions cannot overlap')
+			posOrderedInv[chrom][i:i] = [(inversion,count)]
 
 		# Preserve order by adding the mutations/inversions from in position order lists
 		# Need to ensure no double-placement at any position
 		possibleSpots = []
-		for i in numNewGenomes:
+		for i in range(numNewGenomes):
 			for h in [0,1]:
 				possibleSpots += [(i,h)]
-		for (mut,chrom,count) in posOrderedMut:
-			mutSpots = np.random.choice(possibleSpots,count,False)
-			for (i,hom) in mutSpots:
-				genomes[i][chrom][hom][0] += [mut]
-		for (inv,chrom,count) in posOrderedInv:
-			invSpots = np.random.choice(possibleSpots,count,False)
-			for (i,hom) in invSpots:
-				genomes[i][chrom][hom][1] += [inv]
-
+		for chrom in range(numChrom):
+			for (mut,count) in posOrderedMut[chrom]:
+				np.random.shuffle(possibleSpots)
+				for (i,hom) in possibleSpots[0:count]:
+					newGenomes[i][chrom][hom][0] += [mut]
+			for (inv,count) in posOrderedInv[chrom]:
+				np.random.shuffle(possibleSpots)
+				for (i,hom) in possibleSpots[0:count]:
+					newGenomes[i][chrom][hom][1] += [inv]
+		genomes += newGenomes
 		return (genomes,sexes,record)
 
 	# For changing the population size during simulation
@@ -586,23 +580,25 @@ class SAIpop(object):
 	def __removeFixedInv(self):
 		wholePop = self.males + self.females
 		invCounts = [0]*self.__invIDcount
-		invPos = []*self.__invIDcount
+		invPos = [[]]*self.__invIDcount
 		# All mutations are passed as references, so don't want to change more than one
 		firstMutEncounter = [True]*self.__mutIDcount
 
 		inversionRemoved = False
 		# Generate count and position data
 		for i in range(len(wholePop)):
-			for c in range(len(indiv.genome)):
+			for c in range(self.numChrom):
 				for h in range(2):
 					chromHomInv = wholePop[i].genome[c][h][1]
 					for invIndex in range(len(chromHomInv)):
 						inversion = chromHomInv[invIndex]
+						# print inversion
 						invCounts[inversion[2]] += 1
 						invPos[inversion[2]] += [[i,c,h,invIndex]]
 		for ID in range(self.__invIDcount):
 			if invCounts[ID] == 2*self.size:
 				inversionRemoved = True
+				print "Inversion Removed"
 				inversion = self.record[3][ID]
 				length = self.record[3][ID][1] - self.record[3][ID][0]
 				invCenter = self.record[3][ID][0] + length/2.0
@@ -634,7 +630,7 @@ class SAIpop(object):
 
 	# Simulating a single generational step
 	def step(self):
-		# print "Generation " + str(self.age) + " Reproduction"
+		print "Generation " + str(self.age) + " Reproduction"
 		# Pick mothers
 		femaleSurvivals = []
 		for female in self.females:
@@ -716,7 +712,7 @@ class SAIpop(object):
 		self.age = self.age + 1
 
 		if self.willMutate:
-			# print "Generation " + str(self.age) + " Mutation"
+			print "Generation " + str(self.age) + " Mutation"
 			# Sprinkle on mutations
 			wholePop = self.males + self.females
 			# Add new SA mutations
@@ -762,7 +758,7 @@ class SAIpop(object):
 	#      indexed by ID, of each inversion at each age noted in [0]
 	# ADD: pop size for changing pop size?
 	def __updateRecord(self):
-	 	# print "Record Update"
+	 	print "Record Update"
 		# Record the age of the record update
 		self.record[0] += [self.age]
 		# Count the number of each mutation/ID

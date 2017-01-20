@@ -37,13 +37,13 @@ invRecBuffer = .1
 
 initMutList = [[0.5,0.95,0.1,0,40]]
 initInvList = [[0.01,0.06,0,60]]
-genomes = []
+genomes = [[[[[],[]],[[],[]]]]]
 sexes = []
 
 numGens = 500
 
 # Now run the simulator session in length and recording intervals as desired using above parameters
-(genomes,sexes,record) = sim.SAIpop.genGenomesSexes(size,initMutList,initInvList)
+(genomes,sexes,record) = sim.SAIpop.genGenomesSexes(size,initMutList,initInvList,genomes=genomes,sexes=sexes)
 pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
 	encounterNum, choiceNoiseSD, invRecBuffer, genomes=genomes,sexes=sexes,record=record)
 # pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
