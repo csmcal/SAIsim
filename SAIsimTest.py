@@ -1,7 +1,7 @@
 
 # Simulator script for testing SAI forward simulations with particular parameters
 
-import OOSAIpop as sim
+import SAIsim as sim
 
 # Whoops, a possibility with randomly assigned sexes is population death
 size = 100
@@ -33,6 +33,7 @@ choiceNoiseSD = .5
 conversionRate = 10.0**-2.0
 
 # Inversion record buffer represents how far from inversion edges to examine mutation effects
+# CONSIDER making this a parameter of the record function (Doesn't really work as recording is simultaneous)
 invRecBuffer = .1
 
 initMutList = [[0.5,0.95,0.1,0,40]]
