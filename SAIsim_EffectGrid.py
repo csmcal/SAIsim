@@ -5,12 +5,14 @@
 import sys
 import SAIsim as sim
 
-surEffect = int(sys.argv[1])
-repEffect = int(sys.argv[2])
+surEffect = float(sys.argv[1])
+repEffect = float(sys.argv[2])
 replicateNum = int(sys.argv[3])
 mutPos = 0.5
 size = 1000
 numGens = 20000
+# size = 1000
+# numGens = 100
 recordEveryN = 10
 
 
@@ -40,7 +42,8 @@ def genPopSingMutEffects(mutPos,surEffect,repEffect,size):
 
 # Run the Simulation
 pop = genPopSingMutEffects(mutPos,surEffect,repEffect,size)
-pop.recordNthInNGens(recordEveryN,numGens)
+# pop.recordNthInNGens(recordEveryN,numGens)
+pop.recordNthInNStopWhenFixed(recordEveryN,numGens)
 
 # Record Relevant Output (ASSUMES MUTATION ID = 0)
 mutFileName = 's'+str(surEffect)+'r'+str(repEffect)+'n'+str(replicateNum)+'.txt'
