@@ -45,8 +45,12 @@ pop = genPopSingMutEffects(mutPos,surEffect,repEffect,size)
 # pop.recordNthInNGens(recordEveryN,numGens)
 pop.recordNthInNStopWhenFixed(recordEveryN,numGens)
 
-# Record Relevant Output (ASSUMES MUTATION ID = 0)
-mutFileName = 's'+str(surEffect)+'r'+str(repEffect)+'n'+str(replicateNum)+'.txt'
+# Record Relevant Output
+# ASSUMES MUTATION ID = 0, effect values only to two decimal places, =< three digit replicate ID
+surEffStr = repr(surEffect)+'0'*(4-len(repr(surEffect)))
+repEffStr = repr(repEffect)+'0'*(4-len(repr(repEffect)))
+repNumStr = '0'*(3-len(str(replicateNum)))+str(replicateNum)
+mutFileName = 's'+surEffStr+'r'+repEffStr+'n'+repNumStr+'.txt'
 pop.writeMutation(mutFileName,0)
 
 

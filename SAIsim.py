@@ -346,7 +346,216 @@ class individual(object):
 		return gamGenome
 
 
+# Module methods for preparing populations (genomes/sexes) from mutation/haplotype data
+# Could be defined as Static methods inside the population class
 
+# For testing the inputs for correct size parameters
+def __inputSizeCheck(size, numChrom, genomes, sexes)
+	numGenomes = len(genomes)
+	if numGenomes > 0:
+		# Ignore numChrom if genomes pre-specified, peg it to the number of chormosomes in genomes[0]
+		numChrom = len(genomes[0])
+		if numGenomes > size:
+			raise SAIpop.InputError(genomes,'More genomes provided than population size')
+	# Either require equal length sexes and genomes or just that sexes is smaller than population size
+	#   and allows for one of each sex?
+	if len(sexes) != 0 and len(sexes) != numGenomes:
+		raise SAIpop.InputError(sexes,'Sexes must be of equal length to genomes')
+	return (numGenomes,numChrom)
+
+# For generating the sexes list from a current sexes list 
+def __genSexes(size, sexes):
+	# Account the provided sexes
+	numFemales = 0
+	numMales = 0
+	for sex in sexes:
+		if sex == 'M':
+			numMales += 1
+		elif sex == 'F':
+			numFemales += 1
+		else:
+			raise SAIpop.InputError(sexes,'Sexes must only contain \'F\' and \'M\' elements')
+	newSexes = []
+	# Needs at least one of each sex to be a viable population
+	if numMales == 0:
+		newSexes += ['M']
+		numMales += 1
+	if numFemales == 0:
+		newSexes += ['F']
+		numFemales += 1
+	numRemaining = size - numFemales - numMales
+	if numRemaining < 0:
+		raise SAIpop.InputError(sexes,'Sexes must allow at least one \'F\' and \'M\' in the population')
+	# Reuse numMales for the number of males to be added
+	if randomSex:
+		numMales = np.random.binomial(numRemaining,0.5)
+	else:
+		numMales = int(numRemaining/2)
+	newSexes += ['M' for i in range(numMales)]
+	newSexes += ['F' for i in range(numRemaining-numMales)]
+	np.random.shuffle(newSexes)
+	sexes += newSexes
+	# Mutates the sexes list but will be returned anyway
+	return sexes
+
+# For generating a set of genomes, sexes, and a record from specified mutations and inversions, 
+# along with partial genomes and sexes lists to specify specific genomes,
+# input lists formatted as described in self.record but with count instead of initial generation:
+# mutList: a list of all mutations, indexed by ID, with each entry as 
+#      [position,survival effect,reproductive effect,chromosome,initial count]
+# invList: a list of all inversions, indexed by ID, with each entry as 
+#      [start position,end position,chromosome,initial count]
+# populates the remaining genome slots with genomes to which mutations are randomly assigned from the count pools
+# Currently doesn't allow description of prior record
+#   How to model starting with mutations specific to sexes?
+#   Allow limiting the number of further genomes to generate? How will this interact with having at least 1 'M'/'F'?
+# @staticmethod
+def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1, 
+		genomes = [], sexes = []):
+	# Handling input size checking
+	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes)
+
+	# Generate the remaining sexes list
+	sexes = __genSexes(size, sexes)
+
+	# Generate the remaining genomes
+	numNewGenomes = size-numGenomes
+	newGenomes = [[[[[],[]],[[],[]]] for i in range(numChrom)] for j in range(numNewGenomes)]
+	# Will need to have separate lists per chromosome within these
+	posOrderedMut = [[] for i in range(numChrom)]
+	posOrderedInv = [[] for i in range(numChrom)]
+	# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
+	#   for 0th generation update
+	record = [[],[],[],[],[],[],[],[]]
+
+	numMut = len(mutList)
+	for m in range(numMut):
+		count = mutList[m][4]
+		if count > numNewGenomes:
+			raise SAIpop.InputError(mutList,'Mutation counts must be less than the remaining population size')
+		mutation = mutList[m][0:3]+[m]
+		chrom = mutList[m][3]
+		record[1] += [mutList[m][0:4]+[0]]
+		record[2] += [[]]
+		# Insert the mutation and count to the ordered list for addition to the genomes
+		i = 0
+		while (i < len(posOrderedMut[chrom])) and (posOrderedMut[chrom][i][0][0] < mutation[0]):
+			i += 1
+		posOrderedMut[chrom][i:i] = [(mutation,count)]
+	numInv = len(invList)
+	for i in range(numInv):
+		count = invList[m][3]
+		if count > numNewGenomes:
+			raise SAIpop.InputError(invList,'Inversion counts must be less than the remaining population size')
+		inversion = invList[i][0:2]+[i]
+		chrom = invList[i][2]
+		record[3] += [invList[i][0:3]+[0]]
+		record[4] += [[]]
+		record[5] += [[]]
+		record[6] += [[]]
+		record[7] += [[]]
+		# Insert the inversion and count to the ordered list for addition to the genomes
+		i = 0
+		while (i < len(posOrderedInv[chrom])) and (posOrderedInv[chrom][i][0][1] <= inversion[0]):
+			i += 1
+		if i < len(posOrderedInv[chrom]) and posOrderedInv[chrom][i+1][0][0] <= inversion[1]:
+			raise SAIpop.InputError(invList,'Inversions cannot overlap')
+		posOrderedInv[chrom][i:i] = [(inversion,count)]
+
+	# Preserve order by adding the mutations/inversions from in (position) order lists
+	# Need to ensure no double-placement at any position
+	possibleSpots = []
+	for i in range(numNewGenomes):
+		for h in [0,1]:
+			possibleSpots += [(i,h)]
+	for chrom in range(numChrom):
+		for (mut,count) in posOrderedMut[chrom]:
+			np.random.shuffle(possibleSpots)
+			for (i,hom) in possibleSpots[0:count]:
+				newGenomes[i][chrom][hom][0] += [mut]
+		for (inv,count) in posOrderedInv[chrom]:
+			np.random.shuffle(possibleSpots)
+			for (i,hom) in possibleSpots[0:count]:
+				newGenomes[i][chrom][hom][1] += [inv]
+	genomes += newGenomes
+	return (genomes,sexes,record)
+
+
+# For generating a set of genomes, sexes, and a record from specified mutations, inversions,
+# and haplotypes with frequency data
+# along with partial genomes and sexes lists to specify specific genomes,
+# input lists formatted as described in self.record but with no initial generation:
+# mutList: a list of all mutations, indexed by ID, with each entry as 
+#      [position,survival effect,reproductive effect,chromosome]
+# invList: a list of all inversions, indexed by ID, with each entry as 
+#      [start position,end position,chromosome]
+# hapList: a list of haplotype sets for the whole genome and counts, with each entry as 
+#      [[hap chrom 0, hap chrom 1, ...], count]
+# populates the remaining genome slots with genomes to which chromosomes are assigned from haplotypes randomly
+# Currently doesn't allow description of prior record
+#   How to model starting with mutations specific to sexes?
+# @staticmethod
+def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True, numChrom = 1, 
+		genomes = [], sexes = []):
+	# Handling input size checking
+	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes)
+	# Check that the haplotype chromosome size matches the pre-specified genomes
+	if (len(genomes) > 0) and (len(genomes[0]) != len(hapList[0][0])):
+		# Ignore numChrom if genomes pre-specified, peg it to the number of chormosomes in genomes[0]
+		raise SAIpop.InputError(hapList,'Haplotype lists must have chromosome number matching prespecified genomes')
+
+	# Generate the remaining sexes list
+	sexes = __genSexes(size, sexes)
+
+	# Generate the remaining genomes
+	numNewGenomes = size-numGenomes
+
+	#Build a haplotype pool to sample from
+	totHapCount = 0
+	hapPool = []
+	for (haplotype,count) in hapList:
+		totHapCount += count
+		for i in range(count):
+			hapCopy = []
+			for chromHap in haplotype:
+				hapCopy += [[list(chromHap[0]),list(chromHap[1])]]
+			hapPool += [hapCopy]
+	totHapSlots = 2*numNewGenomes
+	# Check to ensure reasonable number of haplotypes provided
+	if totHapCount > totHapSlots:
+		raise SAIpop.InputError(hapList,'Haplotype counts larger than available population')
+	numHapRemaining = totHapSlots - totHapCount
+	# Fill the remaining slots with blank haplotypes
+	for h in range(numHapRemaining):
+		blankHap = []
+		for c in range(numChrom):
+			blankHap += [[[],[]]]
+		hapPool += [blankHap]
+
+	np.random.shuffle(hapPool)
+
+	# Generate new genomes
+	newGenomes = []
+	for h in range(0,totHapSlots,2):
+		genome = []
+		for chrom in range(numChrom):
+			genome += [[hapPool[h][chrom],hapPool[h+1][chrom]]]
+		newGenomes += [genome]
+
+	# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
+	#   for 0th generation update
+	record = [[],[],[],[],[],[],[],[]]
+	for m in range(len(mutList)):
+		record[1] += [mutList[m][0:4]+[0]]
+		record[2] += [[]]
+	for i in range(len(invList)):
+		record[3] += [invList[i][0:3]+[0]]
+		record[4] += [[]]
+		record[5] += [[]]
+		record[6] += [[]]
+		record[7] += [[]]
+
+	return (genomes,sexes,record)
 
 		
 # The object representing the population under simulation, contains methods for stepping through generations
@@ -458,123 +667,6 @@ class SAIpop(object):
 			self.expression = expression
 			self.message = message
 
-	# For generating a set of genomes, sexes, and a record from specified mutations and inversions, 
-	# along with partial genomes and sexes lists to specify specific genomes,
-	# input lists formatted as described in self.record but with count instead of initial generation:
-	# mutList: a list of all mutations, indexed by ID, with each entry as 
-	#      [position,survival effect,reproductive effect,chromosome,initial count]
-	# invList: a list of all inversions, indexed by ID, with each entry as 
-	#      [start position,end position,chromosome,initial count]
-	# populates the remaining genome slots with genomes to which mutations are randomly assigned from the count pools
-	# Currently doesn't allow description of prior record
-	#   How to model starting with mutations specific to sexes?
-	#   Allow limiting the number of further genomes to generate? How will this interact with having at least 1 'M'/'F'?
-	@staticmethod
-	def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1, 
-			genomes = [], sexes = []):
-		# Handling input
-		numGenomes = len(genomes)
-		if numGenomes > 0:
-			# Ignore numChrom if genomes pre-specified, peg it to the number of chormosomes in genomes[0]
-			numChrom = len(genomes[0])
-			if numGenomes > size:
-				raise SAIpop.InputError(genomes,'More genomes provided than population size')
-		# Either require equal length sexes and genomes or just that sexes is smaller than population size
-		#   and allows for one of each sex?
-		if len(sexes) != 0 and len(sexes) != numGenomes:
-			raise SAIpop.InputError(sexes,'Sexes must be of equal length to genomes')
-
-		# Generate the remaining sexes list
-		numFemales = 0
-		numMales = 0
-		for sex in sexes:
-			if sex == 'M':
-				numMales += 1
-			elif sex == 'F':
-				numFemales += 1
-			else:
-				raise SAIpop.InputError(sexes,'Sexes must only contain \'F\' and \'M\' elements')
-		newSexes = []
-		if numMales == 0:
-			newSexes += ['M']
-			numMales += 1
-		if numFemales == 0:
-			newSexes += ['F']
-			numFemales += 1
-		numRemaining = size - numFemales - numMales
-		if numRemaining < 0:
-			raise SAIpop.InputError(sexes,'Sexes must allow at least one \'F\' and \'M\' in the population')
-		# Reuse numMales for the number of males to be added
-		if randomSex:
-			numMales = np.random.binomial(numRemaining,0.5)
-		else:
-			numMales = int(numRemaining/2)
-		newSexes += ['M' for i in range(numMales)]
-		newSexes += ['F' for i in range(numRemaining-numMales)]
-		np.random.shuffle(newSexes)
-		sexes += newSexes
-
-		# Generate the remaining genomes
-		numNewGenomes = size-numGenomes
-		newGenomes = [[[[[],[]],[[],[]]] for i in range(numChrom)] for j in range(numNewGenomes)]
-		# Will need to have separate lists per chromosome within these
-		posOrderedMut = [[] for i in range(numChrom)]
-		posOrderedInv = [[] for i in range(numChrom)]
-		# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
-		#   for 0th generation update
-		record = [[],[],[],[],[],[],[],[]]
-
-		numMut = len(mutList)
-		for m in range(numMut):
-			count = mutList[m][4]
-			if count > numNewGenomes:
-				raise SAIpop.InputError(mutList,'Mutation counts must be less than the remaining population size')
-			mutation = mutList[m][0:3]+[m]
-			chrom = mutList[m][3]
-			record[1] += [mutList[m][0:4]+[0]]
-			record[2] += [[]]
-			# Insert the mutation and count to the ordered list for addition to the genomes
-			i = 0
-			while (i < len(posOrderedMut[chrom])) and (posOrderedMut[chrom][i][0][0] < mutation[0]):
-				i += 1
-			posOrderedMut[chrom][i:i] = [(mutation,count)]
-		numInv = len(invList)
-		for i in range(numInv):
-			count = invList[m][3]
-			if count > numNewGenomes:
-				raise SAIpop.InputError(invList,'Inversion counts must be less than the remaining population size')
-			inversion = invList[i][0:2]+[i]
-			chrom = invList[i][2]
-			record[3] += [invList[i][0:3]+[0]]
-			record[4] += [[]]
-			record[5] += [[]]
-			record[6] += [[]]
-			record[7] += [[]]
-			# Insert the inversion and count to the ordered list for addition to the genomes
-			i = 0
-			while (i < len(posOrderedInv[chrom])) and (posOrderedInv[chrom][i][0][1] <= inversion[0]):
-				i += 1
-			if i < len(posOrderedInv[chrom]) and posOrderedInv[chrom][i+1][0][0] <= inversion[1]:
-				raise SAIpop.InputError(invList,'Inversions cannot overlap')
-			posOrderedInv[chrom][i:i] = [(inversion,count)]
-
-		# Preserve order by adding the mutations/inversions from in position order lists
-		# Need to ensure no double-placement at any position
-		possibleSpots = []
-		for i in range(numNewGenomes):
-			for h in [0,1]:
-				possibleSpots += [(i,h)]
-		for chrom in range(numChrom):
-			for (mut,count) in posOrderedMut[chrom]:
-				np.random.shuffle(possibleSpots)
-				for (i,hom) in possibleSpots[0:count]:
-					newGenomes[i][chrom][hom][0] += [mut]
-			for (inv,count) in posOrderedInv[chrom]:
-				np.random.shuffle(possibleSpots)
-				for (i,hom) in possibleSpots[0:count]:
-					newGenomes[i][chrom][hom][1] += [inv]
-		genomes += newGenomes
-		return (genomes,sexes,record)
 
 	# For changing the population size during simulation
 	def setSize(self,newSize):
@@ -751,9 +843,9 @@ class SAIpop(object):
 		return
 
 	# Repeats the last element of the list, useful for fixed mutation and inversion accounting
-	# Has 
-	def __repeat(self,l):
-		l += l[len(l)-1]
+	# # Has 
+	# def __repeat(self,l):
+	# 	l += l[len(l)-1]
 
 	# For updating all recorded information on the population, record structured as:
 	# [0] a list of ages at which an update was made
@@ -894,7 +986,7 @@ class SAIpop(object):
 					for addRecord in range(1,numSets-i):
 						self.record[0] += [g+addRecord*setSize]
 						for m in range(self.__mutIDcount):
-							print(self.record[2][m])
+							# print(self.record[2][m])
 							self.record[2][m] += [self.record[2][m][lastRecord]]
 						for i in range(self.__invIDcount):
 							self.record[4][i] += [self.record[4][i][lastRecord]]

@@ -19,7 +19,7 @@ do
 	args=("$@")
 	ARGUMENTS=''${args[0]}' '${args[1]}' '${args[2]}''
 
-	echo ${ARGUMENTS}$locNum
+	# echo ${ARGUMENTS}$locNum
 
 	python SAIsim_EffectGrid.py ${ARGUMENTS}$locNum
 done

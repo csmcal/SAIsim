@@ -6,7 +6,8 @@ import numpy as np
 submitFile = 'SAIsim_EffectGrid.sub'
 outfile = open('SAIsim_EffectGrid.dag','w')
 
-for survEffect in np.linspace(0.0,1.0,num=21):
+# for survEffect in np.linspace(0.0,1.0,num=21):
+for survEffect in np.linspace(0.05,1.0,num=20):
 	for reprEffect in np.linspace(0.0,1.0,num=21):
 		jobName = str(int(survEffect*100))+'_'+str(int(reprEffect*100))
 		jobLine = 'JOB '+jobName+' '+submitFile+'\n'

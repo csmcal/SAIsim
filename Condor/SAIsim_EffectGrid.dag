@@ -1,45 +1,3 @@
-JOB 0_0 SAIsim_EffectGrid.sub
-VARS 0_0 sur="0.0" rep="0.0"
-JOB 0_5 SAIsim_EffectGrid.sub
-VARS 0_5 sur="0.0" rep="0.05"
-JOB 0_10 SAIsim_EffectGrid.sub
-VARS 0_10 sur="0.0" rep="0.1"
-JOB 0_15 SAIsim_EffectGrid.sub
-VARS 0_15 sur="0.0" rep="0.15"
-JOB 0_20 SAIsim_EffectGrid.sub
-VARS 0_20 sur="0.0" rep="0.2"
-JOB 0_25 SAIsim_EffectGrid.sub
-VARS 0_25 sur="0.0" rep="0.25"
-JOB 0_30 SAIsim_EffectGrid.sub
-VARS 0_30 sur="0.0" rep="0.3"
-JOB 0_35 SAIsim_EffectGrid.sub
-VARS 0_35 sur="0.0" rep="0.35"
-JOB 0_40 SAIsim_EffectGrid.sub
-VARS 0_40 sur="0.0" rep="0.4"
-JOB 0_45 SAIsim_EffectGrid.sub
-VARS 0_45 sur="0.0" rep="0.45"
-JOB 0_50 SAIsim_EffectGrid.sub
-VARS 0_50 sur="0.0" rep="0.5"
-JOB 0_55 SAIsim_EffectGrid.sub
-VARS 0_55 sur="0.0" rep="0.55"
-JOB 0_60 SAIsim_EffectGrid.sub
-VARS 0_60 sur="0.0" rep="0.6"
-JOB 0_65 SAIsim_EffectGrid.sub
-VARS 0_65 sur="0.0" rep="0.65"
-JOB 0_70 SAIsim_EffectGrid.sub
-VARS 0_70 sur="0.0" rep="0.7"
-JOB 0_75 SAIsim_EffectGrid.sub
-VARS 0_75 sur="0.0" rep="0.75"
-JOB 0_80 SAIsim_EffectGrid.sub
-VARS 0_80 sur="0.0" rep="0.8"
-JOB 0_85 SAIsim_EffectGrid.sub
-VARS 0_85 sur="0.0" rep="0.85"
-JOB 0_90 SAIsim_EffectGrid.sub
-VARS 0_90 sur="0.0" rep="0.9"
-JOB 0_95 SAIsim_EffectGrid.sub
-VARS 0_95 sur="0.0" rep="0.95"
-JOB 0_100 SAIsim_EffectGrid.sub
-VARS 0_100 sur="0.0" rep="1.0"
 JOB 5_0 SAIsim_EffectGrid.sub
 VARS 5_0 sur="0.05" rep="0.0"
 JOB 5_5 SAIsim_EffectGrid.sub
@@ -376,132 +334,132 @@ JOB 40_95 SAIsim_EffectGrid.sub
 VARS 40_95 sur="0.4" rep="0.95"
 JOB 40_100 SAIsim_EffectGrid.sub
 VARS 40_100 sur="0.4" rep="1.0"
-JOB 45_0 SAIsim_EffectGrid.sub
-VARS 45_0 sur="0.45" rep="0.0"
-JOB 45_5 SAIsim_EffectGrid.sub
-VARS 45_5 sur="0.45" rep="0.05"
-JOB 45_10 SAIsim_EffectGrid.sub
-VARS 45_10 sur="0.45" rep="0.1"
-JOB 45_15 SAIsim_EffectGrid.sub
-VARS 45_15 sur="0.45" rep="0.15"
-JOB 45_20 SAIsim_EffectGrid.sub
-VARS 45_20 sur="0.45" rep="0.2"
-JOB 45_25 SAIsim_EffectGrid.sub
-VARS 45_25 sur="0.45" rep="0.25"
-JOB 45_30 SAIsim_EffectGrid.sub
-VARS 45_30 sur="0.45" rep="0.3"
-JOB 45_35 SAIsim_EffectGrid.sub
-VARS 45_35 sur="0.45" rep="0.35"
-JOB 45_40 SAIsim_EffectGrid.sub
-VARS 45_40 sur="0.45" rep="0.4"
-JOB 45_45 SAIsim_EffectGrid.sub
-VARS 45_45 sur="0.45" rep="0.45"
-JOB 45_50 SAIsim_EffectGrid.sub
-VARS 45_50 sur="0.45" rep="0.5"
-JOB 45_55 SAIsim_EffectGrid.sub
-VARS 45_55 sur="0.45" rep="0.55"
-JOB 45_60 SAIsim_EffectGrid.sub
-VARS 45_60 sur="0.45" rep="0.6"
-JOB 45_65 SAIsim_EffectGrid.sub
-VARS 45_65 sur="0.45" rep="0.65"
-JOB 45_70 SAIsim_EffectGrid.sub
-VARS 45_70 sur="0.45" rep="0.7"
-JOB 45_75 SAIsim_EffectGrid.sub
-VARS 45_75 sur="0.45" rep="0.75"
-JOB 45_80 SAIsim_EffectGrid.sub
-VARS 45_80 sur="0.45" rep="0.8"
-JOB 45_85 SAIsim_EffectGrid.sub
-VARS 45_85 sur="0.45" rep="0.85"
-JOB 45_90 SAIsim_EffectGrid.sub
-VARS 45_90 sur="0.45" rep="0.9"
-JOB 45_95 SAIsim_EffectGrid.sub
-VARS 45_95 sur="0.45" rep="0.95"
-JOB 45_100 SAIsim_EffectGrid.sub
-VARS 45_100 sur="0.45" rep="1.0"
-JOB 50_0 SAIsim_EffectGrid.sub
-VARS 50_0 sur="0.5" rep="0.0"
-JOB 50_5 SAIsim_EffectGrid.sub
-VARS 50_5 sur="0.5" rep="0.05"
-JOB 50_10 SAIsim_EffectGrid.sub
-VARS 50_10 sur="0.5" rep="0.1"
-JOB 50_15 SAIsim_EffectGrid.sub
-VARS 50_15 sur="0.5" rep="0.15"
-JOB 50_20 SAIsim_EffectGrid.sub
-VARS 50_20 sur="0.5" rep="0.2"
-JOB 50_25 SAIsim_EffectGrid.sub
-VARS 50_25 sur="0.5" rep="0.25"
-JOB 50_30 SAIsim_EffectGrid.sub
-VARS 50_30 sur="0.5" rep="0.3"
-JOB 50_35 SAIsim_EffectGrid.sub
-VARS 50_35 sur="0.5" rep="0.35"
-JOB 50_40 SAIsim_EffectGrid.sub
-VARS 50_40 sur="0.5" rep="0.4"
-JOB 50_45 SAIsim_EffectGrid.sub
-VARS 50_45 sur="0.5" rep="0.45"
-JOB 50_50 SAIsim_EffectGrid.sub
-VARS 50_50 sur="0.5" rep="0.5"
-JOB 50_55 SAIsim_EffectGrid.sub
-VARS 50_55 sur="0.5" rep="0.55"
-JOB 50_60 SAIsim_EffectGrid.sub
-VARS 50_60 sur="0.5" rep="0.6"
-JOB 50_65 SAIsim_EffectGrid.sub
-VARS 50_65 sur="0.5" rep="0.65"
-JOB 50_70 SAIsim_EffectGrid.sub
-VARS 50_70 sur="0.5" rep="0.7"
-JOB 50_75 SAIsim_EffectGrid.sub
-VARS 50_75 sur="0.5" rep="0.75"
-JOB 50_80 SAIsim_EffectGrid.sub
-VARS 50_80 sur="0.5" rep="0.8"
-JOB 50_85 SAIsim_EffectGrid.sub
-VARS 50_85 sur="0.5" rep="0.85"
-JOB 50_90 SAIsim_EffectGrid.sub
-VARS 50_90 sur="0.5" rep="0.9"
-JOB 50_95 SAIsim_EffectGrid.sub
-VARS 50_95 sur="0.5" rep="0.95"
-JOB 50_100 SAIsim_EffectGrid.sub
-VARS 50_100 sur="0.5" rep="1.0"
-JOB 55_0 SAIsim_EffectGrid.sub
-VARS 55_0 sur="0.55" rep="0.0"
-JOB 55_5 SAIsim_EffectGrid.sub
-VARS 55_5 sur="0.55" rep="0.05"
-JOB 55_10 SAIsim_EffectGrid.sub
-VARS 55_10 sur="0.55" rep="0.1"
-JOB 55_15 SAIsim_EffectGrid.sub
-VARS 55_15 sur="0.55" rep="0.15"
-JOB 55_20 SAIsim_EffectGrid.sub
-VARS 55_20 sur="0.55" rep="0.2"
-JOB 55_25 SAIsim_EffectGrid.sub
-VARS 55_25 sur="0.55" rep="0.25"
-JOB 55_30 SAIsim_EffectGrid.sub
-VARS 55_30 sur="0.55" rep="0.3"
-JOB 55_35 SAIsim_EffectGrid.sub
-VARS 55_35 sur="0.55" rep="0.35"
-JOB 55_40 SAIsim_EffectGrid.sub
-VARS 55_40 sur="0.55" rep="0.4"
-JOB 55_45 SAIsim_EffectGrid.sub
-VARS 55_45 sur="0.55" rep="0.45"
-JOB 55_50 SAIsim_EffectGrid.sub
-VARS 55_50 sur="0.55" rep="0.5"
-JOB 55_55 SAIsim_EffectGrid.sub
-VARS 55_55 sur="0.55" rep="0.55"
-JOB 55_60 SAIsim_EffectGrid.sub
-VARS 55_60 sur="0.55" rep="0.6"
-JOB 55_65 SAIsim_EffectGrid.sub
-VARS 55_65 sur="0.55" rep="0.65"
-JOB 55_70 SAIsim_EffectGrid.sub
-VARS 55_70 sur="0.55" rep="0.7"
-JOB 55_75 SAIsim_EffectGrid.sub
-VARS 55_75 sur="0.55" rep="0.75"
-JOB 55_80 SAIsim_EffectGrid.sub
-VARS 55_80 sur="0.55" rep="0.8"
-JOB 55_85 SAIsim_EffectGrid.sub
-VARS 55_85 sur="0.55" rep="0.85"
-JOB 55_90 SAIsim_EffectGrid.sub
-VARS 55_90 sur="0.55" rep="0.9"
-JOB 55_95 SAIsim_EffectGrid.sub
-VARS 55_95 sur="0.55" rep="0.95"
-JOB 55_100 SAIsim_EffectGrid.sub
-VARS 55_100 sur="0.55" rep="1.0"
+JOB 44_0 SAIsim_EffectGrid.sub
+VARS 44_0 sur="0.45" rep="0.0"
+JOB 44_5 SAIsim_EffectGrid.sub
+VARS 44_5 sur="0.45" rep="0.05"
+JOB 44_10 SAIsim_EffectGrid.sub
+VARS 44_10 sur="0.45" rep="0.1"
+JOB 44_15 SAIsim_EffectGrid.sub
+VARS 44_15 sur="0.45" rep="0.15"
+JOB 44_20 SAIsim_EffectGrid.sub
+VARS 44_20 sur="0.45" rep="0.2"
+JOB 44_25 SAIsim_EffectGrid.sub
+VARS 44_25 sur="0.45" rep="0.25"
+JOB 44_30 SAIsim_EffectGrid.sub
+VARS 44_30 sur="0.45" rep="0.3"
+JOB 44_35 SAIsim_EffectGrid.sub
+VARS 44_35 sur="0.45" rep="0.35"
+JOB 44_40 SAIsim_EffectGrid.sub
+VARS 44_40 sur="0.45" rep="0.4"
+JOB 44_45 SAIsim_EffectGrid.sub
+VARS 44_45 sur="0.45" rep="0.45"
+JOB 44_50 SAIsim_EffectGrid.sub
+VARS 44_50 sur="0.45" rep="0.5"
+JOB 44_55 SAIsim_EffectGrid.sub
+VARS 44_55 sur="0.45" rep="0.55"
+JOB 44_60 SAIsim_EffectGrid.sub
+VARS 44_60 sur="0.45" rep="0.6"
+JOB 44_65 SAIsim_EffectGrid.sub
+VARS 44_65 sur="0.45" rep="0.65"
+JOB 44_70 SAIsim_EffectGrid.sub
+VARS 44_70 sur="0.45" rep="0.7"
+JOB 44_75 SAIsim_EffectGrid.sub
+VARS 44_75 sur="0.45" rep="0.75"
+JOB 44_80 SAIsim_EffectGrid.sub
+VARS 44_80 sur="0.45" rep="0.8"
+JOB 44_85 SAIsim_EffectGrid.sub
+VARS 44_85 sur="0.45" rep="0.85"
+JOB 44_90 SAIsim_EffectGrid.sub
+VARS 44_90 sur="0.45" rep="0.9"
+JOB 44_95 SAIsim_EffectGrid.sub
+VARS 44_95 sur="0.45" rep="0.95"
+JOB 44_100 SAIsim_EffectGrid.sub
+VARS 44_100 sur="0.45" rep="1.0"
+JOB 49_0 SAIsim_EffectGrid.sub
+VARS 49_0 sur="0.5" rep="0.0"
+JOB 49_5 SAIsim_EffectGrid.sub
+VARS 49_5 sur="0.5" rep="0.05"
+JOB 49_10 SAIsim_EffectGrid.sub
+VARS 49_10 sur="0.5" rep="0.1"
+JOB 49_15 SAIsim_EffectGrid.sub
+VARS 49_15 sur="0.5" rep="0.15"
+JOB 49_20 SAIsim_EffectGrid.sub
+VARS 49_20 sur="0.5" rep="0.2"
+JOB 49_25 SAIsim_EffectGrid.sub
+VARS 49_25 sur="0.5" rep="0.25"
+JOB 49_30 SAIsim_EffectGrid.sub
+VARS 49_30 sur="0.5" rep="0.3"
+JOB 49_35 SAIsim_EffectGrid.sub
+VARS 49_35 sur="0.5" rep="0.35"
+JOB 49_40 SAIsim_EffectGrid.sub
+VARS 49_40 sur="0.5" rep="0.4"
+JOB 49_45 SAIsim_EffectGrid.sub
+VARS 49_45 sur="0.5" rep="0.45"
+JOB 49_50 SAIsim_EffectGrid.sub
+VARS 49_50 sur="0.5" rep="0.5"
+JOB 49_55 SAIsim_EffectGrid.sub
+VARS 49_55 sur="0.5" rep="0.55"
+JOB 49_60 SAIsim_EffectGrid.sub
+VARS 49_60 sur="0.5" rep="0.6"
+JOB 49_65 SAIsim_EffectGrid.sub
+VARS 49_65 sur="0.5" rep="0.65"
+JOB 49_70 SAIsim_EffectGrid.sub
+VARS 49_70 sur="0.5" rep="0.7"
+JOB 49_75 SAIsim_EffectGrid.sub
+VARS 49_75 sur="0.5" rep="0.75"
+JOB 49_80 SAIsim_EffectGrid.sub
+VARS 49_80 sur="0.5" rep="0.8"
+JOB 49_85 SAIsim_EffectGrid.sub
+VARS 49_85 sur="0.5" rep="0.85"
+JOB 49_90 SAIsim_EffectGrid.sub
+VARS 49_90 sur="0.5" rep="0.9"
+JOB 49_95 SAIsim_EffectGrid.sub
+VARS 49_95 sur="0.5" rep="0.95"
+JOB 49_100 SAIsim_EffectGrid.sub
+VARS 49_100 sur="0.5" rep="1.0"
+JOB 54_0 SAIsim_EffectGrid.sub
+VARS 54_0 sur="0.55" rep="0.0"
+JOB 54_5 SAIsim_EffectGrid.sub
+VARS 54_5 sur="0.55" rep="0.05"
+JOB 54_10 SAIsim_EffectGrid.sub
+VARS 54_10 sur="0.55" rep="0.1"
+JOB 54_15 SAIsim_EffectGrid.sub
+VARS 54_15 sur="0.55" rep="0.15"
+JOB 54_20 SAIsim_EffectGrid.sub
+VARS 54_20 sur="0.55" rep="0.2"
+JOB 54_25 SAIsim_EffectGrid.sub
+VARS 54_25 sur="0.55" rep="0.25"
+JOB 54_30 SAIsim_EffectGrid.sub
+VARS 54_30 sur="0.55" rep="0.3"
+JOB 54_35 SAIsim_EffectGrid.sub
+VARS 54_35 sur="0.55" rep="0.35"
+JOB 54_40 SAIsim_EffectGrid.sub
+VARS 54_40 sur="0.55" rep="0.4"
+JOB 54_45 SAIsim_EffectGrid.sub
+VARS 54_45 sur="0.55" rep="0.45"
+JOB 54_50 SAIsim_EffectGrid.sub
+VARS 54_50 sur="0.55" rep="0.5"
+JOB 54_55 SAIsim_EffectGrid.sub
+VARS 54_55 sur="0.55" rep="0.55"
+JOB 54_60 SAIsim_EffectGrid.sub
+VARS 54_60 sur="0.55" rep="0.6"
+JOB 54_65 SAIsim_EffectGrid.sub
+VARS 54_65 sur="0.55" rep="0.65"
+JOB 54_70 SAIsim_EffectGrid.sub
+VARS 54_70 sur="0.55" rep="0.7"
+JOB 54_75 SAIsim_EffectGrid.sub
+VARS 54_75 sur="0.55" rep="0.75"
+JOB 54_80 SAIsim_EffectGrid.sub
+VARS 54_80 sur="0.55" rep="0.8"
+JOB 54_85 SAIsim_EffectGrid.sub
+VARS 54_85 sur="0.55" rep="0.85"
+JOB 54_90 SAIsim_EffectGrid.sub
+VARS 54_90 sur="0.55" rep="0.9"
+JOB 54_95 SAIsim_EffectGrid.sub
+VARS 54_95 sur="0.55" rep="0.95"
+JOB 54_100 SAIsim_EffectGrid.sub
+VARS 54_100 sur="0.55" rep="1.0"
 JOB 60_0 SAIsim_EffectGrid.sub
 VARS 60_0 sur="0.6" rep="0.0"
 JOB 60_5 SAIsim_EffectGrid.sub
