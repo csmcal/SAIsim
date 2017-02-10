@@ -36,20 +36,35 @@ conversionRate = 10.0**-2.0
 # CONSIDER making this a parameter of the record function (Doesn't really work as recording is simultaneous)
 invRecBuffer = .1
 
+# For genGenomesSexes
 initMutList = [[0.5,0.95,0.1,0,40]]
 initInvList = [[0.01,0.06,0,60]]
 genomes = [[[[[],[]],[[],[]]]]]
-sexes = []
+sexes = ['F']
+
+# For genGenoSexFromWholeGenHap
+mutList = [[0.5,0.95,0.1,0],[0.04,0.45,0.45,0]]
+invList = [[0.01,0.06,0]]
+mut0 = [0.5,0.95,0.1,0]
+mut1 = [0.04,0.45,0.45,1]
+inv0 = [0.01,0.06,0]
+hapList = [[[[[mut0,mut1],[inv0]]],6],[[[[mut0],[inv0]]],4]]
+
 
 numGens = 500
 
 # Now run the simulator session in length and recording intervals as desired using above parameters
-(genomes,sexes,record) = sim.SAIpop.genGenomesSexes(size,initMutList,initInvList,genomes=genomes,sexes=sexes)
+
+# (genomes,sexes,record) = sim.genGenomesSexes(size,initMutList,initInvList,genomes=genomes,sexes=sexes)
+(genomes,sexes,record) = sim.genGenoSexFromWholeGenHap(size,mutList,invList,hapList,genomes=genomes,sexes=sexes)
+
 pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
-	encounterNum, choiceNoiseSD, invRecBuffer, genomes=genomes,sexes=sexes,record=record)
+	encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False,\
+	genomes=genomes,sexes=sexes,record=record)
 # pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)
 pop.recordNGens(numGens)
+# pop.printGenomes()
 # pop.printRecord()
-pop.writeRecordTables('testOutput/test1/Test1')
+pop.writeRecordTables('testOutput/Test1')

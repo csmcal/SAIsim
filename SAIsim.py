@@ -168,7 +168,7 @@ class individual(object):
 				homInd1 += 1
 				homInd2 += 1
 			if mut1[0] < mut2[0]:
-				if np.random.ranf < self.conversionRate:
+				if np.random.ranf() < self.conversionRate:
 					if np.random.randint(2):
 						chrom[0][0][homInd1:homInd1+1] = []
 					else:
@@ -178,7 +178,7 @@ class individual(object):
 				else:
 					homInd1 += 1
 			if mut1[0] > mut2[0]:
-				if np.random.ranf < self.conversionRate:
+				if np.random.ranf() < self.conversionRate:
 					if np.random.randint(2):
 						chrom[1][0][homInd2:homInd2+1] = []
 					else:
@@ -190,7 +190,7 @@ class individual(object):
 		# Deal with the remaining mutations
 		# when one chromosome has no mutations it is dealt with here immediately
 		while homInd1 < len(chrom[0][0]):
-			if np.random.ranf < self.conversionRate:
+			if np.random.ranf() < self.conversionRate:
 				if np.random.randint(2):
 					chrom[0][0][homInd1:homInd1+1] = []
 				else:
@@ -199,7 +199,7 @@ class individual(object):
 			else:
 				homInd1 += 1
 		while homInd2 < len(chrom[1][0]):
-			if np.random.ranf < self.conversionRate:
+			if np.random.ranf() < self.conversionRate:
 				if np.random.randint(2):
 					chrom[1][0][homInd2:homInd2+1] = []
 				else:
@@ -350,7 +350,7 @@ class individual(object):
 # Could be defined as Static methods inside the population class
 
 # For testing the inputs for correct size parameters
-def __inputSizeCheck(size, numChrom, genomes, sexes)
+def __inputSizeCheck(size, numChrom, genomes, sexes):
 	numGenomes = len(genomes)
 	if numGenomes > 0:
 		# Ignore numChrom if genomes pre-specified, peg it to the number of chormosomes in genomes[0]
@@ -359,12 +359,12 @@ def __inputSizeCheck(size, numChrom, genomes, sexes)
 			raise SAIpop.InputError(genomes,'More genomes provided than population size')
 	# Either require equal length sexes and genomes or just that sexes is smaller than population size
 	#   and allows for one of each sex?
-	if len(sexes) != 0 and len(sexes) != numGenomes:
+	if (len(sexes) != 0) and (len(sexes) != numGenomes):
 		raise SAIpop.InputError(sexes,'Sexes must be of equal length to genomes')
 	return (numGenomes,numChrom)
 
 # For generating the sexes list from a current sexes list 
-def __genSexes(size, sexes):
+def __genSexes(size, sexes, randomSex):
 	# Account the provided sexes
 	numFemales = 0
 	numMales = 0
@@ -416,7 +416,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes)
 
 	# Generate the remaining sexes list
-	sexes = __genSexes(size, sexes)
+	sexes = __genSexes(size, sexes, randomSex)
 
 	# Generate the remaining genomes
 	numNewGenomes = size-numGenomes
@@ -494,6 +494,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 # populates the remaining genome slots with genomes to which chromosomes are assigned from haplotypes randomly
 # Currently doesn't allow description of prior record
 #   How to model starting with mutations specific to sexes?
+# IMPORTANT - FOR CORRECT RECORD KEEPING, ALL MUT OF THE SAME ID IN HAPS MUST BE SAME OBJECT/REFERENCE
 # @staticmethod
 def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True, numChrom = 1, 
 		genomes = [], sexes = []):
@@ -505,7 +506,7 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 		raise SAIpop.InputError(hapList,'Haplotype lists must have chromosome number matching prespecified genomes')
 
 	# Generate the remaining sexes list
-	sexes = __genSexes(size, sexes)
+	sexes = __genSexes(size, sexes, randomSex)
 
 	# Generate the remaining genomes
 	numNewGenomes = size-numGenomes
@@ -541,6 +542,7 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 		for chrom in range(numChrom):
 			genome += [[hapPool[h][chrom],hapPool[h+1][chrom]]]
 		newGenomes += [genome]
+	genomes += newGenomes
 
 	# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
 	#   for 0th generation update
@@ -1000,6 +1002,14 @@ class SAIpop(object):
 		print (self.record)
 		return
 
+	def printGenomes(self):
+		genomes = []
+		for indiv in self.females:
+			genomes += [indiv.genome]
+		for indiv in self.males:
+			genomes += [indiv.genome]
+		print(genomes)
+
 	# Takes a filename and mutation ID
 	# Writes a tab delineated file of the generation and count data for that mutation
 	def writeMutation(self,filename,ID):
@@ -1095,6 +1105,7 @@ class SAIpop(object):
 		outfile = open(filename, 'w')
 		outfile.write('Parameter\tValue\n')
 		outfile.write('Size\t'+str(self.size)+'\n')
+		outfile.write('NumChromosomes\t'+str(self.numChrom)+'\n')
 		outfile.write('MutationRate\t'+str(self.mutRate)+'\n')
 		outfile.write('InversionMutationRate\t'+str(self.mutRateInv)+'\n')
 		outfile.write('MutationEffectOffsetSD\t'+str(self.mutEffectDiffSD)+'\n')
@@ -1104,6 +1115,11 @@ class SAIpop(object):
 		outfile.write('EncounterNumber\t'+str(self.encounterNum)+'\n')
 		outfile.write('FemaleChoiceNoiseSD\t'+str(self.choiceNoiseSD)+'\n')
 		outfile.write('InversionRecordBuffer\t'+str(self.invRecBuffer)+'\n')
+		outfile.write('RandomSex\t'+str(self.randomSex)+'\n')
+		outfile.write('WillMutate\t'+str(self.willMutate)+'\n')
+		outfile.write('WillMutInv\t'+str(self.willMutInv)+'\n')
+		outfile.write('WillConvert\t'+str(self.willConvert)+'\n')
+		outfile.write('WillRecombine\t'+str(self.willRecombine)+'\n')
 		outfile.close()
 		return
 
