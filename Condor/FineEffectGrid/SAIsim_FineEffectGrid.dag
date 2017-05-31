@@ -1,0 +1,1303 @@
+JOB 70_0 SAIsim_FineEffectGrid.sub
+VARS 70_0 sur="0.7" rep="0.0"
+JOB 70_1 SAIsim_FineEffectGrid.sub
+VARS 70_1 sur="0.7" rep="0.01"
+JOB 70_2 SAIsim_FineEffectGrid.sub
+VARS 70_2 sur="0.7" rep="0.02"
+JOB 70_3 SAIsim_FineEffectGrid.sub
+VARS 70_3 sur="0.7" rep="0.03"
+JOB 70_4 SAIsim_FineEffectGrid.sub
+VARS 70_4 sur="0.7" rep="0.04"
+JOB 70_5 SAIsim_FineEffectGrid.sub
+VARS 70_5 sur="0.7" rep="0.05"
+JOB 70_6 SAIsim_FineEffectGrid.sub
+VARS 70_6 sur="0.7" rep="0.06"
+JOB 70_7 SAIsim_FineEffectGrid.sub
+VARS 70_7 sur="0.7" rep="0.07"
+JOB 70_8 SAIsim_FineEffectGrid.sub
+VARS 70_8 sur="0.7" rep="0.08"
+JOB 70_9 SAIsim_FineEffectGrid.sub
+VARS 70_9 sur="0.7" rep="0.09"
+JOB 70_10 SAIsim_FineEffectGrid.sub
+VARS 70_10 sur="0.7" rep="0.1"
+JOB 70_11 SAIsim_FineEffectGrid.sub
+VARS 70_11 sur="0.7" rep="0.11"
+JOB 70_12 SAIsim_FineEffectGrid.sub
+VARS 70_12 sur="0.7" rep="0.12"
+JOB 70_13 SAIsim_FineEffectGrid.sub
+VARS 70_13 sur="0.7" rep="0.13"
+JOB 70_14 SAIsim_FineEffectGrid.sub
+VARS 70_14 sur="0.7" rep="0.14"
+JOB 70_15 SAIsim_FineEffectGrid.sub
+VARS 70_15 sur="0.7" rep="0.15"
+JOB 70_16 SAIsim_FineEffectGrid.sub
+VARS 70_16 sur="0.7" rep="0.16"
+JOB 70_17 SAIsim_FineEffectGrid.sub
+VARS 70_17 sur="0.7" rep="0.17"
+JOB 70_18 SAIsim_FineEffectGrid.sub
+VARS 70_18 sur="0.7" rep="0.18"
+JOB 70_19 SAIsim_FineEffectGrid.sub
+VARS 70_19 sur="0.7" rep="0.19"
+JOB 70_20 SAIsim_FineEffectGrid.sub
+VARS 70_20 sur="0.7" rep="0.2"
+JOB 71_0 SAIsim_FineEffectGrid.sub
+VARS 71_0 sur="0.71" rep="0.0"
+JOB 71_1 SAIsim_FineEffectGrid.sub
+VARS 71_1 sur="0.71" rep="0.01"
+JOB 71_2 SAIsim_FineEffectGrid.sub
+VARS 71_2 sur="0.71" rep="0.02"
+JOB 71_3 SAIsim_FineEffectGrid.sub
+VARS 71_3 sur="0.71" rep="0.03"
+JOB 71_4 SAIsim_FineEffectGrid.sub
+VARS 71_4 sur="0.71" rep="0.04"
+JOB 71_5 SAIsim_FineEffectGrid.sub
+VARS 71_5 sur="0.71" rep="0.05"
+JOB 71_6 SAIsim_FineEffectGrid.sub
+VARS 71_6 sur="0.71" rep="0.06"
+JOB 71_7 SAIsim_FineEffectGrid.sub
+VARS 71_7 sur="0.71" rep="0.07"
+JOB 71_8 SAIsim_FineEffectGrid.sub
+VARS 71_8 sur="0.71" rep="0.08"
+JOB 71_9 SAIsim_FineEffectGrid.sub
+VARS 71_9 sur="0.71" rep="0.09"
+JOB 71_10 SAIsim_FineEffectGrid.sub
+VARS 71_10 sur="0.71" rep="0.1"
+JOB 71_11 SAIsim_FineEffectGrid.sub
+VARS 71_11 sur="0.71" rep="0.11"
+JOB 71_12 SAIsim_FineEffectGrid.sub
+VARS 71_12 sur="0.71" rep="0.12"
+JOB 71_13 SAIsim_FineEffectGrid.sub
+VARS 71_13 sur="0.71" rep="0.13"
+JOB 71_14 SAIsim_FineEffectGrid.sub
+VARS 71_14 sur="0.71" rep="0.14"
+JOB 71_15 SAIsim_FineEffectGrid.sub
+VARS 71_15 sur="0.71" rep="0.15"
+JOB 71_16 SAIsim_FineEffectGrid.sub
+VARS 71_16 sur="0.71" rep="0.16"
+JOB 71_17 SAIsim_FineEffectGrid.sub
+VARS 71_17 sur="0.71" rep="0.17"
+JOB 71_18 SAIsim_FineEffectGrid.sub
+VARS 71_18 sur="0.71" rep="0.18"
+JOB 71_19 SAIsim_FineEffectGrid.sub
+VARS 71_19 sur="0.71" rep="0.19"
+JOB 71_20 SAIsim_FineEffectGrid.sub
+VARS 71_20 sur="0.71" rep="0.2"
+JOB 72_0 SAIsim_FineEffectGrid.sub
+VARS 72_0 sur="0.72" rep="0.0"
+JOB 72_1 SAIsim_FineEffectGrid.sub
+VARS 72_1 sur="0.72" rep="0.01"
+JOB 72_2 SAIsim_FineEffectGrid.sub
+VARS 72_2 sur="0.72" rep="0.02"
+JOB 72_3 SAIsim_FineEffectGrid.sub
+VARS 72_3 sur="0.72" rep="0.03"
+JOB 72_4 SAIsim_FineEffectGrid.sub
+VARS 72_4 sur="0.72" rep="0.04"
+JOB 72_5 SAIsim_FineEffectGrid.sub
+VARS 72_5 sur="0.72" rep="0.05"
+JOB 72_6 SAIsim_FineEffectGrid.sub
+VARS 72_6 sur="0.72" rep="0.06"
+JOB 72_7 SAIsim_FineEffectGrid.sub
+VARS 72_7 sur="0.72" rep="0.07"
+JOB 72_8 SAIsim_FineEffectGrid.sub
+VARS 72_8 sur="0.72" rep="0.08"
+JOB 72_9 SAIsim_FineEffectGrid.sub
+VARS 72_9 sur="0.72" rep="0.09"
+JOB 72_10 SAIsim_FineEffectGrid.sub
+VARS 72_10 sur="0.72" rep="0.1"
+JOB 72_11 SAIsim_FineEffectGrid.sub
+VARS 72_11 sur="0.72" rep="0.11"
+JOB 72_12 SAIsim_FineEffectGrid.sub
+VARS 72_12 sur="0.72" rep="0.12"
+JOB 72_13 SAIsim_FineEffectGrid.sub
+VARS 72_13 sur="0.72" rep="0.13"
+JOB 72_14 SAIsim_FineEffectGrid.sub
+VARS 72_14 sur="0.72" rep="0.14"
+JOB 72_15 SAIsim_FineEffectGrid.sub
+VARS 72_15 sur="0.72" rep="0.15"
+JOB 72_16 SAIsim_FineEffectGrid.sub
+VARS 72_16 sur="0.72" rep="0.16"
+JOB 72_17 SAIsim_FineEffectGrid.sub
+VARS 72_17 sur="0.72" rep="0.17"
+JOB 72_18 SAIsim_FineEffectGrid.sub
+VARS 72_18 sur="0.72" rep="0.18"
+JOB 72_19 SAIsim_FineEffectGrid.sub
+VARS 72_19 sur="0.72" rep="0.19"
+JOB 72_20 SAIsim_FineEffectGrid.sub
+VARS 72_20 sur="0.72" rep="0.2"
+JOB 73_0 SAIsim_FineEffectGrid.sub
+VARS 73_0 sur="0.73" rep="0.0"
+JOB 73_1 SAIsim_FineEffectGrid.sub
+VARS 73_1 sur="0.73" rep="0.01"
+JOB 73_2 SAIsim_FineEffectGrid.sub
+VARS 73_2 sur="0.73" rep="0.02"
+JOB 73_3 SAIsim_FineEffectGrid.sub
+VARS 73_3 sur="0.73" rep="0.03"
+JOB 73_4 SAIsim_FineEffectGrid.sub
+VARS 73_4 sur="0.73" rep="0.04"
+JOB 73_5 SAIsim_FineEffectGrid.sub
+VARS 73_5 sur="0.73" rep="0.05"
+JOB 73_6 SAIsim_FineEffectGrid.sub
+VARS 73_6 sur="0.73" rep="0.06"
+JOB 73_7 SAIsim_FineEffectGrid.sub
+VARS 73_7 sur="0.73" rep="0.07"
+JOB 73_8 SAIsim_FineEffectGrid.sub
+VARS 73_8 sur="0.73" rep="0.08"
+JOB 73_9 SAIsim_FineEffectGrid.sub
+VARS 73_9 sur="0.73" rep="0.09"
+JOB 73_10 SAIsim_FineEffectGrid.sub
+VARS 73_10 sur="0.73" rep="0.1"
+JOB 73_11 SAIsim_FineEffectGrid.sub
+VARS 73_11 sur="0.73" rep="0.11"
+JOB 73_12 SAIsim_FineEffectGrid.sub
+VARS 73_12 sur="0.73" rep="0.12"
+JOB 73_13 SAIsim_FineEffectGrid.sub
+VARS 73_13 sur="0.73" rep="0.13"
+JOB 73_14 SAIsim_FineEffectGrid.sub
+VARS 73_14 sur="0.73" rep="0.14"
+JOB 73_15 SAIsim_FineEffectGrid.sub
+VARS 73_15 sur="0.73" rep="0.15"
+JOB 73_16 SAIsim_FineEffectGrid.sub
+VARS 73_16 sur="0.73" rep="0.16"
+JOB 73_17 SAIsim_FineEffectGrid.sub
+VARS 73_17 sur="0.73" rep="0.17"
+JOB 73_18 SAIsim_FineEffectGrid.sub
+VARS 73_18 sur="0.73" rep="0.18"
+JOB 73_19 SAIsim_FineEffectGrid.sub
+VARS 73_19 sur="0.73" rep="0.19"
+JOB 73_20 SAIsim_FineEffectGrid.sub
+VARS 73_20 sur="0.73" rep="0.2"
+JOB 74_0 SAIsim_FineEffectGrid.sub
+VARS 74_0 sur="0.74" rep="0.0"
+JOB 74_1 SAIsim_FineEffectGrid.sub
+VARS 74_1 sur="0.74" rep="0.01"
+JOB 74_2 SAIsim_FineEffectGrid.sub
+VARS 74_2 sur="0.74" rep="0.02"
+JOB 74_3 SAIsim_FineEffectGrid.sub
+VARS 74_3 sur="0.74" rep="0.03"
+JOB 74_4 SAIsim_FineEffectGrid.sub
+VARS 74_4 sur="0.74" rep="0.04"
+JOB 74_5 SAIsim_FineEffectGrid.sub
+VARS 74_5 sur="0.74" rep="0.05"
+JOB 74_6 SAIsim_FineEffectGrid.sub
+VARS 74_6 sur="0.74" rep="0.06"
+JOB 74_7 SAIsim_FineEffectGrid.sub
+VARS 74_7 sur="0.74" rep="0.07"
+JOB 74_8 SAIsim_FineEffectGrid.sub
+VARS 74_8 sur="0.74" rep="0.08"
+JOB 74_9 SAIsim_FineEffectGrid.sub
+VARS 74_9 sur="0.74" rep="0.09"
+JOB 74_10 SAIsim_FineEffectGrid.sub
+VARS 74_10 sur="0.74" rep="0.1"
+JOB 74_11 SAIsim_FineEffectGrid.sub
+VARS 74_11 sur="0.74" rep="0.11"
+JOB 74_12 SAIsim_FineEffectGrid.sub
+VARS 74_12 sur="0.74" rep="0.12"
+JOB 74_13 SAIsim_FineEffectGrid.sub
+VARS 74_13 sur="0.74" rep="0.13"
+JOB 74_14 SAIsim_FineEffectGrid.sub
+VARS 74_14 sur="0.74" rep="0.14"
+JOB 74_15 SAIsim_FineEffectGrid.sub
+VARS 74_15 sur="0.74" rep="0.15"
+JOB 74_16 SAIsim_FineEffectGrid.sub
+VARS 74_16 sur="0.74" rep="0.16"
+JOB 74_17 SAIsim_FineEffectGrid.sub
+VARS 74_17 sur="0.74" rep="0.17"
+JOB 74_18 SAIsim_FineEffectGrid.sub
+VARS 74_18 sur="0.74" rep="0.18"
+JOB 74_19 SAIsim_FineEffectGrid.sub
+VARS 74_19 sur="0.74" rep="0.19"
+JOB 74_20 SAIsim_FineEffectGrid.sub
+VARS 74_20 sur="0.74" rep="0.2"
+JOB 75_0 SAIsim_FineEffectGrid.sub
+VARS 75_0 sur="0.75" rep="0.0"
+JOB 75_1 SAIsim_FineEffectGrid.sub
+VARS 75_1 sur="0.75" rep="0.01"
+JOB 75_2 SAIsim_FineEffectGrid.sub
+VARS 75_2 sur="0.75" rep="0.02"
+JOB 75_3 SAIsim_FineEffectGrid.sub
+VARS 75_3 sur="0.75" rep="0.03"
+JOB 75_4 SAIsim_FineEffectGrid.sub
+VARS 75_4 sur="0.75" rep="0.04"
+JOB 75_5 SAIsim_FineEffectGrid.sub
+VARS 75_5 sur="0.75" rep="0.05"
+JOB 75_6 SAIsim_FineEffectGrid.sub
+VARS 75_6 sur="0.75" rep="0.06"
+JOB 75_7 SAIsim_FineEffectGrid.sub
+VARS 75_7 sur="0.75" rep="0.07"
+JOB 75_8 SAIsim_FineEffectGrid.sub
+VARS 75_8 sur="0.75" rep="0.08"
+JOB 75_9 SAIsim_FineEffectGrid.sub
+VARS 75_9 sur="0.75" rep="0.09"
+JOB 75_10 SAIsim_FineEffectGrid.sub
+VARS 75_10 sur="0.75" rep="0.1"
+JOB 75_11 SAIsim_FineEffectGrid.sub
+VARS 75_11 sur="0.75" rep="0.11"
+JOB 75_12 SAIsim_FineEffectGrid.sub
+VARS 75_12 sur="0.75" rep="0.12"
+JOB 75_13 SAIsim_FineEffectGrid.sub
+VARS 75_13 sur="0.75" rep="0.13"
+JOB 75_14 SAIsim_FineEffectGrid.sub
+VARS 75_14 sur="0.75" rep="0.14"
+JOB 75_15 SAIsim_FineEffectGrid.sub
+VARS 75_15 sur="0.75" rep="0.15"
+JOB 75_16 SAIsim_FineEffectGrid.sub
+VARS 75_16 sur="0.75" rep="0.16"
+JOB 75_17 SAIsim_FineEffectGrid.sub
+VARS 75_17 sur="0.75" rep="0.17"
+JOB 75_18 SAIsim_FineEffectGrid.sub
+VARS 75_18 sur="0.75" rep="0.18"
+JOB 75_19 SAIsim_FineEffectGrid.sub
+VARS 75_19 sur="0.75" rep="0.19"
+JOB 75_20 SAIsim_FineEffectGrid.sub
+VARS 75_20 sur="0.75" rep="0.2"
+JOB 76_0 SAIsim_FineEffectGrid.sub
+VARS 76_0 sur="0.76" rep="0.0"
+JOB 76_1 SAIsim_FineEffectGrid.sub
+VARS 76_1 sur="0.76" rep="0.01"
+JOB 76_2 SAIsim_FineEffectGrid.sub
+VARS 76_2 sur="0.76" rep="0.02"
+JOB 76_3 SAIsim_FineEffectGrid.sub
+VARS 76_3 sur="0.76" rep="0.03"
+JOB 76_4 SAIsim_FineEffectGrid.sub
+VARS 76_4 sur="0.76" rep="0.04"
+JOB 76_5 SAIsim_FineEffectGrid.sub
+VARS 76_5 sur="0.76" rep="0.05"
+JOB 76_6 SAIsim_FineEffectGrid.sub
+VARS 76_6 sur="0.76" rep="0.06"
+JOB 76_7 SAIsim_FineEffectGrid.sub
+VARS 76_7 sur="0.76" rep="0.07"
+JOB 76_8 SAIsim_FineEffectGrid.sub
+VARS 76_8 sur="0.76" rep="0.08"
+JOB 76_9 SAIsim_FineEffectGrid.sub
+VARS 76_9 sur="0.76" rep="0.09"
+JOB 76_10 SAIsim_FineEffectGrid.sub
+VARS 76_10 sur="0.76" rep="0.1"
+JOB 76_11 SAIsim_FineEffectGrid.sub
+VARS 76_11 sur="0.76" rep="0.11"
+JOB 76_12 SAIsim_FineEffectGrid.sub
+VARS 76_12 sur="0.76" rep="0.12"
+JOB 76_13 SAIsim_FineEffectGrid.sub
+VARS 76_13 sur="0.76" rep="0.13"
+JOB 76_14 SAIsim_FineEffectGrid.sub
+VARS 76_14 sur="0.76" rep="0.14"
+JOB 76_15 SAIsim_FineEffectGrid.sub
+VARS 76_15 sur="0.76" rep="0.15"
+JOB 76_16 SAIsim_FineEffectGrid.sub
+VARS 76_16 sur="0.76" rep="0.16"
+JOB 76_17 SAIsim_FineEffectGrid.sub
+VARS 76_17 sur="0.76" rep="0.17"
+JOB 76_18 SAIsim_FineEffectGrid.sub
+VARS 76_18 sur="0.76" rep="0.18"
+JOB 76_19 SAIsim_FineEffectGrid.sub
+VARS 76_19 sur="0.76" rep="0.19"
+JOB 76_20 SAIsim_FineEffectGrid.sub
+VARS 76_20 sur="0.76" rep="0.2"
+JOB 77_0 SAIsim_FineEffectGrid.sub
+VARS 77_0 sur="0.77" rep="0.0"
+JOB 77_1 SAIsim_FineEffectGrid.sub
+VARS 77_1 sur="0.77" rep="0.01"
+JOB 77_2 SAIsim_FineEffectGrid.sub
+VARS 77_2 sur="0.77" rep="0.02"
+JOB 77_3 SAIsim_FineEffectGrid.sub
+VARS 77_3 sur="0.77" rep="0.03"
+JOB 77_4 SAIsim_FineEffectGrid.sub
+VARS 77_4 sur="0.77" rep="0.04"
+JOB 77_5 SAIsim_FineEffectGrid.sub
+VARS 77_5 sur="0.77" rep="0.05"
+JOB 77_6 SAIsim_FineEffectGrid.sub
+VARS 77_6 sur="0.77" rep="0.06"
+JOB 77_7 SAIsim_FineEffectGrid.sub
+VARS 77_7 sur="0.77" rep="0.07"
+JOB 77_8 SAIsim_FineEffectGrid.sub
+VARS 77_8 sur="0.77" rep="0.08"
+JOB 77_9 SAIsim_FineEffectGrid.sub
+VARS 77_9 sur="0.77" rep="0.09"
+JOB 77_10 SAIsim_FineEffectGrid.sub
+VARS 77_10 sur="0.77" rep="0.1"
+JOB 77_11 SAIsim_FineEffectGrid.sub
+VARS 77_11 sur="0.77" rep="0.11"
+JOB 77_12 SAIsim_FineEffectGrid.sub
+VARS 77_12 sur="0.77" rep="0.12"
+JOB 77_13 SAIsim_FineEffectGrid.sub
+VARS 77_13 sur="0.77" rep="0.13"
+JOB 77_14 SAIsim_FineEffectGrid.sub
+VARS 77_14 sur="0.77" rep="0.14"
+JOB 77_15 SAIsim_FineEffectGrid.sub
+VARS 77_15 sur="0.77" rep="0.15"
+JOB 77_16 SAIsim_FineEffectGrid.sub
+VARS 77_16 sur="0.77" rep="0.16"
+JOB 77_17 SAIsim_FineEffectGrid.sub
+VARS 77_17 sur="0.77" rep="0.17"
+JOB 77_18 SAIsim_FineEffectGrid.sub
+VARS 77_18 sur="0.77" rep="0.18"
+JOB 77_19 SAIsim_FineEffectGrid.sub
+VARS 77_19 sur="0.77" rep="0.19"
+JOB 77_20 SAIsim_FineEffectGrid.sub
+VARS 77_20 sur="0.77" rep="0.2"
+JOB 78_0 SAIsim_FineEffectGrid.sub
+VARS 78_0 sur="0.78" rep="0.0"
+JOB 78_1 SAIsim_FineEffectGrid.sub
+VARS 78_1 sur="0.78" rep="0.01"
+JOB 78_2 SAIsim_FineEffectGrid.sub
+VARS 78_2 sur="0.78" rep="0.02"
+JOB 78_3 SAIsim_FineEffectGrid.sub
+VARS 78_3 sur="0.78" rep="0.03"
+JOB 78_4 SAIsim_FineEffectGrid.sub
+VARS 78_4 sur="0.78" rep="0.04"
+JOB 78_5 SAIsim_FineEffectGrid.sub
+VARS 78_5 sur="0.78" rep="0.05"
+JOB 78_6 SAIsim_FineEffectGrid.sub
+VARS 78_6 sur="0.78" rep="0.06"
+JOB 78_7 SAIsim_FineEffectGrid.sub
+VARS 78_7 sur="0.78" rep="0.07"
+JOB 78_8 SAIsim_FineEffectGrid.sub
+VARS 78_8 sur="0.78" rep="0.08"
+JOB 78_9 SAIsim_FineEffectGrid.sub
+VARS 78_9 sur="0.78" rep="0.09"
+JOB 78_10 SAIsim_FineEffectGrid.sub
+VARS 78_10 sur="0.78" rep="0.1"
+JOB 78_11 SAIsim_FineEffectGrid.sub
+VARS 78_11 sur="0.78" rep="0.11"
+JOB 78_12 SAIsim_FineEffectGrid.sub
+VARS 78_12 sur="0.78" rep="0.12"
+JOB 78_13 SAIsim_FineEffectGrid.sub
+VARS 78_13 sur="0.78" rep="0.13"
+JOB 78_14 SAIsim_FineEffectGrid.sub
+VARS 78_14 sur="0.78" rep="0.14"
+JOB 78_15 SAIsim_FineEffectGrid.sub
+VARS 78_15 sur="0.78" rep="0.15"
+JOB 78_16 SAIsim_FineEffectGrid.sub
+VARS 78_16 sur="0.78" rep="0.16"
+JOB 78_17 SAIsim_FineEffectGrid.sub
+VARS 78_17 sur="0.78" rep="0.17"
+JOB 78_18 SAIsim_FineEffectGrid.sub
+VARS 78_18 sur="0.78" rep="0.18"
+JOB 78_19 SAIsim_FineEffectGrid.sub
+VARS 78_19 sur="0.78" rep="0.19"
+JOB 78_20 SAIsim_FineEffectGrid.sub
+VARS 78_20 sur="0.78" rep="0.2"
+JOB 79_0 SAIsim_FineEffectGrid.sub
+VARS 79_0 sur="0.79" rep="0.0"
+JOB 79_1 SAIsim_FineEffectGrid.sub
+VARS 79_1 sur="0.79" rep="0.01"
+JOB 79_2 SAIsim_FineEffectGrid.sub
+VARS 79_2 sur="0.79" rep="0.02"
+JOB 79_3 SAIsim_FineEffectGrid.sub
+VARS 79_3 sur="0.79" rep="0.03"
+JOB 79_4 SAIsim_FineEffectGrid.sub
+VARS 79_4 sur="0.79" rep="0.04"
+JOB 79_5 SAIsim_FineEffectGrid.sub
+VARS 79_5 sur="0.79" rep="0.05"
+JOB 79_6 SAIsim_FineEffectGrid.sub
+VARS 79_6 sur="0.79" rep="0.06"
+JOB 79_7 SAIsim_FineEffectGrid.sub
+VARS 79_7 sur="0.79" rep="0.07"
+JOB 79_8 SAIsim_FineEffectGrid.sub
+VARS 79_8 sur="0.79" rep="0.08"
+JOB 79_9 SAIsim_FineEffectGrid.sub
+VARS 79_9 sur="0.79" rep="0.09"
+JOB 79_10 SAIsim_FineEffectGrid.sub
+VARS 79_10 sur="0.79" rep="0.1"
+JOB 79_11 SAIsim_FineEffectGrid.sub
+VARS 79_11 sur="0.79" rep="0.11"
+JOB 79_12 SAIsim_FineEffectGrid.sub
+VARS 79_12 sur="0.79" rep="0.12"
+JOB 79_13 SAIsim_FineEffectGrid.sub
+VARS 79_13 sur="0.79" rep="0.13"
+JOB 79_14 SAIsim_FineEffectGrid.sub
+VARS 79_14 sur="0.79" rep="0.14"
+JOB 79_15 SAIsim_FineEffectGrid.sub
+VARS 79_15 sur="0.79" rep="0.15"
+JOB 79_16 SAIsim_FineEffectGrid.sub
+VARS 79_16 sur="0.79" rep="0.16"
+JOB 79_17 SAIsim_FineEffectGrid.sub
+VARS 79_17 sur="0.79" rep="0.17"
+JOB 79_18 SAIsim_FineEffectGrid.sub
+VARS 79_18 sur="0.79" rep="0.18"
+JOB 79_19 SAIsim_FineEffectGrid.sub
+VARS 79_19 sur="0.79" rep="0.19"
+JOB 79_20 SAIsim_FineEffectGrid.sub
+VARS 79_20 sur="0.79" rep="0.2"
+JOB 80_0 SAIsim_FineEffectGrid.sub
+VARS 80_0 sur="0.8" rep="0.0"
+JOB 80_1 SAIsim_FineEffectGrid.sub
+VARS 80_1 sur="0.8" rep="0.01"
+JOB 80_2 SAIsim_FineEffectGrid.sub
+VARS 80_2 sur="0.8" rep="0.02"
+JOB 80_3 SAIsim_FineEffectGrid.sub
+VARS 80_3 sur="0.8" rep="0.03"
+JOB 80_4 SAIsim_FineEffectGrid.sub
+VARS 80_4 sur="0.8" rep="0.04"
+JOB 80_5 SAIsim_FineEffectGrid.sub
+VARS 80_5 sur="0.8" rep="0.05"
+JOB 80_6 SAIsim_FineEffectGrid.sub
+VARS 80_6 sur="0.8" rep="0.06"
+JOB 80_7 SAIsim_FineEffectGrid.sub
+VARS 80_7 sur="0.8" rep="0.07"
+JOB 80_8 SAIsim_FineEffectGrid.sub
+VARS 80_8 sur="0.8" rep="0.08"
+JOB 80_9 SAIsim_FineEffectGrid.sub
+VARS 80_9 sur="0.8" rep="0.09"
+JOB 80_10 SAIsim_FineEffectGrid.sub
+VARS 80_10 sur="0.8" rep="0.1"
+JOB 80_11 SAIsim_FineEffectGrid.sub
+VARS 80_11 sur="0.8" rep="0.11"
+JOB 80_12 SAIsim_FineEffectGrid.sub
+VARS 80_12 sur="0.8" rep="0.12"
+JOB 80_13 SAIsim_FineEffectGrid.sub
+VARS 80_13 sur="0.8" rep="0.13"
+JOB 80_14 SAIsim_FineEffectGrid.sub
+VARS 80_14 sur="0.8" rep="0.14"
+JOB 80_15 SAIsim_FineEffectGrid.sub
+VARS 80_15 sur="0.8" rep="0.15"
+JOB 80_16 SAIsim_FineEffectGrid.sub
+VARS 80_16 sur="0.8" rep="0.16"
+JOB 80_17 SAIsim_FineEffectGrid.sub
+VARS 80_17 sur="0.8" rep="0.17"
+JOB 80_18 SAIsim_FineEffectGrid.sub
+VARS 80_18 sur="0.8" rep="0.18"
+JOB 80_19 SAIsim_FineEffectGrid.sub
+VARS 80_19 sur="0.8" rep="0.19"
+JOB 80_20 SAIsim_FineEffectGrid.sub
+VARS 80_20 sur="0.8" rep="0.2"
+JOB 81_0 SAIsim_FineEffectGrid.sub
+VARS 81_0 sur="0.81" rep="0.0"
+JOB 81_1 SAIsim_FineEffectGrid.sub
+VARS 81_1 sur="0.81" rep="0.01"
+JOB 81_2 SAIsim_FineEffectGrid.sub
+VARS 81_2 sur="0.81" rep="0.02"
+JOB 81_3 SAIsim_FineEffectGrid.sub
+VARS 81_3 sur="0.81" rep="0.03"
+JOB 81_4 SAIsim_FineEffectGrid.sub
+VARS 81_4 sur="0.81" rep="0.04"
+JOB 81_5 SAIsim_FineEffectGrid.sub
+VARS 81_5 sur="0.81" rep="0.05"
+JOB 81_6 SAIsim_FineEffectGrid.sub
+VARS 81_6 sur="0.81" rep="0.06"
+JOB 81_7 SAIsim_FineEffectGrid.sub
+VARS 81_7 sur="0.81" rep="0.07"
+JOB 81_8 SAIsim_FineEffectGrid.sub
+VARS 81_8 sur="0.81" rep="0.08"
+JOB 81_9 SAIsim_FineEffectGrid.sub
+VARS 81_9 sur="0.81" rep="0.09"
+JOB 81_10 SAIsim_FineEffectGrid.sub
+VARS 81_10 sur="0.81" rep="0.1"
+JOB 81_11 SAIsim_FineEffectGrid.sub
+VARS 81_11 sur="0.81" rep="0.11"
+JOB 81_12 SAIsim_FineEffectGrid.sub
+VARS 81_12 sur="0.81" rep="0.12"
+JOB 81_13 SAIsim_FineEffectGrid.sub
+VARS 81_13 sur="0.81" rep="0.13"
+JOB 81_14 SAIsim_FineEffectGrid.sub
+VARS 81_14 sur="0.81" rep="0.14"
+JOB 81_15 SAIsim_FineEffectGrid.sub
+VARS 81_15 sur="0.81" rep="0.15"
+JOB 81_16 SAIsim_FineEffectGrid.sub
+VARS 81_16 sur="0.81" rep="0.16"
+JOB 81_17 SAIsim_FineEffectGrid.sub
+VARS 81_17 sur="0.81" rep="0.17"
+JOB 81_18 SAIsim_FineEffectGrid.sub
+VARS 81_18 sur="0.81" rep="0.18"
+JOB 81_19 SAIsim_FineEffectGrid.sub
+VARS 81_19 sur="0.81" rep="0.19"
+JOB 81_20 SAIsim_FineEffectGrid.sub
+VARS 81_20 sur="0.81" rep="0.2"
+JOB 82_0 SAIsim_FineEffectGrid.sub
+VARS 82_0 sur="0.82" rep="0.0"
+JOB 82_1 SAIsim_FineEffectGrid.sub
+VARS 82_1 sur="0.82" rep="0.01"
+JOB 82_2 SAIsim_FineEffectGrid.sub
+VARS 82_2 sur="0.82" rep="0.02"
+JOB 82_3 SAIsim_FineEffectGrid.sub
+VARS 82_3 sur="0.82" rep="0.03"
+JOB 82_4 SAIsim_FineEffectGrid.sub
+VARS 82_4 sur="0.82" rep="0.04"
+JOB 82_5 SAIsim_FineEffectGrid.sub
+VARS 82_5 sur="0.82" rep="0.05"
+JOB 82_6 SAIsim_FineEffectGrid.sub
+VARS 82_6 sur="0.82" rep="0.06"
+JOB 82_7 SAIsim_FineEffectGrid.sub
+VARS 82_7 sur="0.82" rep="0.07"
+JOB 82_8 SAIsim_FineEffectGrid.sub
+VARS 82_8 sur="0.82" rep="0.08"
+JOB 82_9 SAIsim_FineEffectGrid.sub
+VARS 82_9 sur="0.82" rep="0.09"
+JOB 82_10 SAIsim_FineEffectGrid.sub
+VARS 82_10 sur="0.82" rep="0.1"
+JOB 82_11 SAIsim_FineEffectGrid.sub
+VARS 82_11 sur="0.82" rep="0.11"
+JOB 82_12 SAIsim_FineEffectGrid.sub
+VARS 82_12 sur="0.82" rep="0.12"
+JOB 82_13 SAIsim_FineEffectGrid.sub
+VARS 82_13 sur="0.82" rep="0.13"
+JOB 82_14 SAIsim_FineEffectGrid.sub
+VARS 82_14 sur="0.82" rep="0.14"
+JOB 82_15 SAIsim_FineEffectGrid.sub
+VARS 82_15 sur="0.82" rep="0.15"
+JOB 82_16 SAIsim_FineEffectGrid.sub
+VARS 82_16 sur="0.82" rep="0.16"
+JOB 82_17 SAIsim_FineEffectGrid.sub
+VARS 82_17 sur="0.82" rep="0.17"
+JOB 82_18 SAIsim_FineEffectGrid.sub
+VARS 82_18 sur="0.82" rep="0.18"
+JOB 82_19 SAIsim_FineEffectGrid.sub
+VARS 82_19 sur="0.82" rep="0.19"
+JOB 82_20 SAIsim_FineEffectGrid.sub
+VARS 82_20 sur="0.82" rep="0.2"
+JOB 83_0 SAIsim_FineEffectGrid.sub
+VARS 83_0 sur="0.83" rep="0.0"
+JOB 83_1 SAIsim_FineEffectGrid.sub
+VARS 83_1 sur="0.83" rep="0.01"
+JOB 83_2 SAIsim_FineEffectGrid.sub
+VARS 83_2 sur="0.83" rep="0.02"
+JOB 83_3 SAIsim_FineEffectGrid.sub
+VARS 83_3 sur="0.83" rep="0.03"
+JOB 83_4 SAIsim_FineEffectGrid.sub
+VARS 83_4 sur="0.83" rep="0.04"
+JOB 83_5 SAIsim_FineEffectGrid.sub
+VARS 83_5 sur="0.83" rep="0.05"
+JOB 83_6 SAIsim_FineEffectGrid.sub
+VARS 83_6 sur="0.83" rep="0.06"
+JOB 83_7 SAIsim_FineEffectGrid.sub
+VARS 83_7 sur="0.83" rep="0.07"
+JOB 83_8 SAIsim_FineEffectGrid.sub
+VARS 83_8 sur="0.83" rep="0.08"
+JOB 83_9 SAIsim_FineEffectGrid.sub
+VARS 83_9 sur="0.83" rep="0.09"
+JOB 83_10 SAIsim_FineEffectGrid.sub
+VARS 83_10 sur="0.83" rep="0.1"
+JOB 83_11 SAIsim_FineEffectGrid.sub
+VARS 83_11 sur="0.83" rep="0.11"
+JOB 83_12 SAIsim_FineEffectGrid.sub
+VARS 83_12 sur="0.83" rep="0.12"
+JOB 83_13 SAIsim_FineEffectGrid.sub
+VARS 83_13 sur="0.83" rep="0.13"
+JOB 83_14 SAIsim_FineEffectGrid.sub
+VARS 83_14 sur="0.83" rep="0.14"
+JOB 83_15 SAIsim_FineEffectGrid.sub
+VARS 83_15 sur="0.83" rep="0.15"
+JOB 83_16 SAIsim_FineEffectGrid.sub
+VARS 83_16 sur="0.83" rep="0.16"
+JOB 83_17 SAIsim_FineEffectGrid.sub
+VARS 83_17 sur="0.83" rep="0.17"
+JOB 83_18 SAIsim_FineEffectGrid.sub
+VARS 83_18 sur="0.83" rep="0.18"
+JOB 83_19 SAIsim_FineEffectGrid.sub
+VARS 83_19 sur="0.83" rep="0.19"
+JOB 83_20 SAIsim_FineEffectGrid.sub
+VARS 83_20 sur="0.83" rep="0.2"
+JOB 84_0 SAIsim_FineEffectGrid.sub
+VARS 84_0 sur="0.84" rep="0.0"
+JOB 84_1 SAIsim_FineEffectGrid.sub
+VARS 84_1 sur="0.84" rep="0.01"
+JOB 84_2 SAIsim_FineEffectGrid.sub
+VARS 84_2 sur="0.84" rep="0.02"
+JOB 84_3 SAIsim_FineEffectGrid.sub
+VARS 84_3 sur="0.84" rep="0.03"
+JOB 84_4 SAIsim_FineEffectGrid.sub
+VARS 84_4 sur="0.84" rep="0.04"
+JOB 84_5 SAIsim_FineEffectGrid.sub
+VARS 84_5 sur="0.84" rep="0.05"
+JOB 84_6 SAIsim_FineEffectGrid.sub
+VARS 84_6 sur="0.84" rep="0.06"
+JOB 84_7 SAIsim_FineEffectGrid.sub
+VARS 84_7 sur="0.84" rep="0.07"
+JOB 84_8 SAIsim_FineEffectGrid.sub
+VARS 84_8 sur="0.84" rep="0.08"
+JOB 84_9 SAIsim_FineEffectGrid.sub
+VARS 84_9 sur="0.84" rep="0.09"
+JOB 84_10 SAIsim_FineEffectGrid.sub
+VARS 84_10 sur="0.84" rep="0.1"
+JOB 84_11 SAIsim_FineEffectGrid.sub
+VARS 84_11 sur="0.84" rep="0.11"
+JOB 84_12 SAIsim_FineEffectGrid.sub
+VARS 84_12 sur="0.84" rep="0.12"
+JOB 84_13 SAIsim_FineEffectGrid.sub
+VARS 84_13 sur="0.84" rep="0.13"
+JOB 84_14 SAIsim_FineEffectGrid.sub
+VARS 84_14 sur="0.84" rep="0.14"
+JOB 84_15 SAIsim_FineEffectGrid.sub
+VARS 84_15 sur="0.84" rep="0.15"
+JOB 84_16 SAIsim_FineEffectGrid.sub
+VARS 84_16 sur="0.84" rep="0.16"
+JOB 84_17 SAIsim_FineEffectGrid.sub
+VARS 84_17 sur="0.84" rep="0.17"
+JOB 84_18 SAIsim_FineEffectGrid.sub
+VARS 84_18 sur="0.84" rep="0.18"
+JOB 84_19 SAIsim_FineEffectGrid.sub
+VARS 84_19 sur="0.84" rep="0.19"
+JOB 84_20 SAIsim_FineEffectGrid.sub
+VARS 84_20 sur="0.84" rep="0.2"
+JOB 85_0 SAIsim_FineEffectGrid.sub
+VARS 85_0 sur="0.85" rep="0.0"
+JOB 85_1 SAIsim_FineEffectGrid.sub
+VARS 85_1 sur="0.85" rep="0.01"
+JOB 85_2 SAIsim_FineEffectGrid.sub
+VARS 85_2 sur="0.85" rep="0.02"
+JOB 85_3 SAIsim_FineEffectGrid.sub
+VARS 85_3 sur="0.85" rep="0.03"
+JOB 85_4 SAIsim_FineEffectGrid.sub
+VARS 85_4 sur="0.85" rep="0.04"
+JOB 85_5 SAIsim_FineEffectGrid.sub
+VARS 85_5 sur="0.85" rep="0.05"
+JOB 85_6 SAIsim_FineEffectGrid.sub
+VARS 85_6 sur="0.85" rep="0.06"
+JOB 85_7 SAIsim_FineEffectGrid.sub
+VARS 85_7 sur="0.85" rep="0.07"
+JOB 85_8 SAIsim_FineEffectGrid.sub
+VARS 85_8 sur="0.85" rep="0.08"
+JOB 85_9 SAIsim_FineEffectGrid.sub
+VARS 85_9 sur="0.85" rep="0.09"
+JOB 85_10 SAIsim_FineEffectGrid.sub
+VARS 85_10 sur="0.85" rep="0.1"
+JOB 85_11 SAIsim_FineEffectGrid.sub
+VARS 85_11 sur="0.85" rep="0.11"
+JOB 85_12 SAIsim_FineEffectGrid.sub
+VARS 85_12 sur="0.85" rep="0.12"
+JOB 85_13 SAIsim_FineEffectGrid.sub
+VARS 85_13 sur="0.85" rep="0.13"
+JOB 85_14 SAIsim_FineEffectGrid.sub
+VARS 85_14 sur="0.85" rep="0.14"
+JOB 85_15 SAIsim_FineEffectGrid.sub
+VARS 85_15 sur="0.85" rep="0.15"
+JOB 85_16 SAIsim_FineEffectGrid.sub
+VARS 85_16 sur="0.85" rep="0.16"
+JOB 85_17 SAIsim_FineEffectGrid.sub
+VARS 85_17 sur="0.85" rep="0.17"
+JOB 85_18 SAIsim_FineEffectGrid.sub
+VARS 85_18 sur="0.85" rep="0.18"
+JOB 85_19 SAIsim_FineEffectGrid.sub
+VARS 85_19 sur="0.85" rep="0.19"
+JOB 85_20 SAIsim_FineEffectGrid.sub
+VARS 85_20 sur="0.85" rep="0.2"
+JOB 86_0 SAIsim_FineEffectGrid.sub
+VARS 86_0 sur="0.86" rep="0.0"
+JOB 86_1 SAIsim_FineEffectGrid.sub
+VARS 86_1 sur="0.86" rep="0.01"
+JOB 86_2 SAIsim_FineEffectGrid.sub
+VARS 86_2 sur="0.86" rep="0.02"
+JOB 86_3 SAIsim_FineEffectGrid.sub
+VARS 86_3 sur="0.86" rep="0.03"
+JOB 86_4 SAIsim_FineEffectGrid.sub
+VARS 86_4 sur="0.86" rep="0.04"
+JOB 86_5 SAIsim_FineEffectGrid.sub
+VARS 86_5 sur="0.86" rep="0.05"
+JOB 86_6 SAIsim_FineEffectGrid.sub
+VARS 86_6 sur="0.86" rep="0.06"
+JOB 86_7 SAIsim_FineEffectGrid.sub
+VARS 86_7 sur="0.86" rep="0.07"
+JOB 86_8 SAIsim_FineEffectGrid.sub
+VARS 86_8 sur="0.86" rep="0.08"
+JOB 86_9 SAIsim_FineEffectGrid.sub
+VARS 86_9 sur="0.86" rep="0.09"
+JOB 86_10 SAIsim_FineEffectGrid.sub
+VARS 86_10 sur="0.86" rep="0.1"
+JOB 86_11 SAIsim_FineEffectGrid.sub
+VARS 86_11 sur="0.86" rep="0.11"
+JOB 86_12 SAIsim_FineEffectGrid.sub
+VARS 86_12 sur="0.86" rep="0.12"
+JOB 86_13 SAIsim_FineEffectGrid.sub
+VARS 86_13 sur="0.86" rep="0.13"
+JOB 86_14 SAIsim_FineEffectGrid.sub
+VARS 86_14 sur="0.86" rep="0.14"
+JOB 86_15 SAIsim_FineEffectGrid.sub
+VARS 86_15 sur="0.86" rep="0.15"
+JOB 86_16 SAIsim_FineEffectGrid.sub
+VARS 86_16 sur="0.86" rep="0.16"
+JOB 86_17 SAIsim_FineEffectGrid.sub
+VARS 86_17 sur="0.86" rep="0.17"
+JOB 86_18 SAIsim_FineEffectGrid.sub
+VARS 86_18 sur="0.86" rep="0.18"
+JOB 86_19 SAIsim_FineEffectGrid.sub
+VARS 86_19 sur="0.86" rep="0.19"
+JOB 86_20 SAIsim_FineEffectGrid.sub
+VARS 86_20 sur="0.86" rep="0.2"
+JOB 87_0 SAIsim_FineEffectGrid.sub
+VARS 87_0 sur="0.87" rep="0.0"
+JOB 87_1 SAIsim_FineEffectGrid.sub
+VARS 87_1 sur="0.87" rep="0.01"
+JOB 87_2 SAIsim_FineEffectGrid.sub
+VARS 87_2 sur="0.87" rep="0.02"
+JOB 87_3 SAIsim_FineEffectGrid.sub
+VARS 87_3 sur="0.87" rep="0.03"
+JOB 87_4 SAIsim_FineEffectGrid.sub
+VARS 87_4 sur="0.87" rep="0.04"
+JOB 87_5 SAIsim_FineEffectGrid.sub
+VARS 87_5 sur="0.87" rep="0.05"
+JOB 87_6 SAIsim_FineEffectGrid.sub
+VARS 87_6 sur="0.87" rep="0.06"
+JOB 87_7 SAIsim_FineEffectGrid.sub
+VARS 87_7 sur="0.87" rep="0.07"
+JOB 87_8 SAIsim_FineEffectGrid.sub
+VARS 87_8 sur="0.87" rep="0.08"
+JOB 87_9 SAIsim_FineEffectGrid.sub
+VARS 87_9 sur="0.87" rep="0.09"
+JOB 87_10 SAIsim_FineEffectGrid.sub
+VARS 87_10 sur="0.87" rep="0.1"
+JOB 87_11 SAIsim_FineEffectGrid.sub
+VARS 87_11 sur="0.87" rep="0.11"
+JOB 87_12 SAIsim_FineEffectGrid.sub
+VARS 87_12 sur="0.87" rep="0.12"
+JOB 87_13 SAIsim_FineEffectGrid.sub
+VARS 87_13 sur="0.87" rep="0.13"
+JOB 87_14 SAIsim_FineEffectGrid.sub
+VARS 87_14 sur="0.87" rep="0.14"
+JOB 87_15 SAIsim_FineEffectGrid.sub
+VARS 87_15 sur="0.87" rep="0.15"
+JOB 87_16 SAIsim_FineEffectGrid.sub
+VARS 87_16 sur="0.87" rep="0.16"
+JOB 87_17 SAIsim_FineEffectGrid.sub
+VARS 87_17 sur="0.87" rep="0.17"
+JOB 87_18 SAIsim_FineEffectGrid.sub
+VARS 87_18 sur="0.87" rep="0.18"
+JOB 87_19 SAIsim_FineEffectGrid.sub
+VARS 87_19 sur="0.87" rep="0.19"
+JOB 87_20 SAIsim_FineEffectGrid.sub
+VARS 87_20 sur="0.87" rep="0.2"
+JOB 88_0 SAIsim_FineEffectGrid.sub
+VARS 88_0 sur="0.88" rep="0.0"
+JOB 88_1 SAIsim_FineEffectGrid.sub
+VARS 88_1 sur="0.88" rep="0.01"
+JOB 88_2 SAIsim_FineEffectGrid.sub
+VARS 88_2 sur="0.88" rep="0.02"
+JOB 88_3 SAIsim_FineEffectGrid.sub
+VARS 88_3 sur="0.88" rep="0.03"
+JOB 88_4 SAIsim_FineEffectGrid.sub
+VARS 88_4 sur="0.88" rep="0.04"
+JOB 88_5 SAIsim_FineEffectGrid.sub
+VARS 88_5 sur="0.88" rep="0.05"
+JOB 88_6 SAIsim_FineEffectGrid.sub
+VARS 88_6 sur="0.88" rep="0.06"
+JOB 88_7 SAIsim_FineEffectGrid.sub
+VARS 88_7 sur="0.88" rep="0.07"
+JOB 88_8 SAIsim_FineEffectGrid.sub
+VARS 88_8 sur="0.88" rep="0.08"
+JOB 88_9 SAIsim_FineEffectGrid.sub
+VARS 88_9 sur="0.88" rep="0.09"
+JOB 88_10 SAIsim_FineEffectGrid.sub
+VARS 88_10 sur="0.88" rep="0.1"
+JOB 88_11 SAIsim_FineEffectGrid.sub
+VARS 88_11 sur="0.88" rep="0.11"
+JOB 88_12 SAIsim_FineEffectGrid.sub
+VARS 88_12 sur="0.88" rep="0.12"
+JOB 88_13 SAIsim_FineEffectGrid.sub
+VARS 88_13 sur="0.88" rep="0.13"
+JOB 88_14 SAIsim_FineEffectGrid.sub
+VARS 88_14 sur="0.88" rep="0.14"
+JOB 88_15 SAIsim_FineEffectGrid.sub
+VARS 88_15 sur="0.88" rep="0.15"
+JOB 88_16 SAIsim_FineEffectGrid.sub
+VARS 88_16 sur="0.88" rep="0.16"
+JOB 88_17 SAIsim_FineEffectGrid.sub
+VARS 88_17 sur="0.88" rep="0.17"
+JOB 88_18 SAIsim_FineEffectGrid.sub
+VARS 88_18 sur="0.88" rep="0.18"
+JOB 88_19 SAIsim_FineEffectGrid.sub
+VARS 88_19 sur="0.88" rep="0.19"
+JOB 88_20 SAIsim_FineEffectGrid.sub
+VARS 88_20 sur="0.88" rep="0.2"
+JOB 89_0 SAIsim_FineEffectGrid.sub
+VARS 89_0 sur="0.89" rep="0.0"
+JOB 89_1 SAIsim_FineEffectGrid.sub
+VARS 89_1 sur="0.89" rep="0.01"
+JOB 89_2 SAIsim_FineEffectGrid.sub
+VARS 89_2 sur="0.89" rep="0.02"
+JOB 89_3 SAIsim_FineEffectGrid.sub
+VARS 89_3 sur="0.89" rep="0.03"
+JOB 89_4 SAIsim_FineEffectGrid.sub
+VARS 89_4 sur="0.89" rep="0.04"
+JOB 89_5 SAIsim_FineEffectGrid.sub
+VARS 89_5 sur="0.89" rep="0.05"
+JOB 89_6 SAIsim_FineEffectGrid.sub
+VARS 89_6 sur="0.89" rep="0.06"
+JOB 89_7 SAIsim_FineEffectGrid.sub
+VARS 89_7 sur="0.89" rep="0.07"
+JOB 89_8 SAIsim_FineEffectGrid.sub
+VARS 89_8 sur="0.89" rep="0.08"
+JOB 89_9 SAIsim_FineEffectGrid.sub
+VARS 89_9 sur="0.89" rep="0.09"
+JOB 89_10 SAIsim_FineEffectGrid.sub
+VARS 89_10 sur="0.89" rep="0.1"
+JOB 89_11 SAIsim_FineEffectGrid.sub
+VARS 89_11 sur="0.89" rep="0.11"
+JOB 89_12 SAIsim_FineEffectGrid.sub
+VARS 89_12 sur="0.89" rep="0.12"
+JOB 89_13 SAIsim_FineEffectGrid.sub
+VARS 89_13 sur="0.89" rep="0.13"
+JOB 89_14 SAIsim_FineEffectGrid.sub
+VARS 89_14 sur="0.89" rep="0.14"
+JOB 89_15 SAIsim_FineEffectGrid.sub
+VARS 89_15 sur="0.89" rep="0.15"
+JOB 89_16 SAIsim_FineEffectGrid.sub
+VARS 89_16 sur="0.89" rep="0.16"
+JOB 89_17 SAIsim_FineEffectGrid.sub
+VARS 89_17 sur="0.89" rep="0.17"
+JOB 89_18 SAIsim_FineEffectGrid.sub
+VARS 89_18 sur="0.89" rep="0.18"
+JOB 89_19 SAIsim_FineEffectGrid.sub
+VARS 89_19 sur="0.89" rep="0.19"
+JOB 89_20 SAIsim_FineEffectGrid.sub
+VARS 89_20 sur="0.89" rep="0.2"
+JOB 90_0 SAIsim_FineEffectGrid.sub
+VARS 90_0 sur="0.9" rep="0.0"
+JOB 90_1 SAIsim_FineEffectGrid.sub
+VARS 90_1 sur="0.9" rep="0.01"
+JOB 90_2 SAIsim_FineEffectGrid.sub
+VARS 90_2 sur="0.9" rep="0.02"
+JOB 90_3 SAIsim_FineEffectGrid.sub
+VARS 90_3 sur="0.9" rep="0.03"
+JOB 90_4 SAIsim_FineEffectGrid.sub
+VARS 90_4 sur="0.9" rep="0.04"
+JOB 90_5 SAIsim_FineEffectGrid.sub
+VARS 90_5 sur="0.9" rep="0.05"
+JOB 90_6 SAIsim_FineEffectGrid.sub
+VARS 90_6 sur="0.9" rep="0.06"
+JOB 90_7 SAIsim_FineEffectGrid.sub
+VARS 90_7 sur="0.9" rep="0.07"
+JOB 90_8 SAIsim_FineEffectGrid.sub
+VARS 90_8 sur="0.9" rep="0.08"
+JOB 90_9 SAIsim_FineEffectGrid.sub
+VARS 90_9 sur="0.9" rep="0.09"
+JOB 90_10 SAIsim_FineEffectGrid.sub
+VARS 90_10 sur="0.9" rep="0.1"
+JOB 90_11 SAIsim_FineEffectGrid.sub
+VARS 90_11 sur="0.9" rep="0.11"
+JOB 90_12 SAIsim_FineEffectGrid.sub
+VARS 90_12 sur="0.9" rep="0.12"
+JOB 90_13 SAIsim_FineEffectGrid.sub
+VARS 90_13 sur="0.9" rep="0.13"
+JOB 90_14 SAIsim_FineEffectGrid.sub
+VARS 90_14 sur="0.9" rep="0.14"
+JOB 90_15 SAIsim_FineEffectGrid.sub
+VARS 90_15 sur="0.9" rep="0.15"
+JOB 90_16 SAIsim_FineEffectGrid.sub
+VARS 90_16 sur="0.9" rep="0.16"
+JOB 90_17 SAIsim_FineEffectGrid.sub
+VARS 90_17 sur="0.9" rep="0.17"
+JOB 90_18 SAIsim_FineEffectGrid.sub
+VARS 90_18 sur="0.9" rep="0.18"
+JOB 90_19 SAIsim_FineEffectGrid.sub
+VARS 90_19 sur="0.9" rep="0.19"
+JOB 90_20 SAIsim_FineEffectGrid.sub
+VARS 90_20 sur="0.9" rep="0.2"
+JOB 91_0 SAIsim_FineEffectGrid.sub
+VARS 91_0 sur="0.91" rep="0.0"
+JOB 91_1 SAIsim_FineEffectGrid.sub
+VARS 91_1 sur="0.91" rep="0.01"
+JOB 91_2 SAIsim_FineEffectGrid.sub
+VARS 91_2 sur="0.91" rep="0.02"
+JOB 91_3 SAIsim_FineEffectGrid.sub
+VARS 91_3 sur="0.91" rep="0.03"
+JOB 91_4 SAIsim_FineEffectGrid.sub
+VARS 91_4 sur="0.91" rep="0.04"
+JOB 91_5 SAIsim_FineEffectGrid.sub
+VARS 91_5 sur="0.91" rep="0.05"
+JOB 91_6 SAIsim_FineEffectGrid.sub
+VARS 91_6 sur="0.91" rep="0.06"
+JOB 91_7 SAIsim_FineEffectGrid.sub
+VARS 91_7 sur="0.91" rep="0.07"
+JOB 91_8 SAIsim_FineEffectGrid.sub
+VARS 91_8 sur="0.91" rep="0.08"
+JOB 91_9 SAIsim_FineEffectGrid.sub
+VARS 91_9 sur="0.91" rep="0.09"
+JOB 91_10 SAIsim_FineEffectGrid.sub
+VARS 91_10 sur="0.91" rep="0.1"
+JOB 91_11 SAIsim_FineEffectGrid.sub
+VARS 91_11 sur="0.91" rep="0.11"
+JOB 91_12 SAIsim_FineEffectGrid.sub
+VARS 91_12 sur="0.91" rep="0.12"
+JOB 91_13 SAIsim_FineEffectGrid.sub
+VARS 91_13 sur="0.91" rep="0.13"
+JOB 91_14 SAIsim_FineEffectGrid.sub
+VARS 91_14 sur="0.91" rep="0.14"
+JOB 91_15 SAIsim_FineEffectGrid.sub
+VARS 91_15 sur="0.91" rep="0.15"
+JOB 91_16 SAIsim_FineEffectGrid.sub
+VARS 91_16 sur="0.91" rep="0.16"
+JOB 91_17 SAIsim_FineEffectGrid.sub
+VARS 91_17 sur="0.91" rep="0.17"
+JOB 91_18 SAIsim_FineEffectGrid.sub
+VARS 91_18 sur="0.91" rep="0.18"
+JOB 91_19 SAIsim_FineEffectGrid.sub
+VARS 91_19 sur="0.91" rep="0.19"
+JOB 91_20 SAIsim_FineEffectGrid.sub
+VARS 91_20 sur="0.91" rep="0.2"
+JOB 92_0 SAIsim_FineEffectGrid.sub
+VARS 92_0 sur="0.92" rep="0.0"
+JOB 92_1 SAIsim_FineEffectGrid.sub
+VARS 92_1 sur="0.92" rep="0.01"
+JOB 92_2 SAIsim_FineEffectGrid.sub
+VARS 92_2 sur="0.92" rep="0.02"
+JOB 92_3 SAIsim_FineEffectGrid.sub
+VARS 92_3 sur="0.92" rep="0.03"
+JOB 92_4 SAIsim_FineEffectGrid.sub
+VARS 92_4 sur="0.92" rep="0.04"
+JOB 92_5 SAIsim_FineEffectGrid.sub
+VARS 92_5 sur="0.92" rep="0.05"
+JOB 92_6 SAIsim_FineEffectGrid.sub
+VARS 92_6 sur="0.92" rep="0.06"
+JOB 92_7 SAIsim_FineEffectGrid.sub
+VARS 92_7 sur="0.92" rep="0.07"
+JOB 92_8 SAIsim_FineEffectGrid.sub
+VARS 92_8 sur="0.92" rep="0.08"
+JOB 92_9 SAIsim_FineEffectGrid.sub
+VARS 92_9 sur="0.92" rep="0.09"
+JOB 92_10 SAIsim_FineEffectGrid.sub
+VARS 92_10 sur="0.92" rep="0.1"
+JOB 92_11 SAIsim_FineEffectGrid.sub
+VARS 92_11 sur="0.92" rep="0.11"
+JOB 92_12 SAIsim_FineEffectGrid.sub
+VARS 92_12 sur="0.92" rep="0.12"
+JOB 92_13 SAIsim_FineEffectGrid.sub
+VARS 92_13 sur="0.92" rep="0.13"
+JOB 92_14 SAIsim_FineEffectGrid.sub
+VARS 92_14 sur="0.92" rep="0.14"
+JOB 92_15 SAIsim_FineEffectGrid.sub
+VARS 92_15 sur="0.92" rep="0.15"
+JOB 92_16 SAIsim_FineEffectGrid.sub
+VARS 92_16 sur="0.92" rep="0.16"
+JOB 92_17 SAIsim_FineEffectGrid.sub
+VARS 92_17 sur="0.92" rep="0.17"
+JOB 92_18 SAIsim_FineEffectGrid.sub
+VARS 92_18 sur="0.92" rep="0.18"
+JOB 92_19 SAIsim_FineEffectGrid.sub
+VARS 92_19 sur="0.92" rep="0.19"
+JOB 92_20 SAIsim_FineEffectGrid.sub
+VARS 92_20 sur="0.92" rep="0.2"
+JOB 93_0 SAIsim_FineEffectGrid.sub
+VARS 93_0 sur="0.93" rep="0.0"
+JOB 93_1 SAIsim_FineEffectGrid.sub
+VARS 93_1 sur="0.93" rep="0.01"
+JOB 93_2 SAIsim_FineEffectGrid.sub
+VARS 93_2 sur="0.93" rep="0.02"
+JOB 93_3 SAIsim_FineEffectGrid.sub
+VARS 93_3 sur="0.93" rep="0.03"
+JOB 93_4 SAIsim_FineEffectGrid.sub
+VARS 93_4 sur="0.93" rep="0.04"
+JOB 93_5 SAIsim_FineEffectGrid.sub
+VARS 93_5 sur="0.93" rep="0.05"
+JOB 93_6 SAIsim_FineEffectGrid.sub
+VARS 93_6 sur="0.93" rep="0.06"
+JOB 93_7 SAIsim_FineEffectGrid.sub
+VARS 93_7 sur="0.93" rep="0.07"
+JOB 93_8 SAIsim_FineEffectGrid.sub
+VARS 93_8 sur="0.93" rep="0.08"
+JOB 93_9 SAIsim_FineEffectGrid.sub
+VARS 93_9 sur="0.93" rep="0.09"
+JOB 93_10 SAIsim_FineEffectGrid.sub
+VARS 93_10 sur="0.93" rep="0.1"
+JOB 93_11 SAIsim_FineEffectGrid.sub
+VARS 93_11 sur="0.93" rep="0.11"
+JOB 93_12 SAIsim_FineEffectGrid.sub
+VARS 93_12 sur="0.93" rep="0.12"
+JOB 93_13 SAIsim_FineEffectGrid.sub
+VARS 93_13 sur="0.93" rep="0.13"
+JOB 93_14 SAIsim_FineEffectGrid.sub
+VARS 93_14 sur="0.93" rep="0.14"
+JOB 93_15 SAIsim_FineEffectGrid.sub
+VARS 93_15 sur="0.93" rep="0.15"
+JOB 93_16 SAIsim_FineEffectGrid.sub
+VARS 93_16 sur="0.93" rep="0.16"
+JOB 93_17 SAIsim_FineEffectGrid.sub
+VARS 93_17 sur="0.93" rep="0.17"
+JOB 93_18 SAIsim_FineEffectGrid.sub
+VARS 93_18 sur="0.93" rep="0.18"
+JOB 93_19 SAIsim_FineEffectGrid.sub
+VARS 93_19 sur="0.93" rep="0.19"
+JOB 93_20 SAIsim_FineEffectGrid.sub
+VARS 93_20 sur="0.93" rep="0.2"
+JOB 94_0 SAIsim_FineEffectGrid.sub
+VARS 94_0 sur="0.94" rep="0.0"
+JOB 94_1 SAIsim_FineEffectGrid.sub
+VARS 94_1 sur="0.94" rep="0.01"
+JOB 94_2 SAIsim_FineEffectGrid.sub
+VARS 94_2 sur="0.94" rep="0.02"
+JOB 94_3 SAIsim_FineEffectGrid.sub
+VARS 94_3 sur="0.94" rep="0.03"
+JOB 94_4 SAIsim_FineEffectGrid.sub
+VARS 94_4 sur="0.94" rep="0.04"
+JOB 94_5 SAIsim_FineEffectGrid.sub
+VARS 94_5 sur="0.94" rep="0.05"
+JOB 94_6 SAIsim_FineEffectGrid.sub
+VARS 94_6 sur="0.94" rep="0.06"
+JOB 94_7 SAIsim_FineEffectGrid.sub
+VARS 94_7 sur="0.94" rep="0.07"
+JOB 94_8 SAIsim_FineEffectGrid.sub
+VARS 94_8 sur="0.94" rep="0.08"
+JOB 94_9 SAIsim_FineEffectGrid.sub
+VARS 94_9 sur="0.94" rep="0.09"
+JOB 94_10 SAIsim_FineEffectGrid.sub
+VARS 94_10 sur="0.94" rep="0.1"
+JOB 94_11 SAIsim_FineEffectGrid.sub
+VARS 94_11 sur="0.94" rep="0.11"
+JOB 94_12 SAIsim_FineEffectGrid.sub
+VARS 94_12 sur="0.94" rep="0.12"
+JOB 94_13 SAIsim_FineEffectGrid.sub
+VARS 94_13 sur="0.94" rep="0.13"
+JOB 94_14 SAIsim_FineEffectGrid.sub
+VARS 94_14 sur="0.94" rep="0.14"
+JOB 94_15 SAIsim_FineEffectGrid.sub
+VARS 94_15 sur="0.94" rep="0.15"
+JOB 94_16 SAIsim_FineEffectGrid.sub
+VARS 94_16 sur="0.94" rep="0.16"
+JOB 94_17 SAIsim_FineEffectGrid.sub
+VARS 94_17 sur="0.94" rep="0.17"
+JOB 94_18 SAIsim_FineEffectGrid.sub
+VARS 94_18 sur="0.94" rep="0.18"
+JOB 94_19 SAIsim_FineEffectGrid.sub
+VARS 94_19 sur="0.94" rep="0.19"
+JOB 94_20 SAIsim_FineEffectGrid.sub
+VARS 94_20 sur="0.94" rep="0.2"
+JOB 95_0 SAIsim_FineEffectGrid.sub
+VARS 95_0 sur="0.95" rep="0.0"
+JOB 95_1 SAIsim_FineEffectGrid.sub
+VARS 95_1 sur="0.95" rep="0.01"
+JOB 95_2 SAIsim_FineEffectGrid.sub
+VARS 95_2 sur="0.95" rep="0.02"
+JOB 95_3 SAIsim_FineEffectGrid.sub
+VARS 95_3 sur="0.95" rep="0.03"
+JOB 95_4 SAIsim_FineEffectGrid.sub
+VARS 95_4 sur="0.95" rep="0.04"
+JOB 95_5 SAIsim_FineEffectGrid.sub
+VARS 95_5 sur="0.95" rep="0.05"
+JOB 95_6 SAIsim_FineEffectGrid.sub
+VARS 95_6 sur="0.95" rep="0.06"
+JOB 95_7 SAIsim_FineEffectGrid.sub
+VARS 95_7 sur="0.95" rep="0.07"
+JOB 95_8 SAIsim_FineEffectGrid.sub
+VARS 95_8 sur="0.95" rep="0.08"
+JOB 95_9 SAIsim_FineEffectGrid.sub
+VARS 95_9 sur="0.95" rep="0.09"
+JOB 95_10 SAIsim_FineEffectGrid.sub
+VARS 95_10 sur="0.95" rep="0.1"
+JOB 95_11 SAIsim_FineEffectGrid.sub
+VARS 95_11 sur="0.95" rep="0.11"
+JOB 95_12 SAIsim_FineEffectGrid.sub
+VARS 95_12 sur="0.95" rep="0.12"
+JOB 95_13 SAIsim_FineEffectGrid.sub
+VARS 95_13 sur="0.95" rep="0.13"
+JOB 95_14 SAIsim_FineEffectGrid.sub
+VARS 95_14 sur="0.95" rep="0.14"
+JOB 95_15 SAIsim_FineEffectGrid.sub
+VARS 95_15 sur="0.95" rep="0.15"
+JOB 95_16 SAIsim_FineEffectGrid.sub
+VARS 95_16 sur="0.95" rep="0.16"
+JOB 95_17 SAIsim_FineEffectGrid.sub
+VARS 95_17 sur="0.95" rep="0.17"
+JOB 95_18 SAIsim_FineEffectGrid.sub
+VARS 95_18 sur="0.95" rep="0.18"
+JOB 95_19 SAIsim_FineEffectGrid.sub
+VARS 95_19 sur="0.95" rep="0.19"
+JOB 95_20 SAIsim_FineEffectGrid.sub
+VARS 95_20 sur="0.95" rep="0.2"
+JOB 96_0 SAIsim_FineEffectGrid.sub
+VARS 96_0 sur="0.96" rep="0.0"
+JOB 96_1 SAIsim_FineEffectGrid.sub
+VARS 96_1 sur="0.96" rep="0.01"
+JOB 96_2 SAIsim_FineEffectGrid.sub
+VARS 96_2 sur="0.96" rep="0.02"
+JOB 96_3 SAIsim_FineEffectGrid.sub
+VARS 96_3 sur="0.96" rep="0.03"
+JOB 96_4 SAIsim_FineEffectGrid.sub
+VARS 96_4 sur="0.96" rep="0.04"
+JOB 96_5 SAIsim_FineEffectGrid.sub
+VARS 96_5 sur="0.96" rep="0.05"
+JOB 96_6 SAIsim_FineEffectGrid.sub
+VARS 96_6 sur="0.96" rep="0.06"
+JOB 96_7 SAIsim_FineEffectGrid.sub
+VARS 96_7 sur="0.96" rep="0.07"
+JOB 96_8 SAIsim_FineEffectGrid.sub
+VARS 96_8 sur="0.96" rep="0.08"
+JOB 96_9 SAIsim_FineEffectGrid.sub
+VARS 96_9 sur="0.96" rep="0.09"
+JOB 96_10 SAIsim_FineEffectGrid.sub
+VARS 96_10 sur="0.96" rep="0.1"
+JOB 96_11 SAIsim_FineEffectGrid.sub
+VARS 96_11 sur="0.96" rep="0.11"
+JOB 96_12 SAIsim_FineEffectGrid.sub
+VARS 96_12 sur="0.96" rep="0.12"
+JOB 96_13 SAIsim_FineEffectGrid.sub
+VARS 96_13 sur="0.96" rep="0.13"
+JOB 96_14 SAIsim_FineEffectGrid.sub
+VARS 96_14 sur="0.96" rep="0.14"
+JOB 96_15 SAIsim_FineEffectGrid.sub
+VARS 96_15 sur="0.96" rep="0.15"
+JOB 96_16 SAIsim_FineEffectGrid.sub
+VARS 96_16 sur="0.96" rep="0.16"
+JOB 96_17 SAIsim_FineEffectGrid.sub
+VARS 96_17 sur="0.96" rep="0.17"
+JOB 96_18 SAIsim_FineEffectGrid.sub
+VARS 96_18 sur="0.96" rep="0.18"
+JOB 96_19 SAIsim_FineEffectGrid.sub
+VARS 96_19 sur="0.96" rep="0.19"
+JOB 96_20 SAIsim_FineEffectGrid.sub
+VARS 96_20 sur="0.96" rep="0.2"
+JOB 97_0 SAIsim_FineEffectGrid.sub
+VARS 97_0 sur="0.97" rep="0.0"
+JOB 97_1 SAIsim_FineEffectGrid.sub
+VARS 97_1 sur="0.97" rep="0.01"
+JOB 97_2 SAIsim_FineEffectGrid.sub
+VARS 97_2 sur="0.97" rep="0.02"
+JOB 97_3 SAIsim_FineEffectGrid.sub
+VARS 97_3 sur="0.97" rep="0.03"
+JOB 97_4 SAIsim_FineEffectGrid.sub
+VARS 97_4 sur="0.97" rep="0.04"
+JOB 97_5 SAIsim_FineEffectGrid.sub
+VARS 97_5 sur="0.97" rep="0.05"
+JOB 97_6 SAIsim_FineEffectGrid.sub
+VARS 97_6 sur="0.97" rep="0.06"
+JOB 97_7 SAIsim_FineEffectGrid.sub
+VARS 97_7 sur="0.97" rep="0.07"
+JOB 97_8 SAIsim_FineEffectGrid.sub
+VARS 97_8 sur="0.97" rep="0.08"
+JOB 97_9 SAIsim_FineEffectGrid.sub
+VARS 97_9 sur="0.97" rep="0.09"
+JOB 97_10 SAIsim_FineEffectGrid.sub
+VARS 97_10 sur="0.97" rep="0.1"
+JOB 97_11 SAIsim_FineEffectGrid.sub
+VARS 97_11 sur="0.97" rep="0.11"
+JOB 97_12 SAIsim_FineEffectGrid.sub
+VARS 97_12 sur="0.97" rep="0.12"
+JOB 97_13 SAIsim_FineEffectGrid.sub
+VARS 97_13 sur="0.97" rep="0.13"
+JOB 97_14 SAIsim_FineEffectGrid.sub
+VARS 97_14 sur="0.97" rep="0.14"
+JOB 97_15 SAIsim_FineEffectGrid.sub
+VARS 97_15 sur="0.97" rep="0.15"
+JOB 97_16 SAIsim_FineEffectGrid.sub
+VARS 97_16 sur="0.97" rep="0.16"
+JOB 97_17 SAIsim_FineEffectGrid.sub
+VARS 97_17 sur="0.97" rep="0.17"
+JOB 97_18 SAIsim_FineEffectGrid.sub
+VARS 97_18 sur="0.97" rep="0.18"
+JOB 97_19 SAIsim_FineEffectGrid.sub
+VARS 97_19 sur="0.97" rep="0.19"
+JOB 97_20 SAIsim_FineEffectGrid.sub
+VARS 97_20 sur="0.97" rep="0.2"
+JOB 98_0 SAIsim_FineEffectGrid.sub
+VARS 98_0 sur="0.98" rep="0.0"
+JOB 98_1 SAIsim_FineEffectGrid.sub
+VARS 98_1 sur="0.98" rep="0.01"
+JOB 98_2 SAIsim_FineEffectGrid.sub
+VARS 98_2 sur="0.98" rep="0.02"
+JOB 98_3 SAIsim_FineEffectGrid.sub
+VARS 98_3 sur="0.98" rep="0.03"
+JOB 98_4 SAIsim_FineEffectGrid.sub
+VARS 98_4 sur="0.98" rep="0.04"
+JOB 98_5 SAIsim_FineEffectGrid.sub
+VARS 98_5 sur="0.98" rep="0.05"
+JOB 98_6 SAIsim_FineEffectGrid.sub
+VARS 98_6 sur="0.98" rep="0.06"
+JOB 98_7 SAIsim_FineEffectGrid.sub
+VARS 98_7 sur="0.98" rep="0.07"
+JOB 98_8 SAIsim_FineEffectGrid.sub
+VARS 98_8 sur="0.98" rep="0.08"
+JOB 98_9 SAIsim_FineEffectGrid.sub
+VARS 98_9 sur="0.98" rep="0.09"
+JOB 98_10 SAIsim_FineEffectGrid.sub
+VARS 98_10 sur="0.98" rep="0.1"
+JOB 98_11 SAIsim_FineEffectGrid.sub
+VARS 98_11 sur="0.98" rep="0.11"
+JOB 98_12 SAIsim_FineEffectGrid.sub
+VARS 98_12 sur="0.98" rep="0.12"
+JOB 98_13 SAIsim_FineEffectGrid.sub
+VARS 98_13 sur="0.98" rep="0.13"
+JOB 98_14 SAIsim_FineEffectGrid.sub
+VARS 98_14 sur="0.98" rep="0.14"
+JOB 98_15 SAIsim_FineEffectGrid.sub
+VARS 98_15 sur="0.98" rep="0.15"
+JOB 98_16 SAIsim_FineEffectGrid.sub
+VARS 98_16 sur="0.98" rep="0.16"
+JOB 98_17 SAIsim_FineEffectGrid.sub
+VARS 98_17 sur="0.98" rep="0.17"
+JOB 98_18 SAIsim_FineEffectGrid.sub
+VARS 98_18 sur="0.98" rep="0.18"
+JOB 98_19 SAIsim_FineEffectGrid.sub
+VARS 98_19 sur="0.98" rep="0.19"
+JOB 98_20 SAIsim_FineEffectGrid.sub
+VARS 98_20 sur="0.98" rep="0.2"
+JOB 99_0 SAIsim_FineEffectGrid.sub
+VARS 99_0 sur="0.99" rep="0.0"
+JOB 99_1 SAIsim_FineEffectGrid.sub
+VARS 99_1 sur="0.99" rep="0.01"
+JOB 99_2 SAIsim_FineEffectGrid.sub
+VARS 99_2 sur="0.99" rep="0.02"
+JOB 99_3 SAIsim_FineEffectGrid.sub
+VARS 99_3 sur="0.99" rep="0.03"
+JOB 99_4 SAIsim_FineEffectGrid.sub
+VARS 99_4 sur="0.99" rep="0.04"
+JOB 99_5 SAIsim_FineEffectGrid.sub
+VARS 99_5 sur="0.99" rep="0.05"
+JOB 99_6 SAIsim_FineEffectGrid.sub
+VARS 99_6 sur="0.99" rep="0.06"
+JOB 99_7 SAIsim_FineEffectGrid.sub
+VARS 99_7 sur="0.99" rep="0.07"
+JOB 99_8 SAIsim_FineEffectGrid.sub
+VARS 99_8 sur="0.99" rep="0.08"
+JOB 99_9 SAIsim_FineEffectGrid.sub
+VARS 99_9 sur="0.99" rep="0.09"
+JOB 99_10 SAIsim_FineEffectGrid.sub
+VARS 99_10 sur="0.99" rep="0.1"
+JOB 99_11 SAIsim_FineEffectGrid.sub
+VARS 99_11 sur="0.99" rep="0.11"
+JOB 99_12 SAIsim_FineEffectGrid.sub
+VARS 99_12 sur="0.99" rep="0.12"
+JOB 99_13 SAIsim_FineEffectGrid.sub
+VARS 99_13 sur="0.99" rep="0.13"
+JOB 99_14 SAIsim_FineEffectGrid.sub
+VARS 99_14 sur="0.99" rep="0.14"
+JOB 99_15 SAIsim_FineEffectGrid.sub
+VARS 99_15 sur="0.99" rep="0.15"
+JOB 99_16 SAIsim_FineEffectGrid.sub
+VARS 99_16 sur="0.99" rep="0.16"
+JOB 99_17 SAIsim_FineEffectGrid.sub
+VARS 99_17 sur="0.99" rep="0.17"
+JOB 99_18 SAIsim_FineEffectGrid.sub
+VARS 99_18 sur="0.99" rep="0.18"
+JOB 99_19 SAIsim_FineEffectGrid.sub
+VARS 99_19 sur="0.99" rep="0.19"
+JOB 99_20 SAIsim_FineEffectGrid.sub
+VARS 99_20 sur="0.99" rep="0.2"
+JOB 100_0 SAIsim_FineEffectGrid.sub
+VARS 100_0 sur="1.0" rep="0.0"
+JOB 100_1 SAIsim_FineEffectGrid.sub
+VARS 100_1 sur="1.0" rep="0.01"
+JOB 100_2 SAIsim_FineEffectGrid.sub
+VARS 100_2 sur="1.0" rep="0.02"
+JOB 100_3 SAIsim_FineEffectGrid.sub
+VARS 100_3 sur="1.0" rep="0.03"
+JOB 100_4 SAIsim_FineEffectGrid.sub
+VARS 100_4 sur="1.0" rep="0.04"
+JOB 100_5 SAIsim_FineEffectGrid.sub
+VARS 100_5 sur="1.0" rep="0.05"
+JOB 100_6 SAIsim_FineEffectGrid.sub
+VARS 100_6 sur="1.0" rep="0.06"
+JOB 100_7 SAIsim_FineEffectGrid.sub
+VARS 100_7 sur="1.0" rep="0.07"
+JOB 100_8 SAIsim_FineEffectGrid.sub
+VARS 100_8 sur="1.0" rep="0.08"
+JOB 100_9 SAIsim_FineEffectGrid.sub
+VARS 100_9 sur="1.0" rep="0.09"
+JOB 100_10 SAIsim_FineEffectGrid.sub
+VARS 100_10 sur="1.0" rep="0.1"
+JOB 100_11 SAIsim_FineEffectGrid.sub
+VARS 100_11 sur="1.0" rep="0.11"
+JOB 100_12 SAIsim_FineEffectGrid.sub
+VARS 100_12 sur="1.0" rep="0.12"
+JOB 100_13 SAIsim_FineEffectGrid.sub
+VARS 100_13 sur="1.0" rep="0.13"
+JOB 100_14 SAIsim_FineEffectGrid.sub
+VARS 100_14 sur="1.0" rep="0.14"
+JOB 100_15 SAIsim_FineEffectGrid.sub
+VARS 100_15 sur="1.0" rep="0.15"
+JOB 100_16 SAIsim_FineEffectGrid.sub
+VARS 100_16 sur="1.0" rep="0.16"
+JOB 100_17 SAIsim_FineEffectGrid.sub
+VARS 100_17 sur="1.0" rep="0.17"
+JOB 100_18 SAIsim_FineEffectGrid.sub
+VARS 100_18 sur="1.0" rep="0.18"
+JOB 100_19 SAIsim_FineEffectGrid.sub
+VARS 100_19 sur="1.0" rep="0.19"
+JOB 100_20 SAIsim_FineEffectGrid.sub
+VARS 100_20 sur="1.0" rep="0.2"
+CONFIG effectGridDAG.config

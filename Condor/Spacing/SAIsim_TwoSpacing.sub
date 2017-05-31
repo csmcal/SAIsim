@@ -1,0 +1,45 @@
+# SAIsim_TwoSpacing.sub
+# Submit file for running two polymorphic mutations of differing size using SAIsim
+# Defaults to 10 batches of 10 simulations with passed (sur1,rep1,sur2,rep2) mutation
+# Use -append "arguments=<argument list>" for use without DAG script
+
+
+#
+# Specify the HTCondor Universe (default vanilla), log file, error file.  
+#  Wherever you see $(Cluster), HTCondor will insert the queue number
+#  assigned to this set of jobs at the time of submission.
+
+universe = vanilla
+log = twoSpacing_$(Cluster).log
+error = twoSpacing_$(Cluster)_$(Process).err
+initialdir = SpaMutShort
+
+#
+# Specify executable (binary or script), arguments, 
+# files for HTCondor to store standard output (or "screen output").
+#  $(Process) will be a integer number for each job, "0" .. number of jobs
+
+executable = SAIsim_TwoSpacing.sh
+arguments = "$(sur1) $(rep1) $(sur2) $(rep2) $(spa) $(Process)"
+output = twoSpacing_$(Cluster)_$(Process).out
+requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
+
+#
+# Transfer files to and from the computer where each job runs, 'executable' is implicit
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = SAIsim_TwoSpacing.py, SAIsim.py, http://proxy.chtc.wisc.edu/SQUID/cmcallester/python.tar.gz
+
+#
+# Requesting from HTCondor compute resources/job
+
+request_cpus = 1
+request_memory = 2GB
+request_disk = 100MB
+
+#
+# Tell HTCondor to run 1 instances of our job:
+
+queue 50
+

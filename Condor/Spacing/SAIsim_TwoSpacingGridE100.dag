@@ -1,0 +1,39 @@
+JOB 0 SAIsim_TwoSpacing.sub
+VARS 0 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0"
+JOB 5 SAIsim_TwoSpacing.sub
+VARS 5 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.05"
+JOB 10 SAIsim_TwoSpacing.sub
+VARS 10 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.1"
+JOB 15 SAIsim_TwoSpacing.sub
+VARS 15 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.15"
+JOB 20 SAIsim_TwoSpacing.sub
+VARS 20 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.2"
+JOB 25 SAIsim_TwoSpacing.sub
+VARS 25 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.25"
+JOB 30 SAIsim_TwoSpacing.sub
+VARS 30 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.3"
+JOB 35 SAIsim_TwoSpacing.sub
+VARS 35 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.35"
+JOB 40 SAIsim_TwoSpacing.sub
+VARS 40 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.4"
+JOB 45 SAIsim_TwoSpacing.sub
+VARS 45 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.45"
+JOB 50 SAIsim_TwoSpacing.sub
+VARS 50 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.5"
+JOB 55 SAIsim_TwoSpacing.sub
+VARS 55 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.55"
+JOB 60 SAIsim_TwoSpacing.sub
+VARS 60 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.6"
+JOB 65 SAIsim_TwoSpacing.sub
+VARS 65 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.65"
+JOB 70 SAIsim_TwoSpacing.sub
+VARS 70 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.7"
+JOB 75 SAIsim_TwoSpacing.sub
+VARS 75 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.75"
+JOB 80 SAIsim_TwoSpacing.sub
+VARS 80 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.8"
+JOB 85 SAIsim_TwoSpacing.sub
+VARS 85 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.85"
+JOB 90 SAIsim_TwoSpacing.sub
+VARS 90 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.9"
+CONFIG effectGridDAG.config

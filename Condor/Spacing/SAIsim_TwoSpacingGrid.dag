@@ -1,0 +1,31 @@
+JOB 0 SAIsim_TwoSpacing.sub
+VARS 0 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0"
+JOB 24 SAIsim_TwoSpacing.sub
+VARS 24 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.025"
+JOB 49 SAIsim_TwoSpacing.sub
+VARS 49 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.05"
+JOB 75 SAIsim_TwoSpacing.sub
+VARS 75 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.075"
+JOB 99 SAIsim_TwoSpacing.sub
+VARS 99 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.1"
+JOB 124 SAIsim_TwoSpacing.sub
+VARS 124 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.125"
+JOB 150 SAIsim_TwoSpacing.sub
+VARS 150 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.15"
+JOB 175 SAIsim_TwoSpacing.sub
+VARS 175 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.175"
+JOB 199 SAIsim_TwoSpacing.sub
+VARS 199 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.2"
+JOB 224 SAIsim_TwoSpacing.sub
+VARS 224 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.225"
+JOB 249 SAIsim_TwoSpacing.sub
+VARS 249 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.25"
+JOB 274 SAIsim_TwoSpacing.sub
+VARS 274 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.275"
+JOB 300 SAIsim_TwoSpacing.sub
+VARS 300 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.3"
+JOB 324 SAIsim_TwoSpacing.sub
+VARS 324 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.325"
+JOB 350 SAIsim_TwoSpacing.sub
+VARS 350 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.35"
+CONFIG effectGridDAG.config

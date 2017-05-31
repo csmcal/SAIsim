@@ -1,2 +1,6 @@
 *.pyc
 testOutput/
+Reference/
+Papers/
+__pycache__/
+Results/
