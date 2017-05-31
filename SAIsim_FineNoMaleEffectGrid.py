@@ -37,7 +37,8 @@ def genPopSingMutEffects(mutPos,surEffect,repEffect,size):
 	(genomes,sexes,record) = sim.genGenomesSexes(size,[mutation],[])
 	pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
 		encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False,\
-		willConvert = False, willRecombine = False, genomes=genomes, sexes=sexes, record=record)
+		willConvert = False, willRecombine = False, noMaleCost = True,\
+		genomes=genomes, sexes=sexes, record=record)
 	return pop
 
 # Run the Simulation
@@ -47,8 +48,8 @@ pop.recordNthInNStopWhenFixed(recordEveryN,numGens)
 
 # Record Relevant Output
 # ASSUMES MUTATION ID = 0, effect values only to two decimal places, =< three digit replicate ID
-surEffStr = repr(surEffect)+'0'*(4-len(repr(surEffect)))
-repEffStr = repr(repEffect)+'0'*(4-len(repr(repEffect)))
+surEffStr = repr(surEffect)+'0'*(5-len(repr(surEffect)))
+repEffStr = repr(repEffect)+'0'*(5-len(repr(repEffect)))
 repNumStr = '0'*(3-len(str(replicateNum)))+str(replicateNum)
 mutFileName = 's'+surEffStr+'r'+repEffStr+'n'+repNumStr+'.txt'
 pop.writeMutation(mutFileName,0)

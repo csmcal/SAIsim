@@ -1,19 +1,26 @@
 
-# Script created for running with Condor, to take in effects and model the change in frequency
-#   in an otherwise undifferentiable background
+# Script created for running with Condor, to take in effect magnitudes and model the change in frequency
+#   of multiple variably linked alleles in an otherwise undifferentiable background
 
 import sys
 import SAIsim as sim
 
 surEffect = float(sys.argv[1])
 repEffect = float(sys.argv[2])
-replicateNum = int(sys.argv[3])
-mutPos = 0.5
+numMut = int(sys.argv[3])
+spacing = float(sys.argv[4])
+replicateNum = int(sys.argv[5])
 size = 1000
 numGens = 20000
-# size = 1000
 # numGens = 100
 recordEveryN = 10
+
+# For generating a set of equivalent 
+def genMutationList(surEffect,repEffect,numMut,spacing):
+	indivSurEffect = np.power(surEffect,(1/float(numMut)))
+	indivRepEffect = repEffect/float(numMut)
+	for i in range(numMut):
+
 
 
 # For generating a SAIsim population object from a single mutation specification
@@ -24,11 +31,11 @@ def genPopSingMutEffects(mutPos,surEffect,repEffect,size):
 	#   size # of mutations as the diploid population has 2N alleles
 	mutation = [mutPos,surEffect,repEffect,0,size]
 	# Parameters as described in general de novo simulator script, most parameters will not be used
-	mutRate = .1
-	mutRateInv = .1
+	mutRate = 10^-3
+	mutRateInv = 10^-3
 	mutEffectDiffSD = .2
 	minInvLen = .1
-	conversionRate = 10.0**-2.0
+	conversionRate = 10.0**-4.0
 	recombRate = 1 
 	encounterNum = 100 #USED
 	choiceNoiseSD = .5 #USED

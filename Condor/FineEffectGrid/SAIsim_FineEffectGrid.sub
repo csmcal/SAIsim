@@ -1,6 +1,6 @@
 # SAIsim_EffectGrid.sub
 # Submit file for running mutation effect heatmap data generation using SAIsim
-# Defaults to 100 batches of 10 simulations with passed (sur,rep) mutation
+# Defaults to 1 batch of 10 simulations with passed (sur,rep) mutation
 # Use -append "arguments=<argument list>" for use without DAG script
 
 
@@ -20,7 +20,7 @@ error = fineEffectGrid_$(Cluster)_$(Process).err
 
 executable = SAIsim_EffectGridBatch.sh
 arguments = "$(sur) $(rep) $(Process)"
-output = effectGrid_$(Cluster)_$(Process).out
+output = fineEffectGrid_$(Cluster)_$(Process).out
 requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
 
 #
@@ -38,7 +38,7 @@ request_memory = 2GB
 request_disk = 100MB
 
 #
-# Tell HTCondor to run 100 instances of our job:
+# Tell HTCondor to run 1 instances of our job:
 
-queue 100
+queue 1
 

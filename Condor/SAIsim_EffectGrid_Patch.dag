@@ -1,0 +1,7 @@
+JOB 40_85 SAIsim_EffectGrid.sub
+VARS 40_85 sur="0.4" rep="0.85"
+JOB 40_90 SAIsim_EffectGrid.sub
+VARS 40_90 sur="0.4" rep="0.9"
+JOB 40_95 SAIsim_EffectGrid.sub
+VARS 40_95 sur="0.4" rep="0.95"
+CONFIG effectGridDAG.config

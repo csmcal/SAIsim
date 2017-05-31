@@ -3,7 +3,7 @@
 
 import SAIsim as sim
 
-# Whoops, a possibility with randomly assigned sexes is population death
+# Ensures a minimum of 1 female, 1 male
 size = 100
 
 # given 10^-8 SAmut/base/gen and 
@@ -60,7 +60,7 @@ numGens = 500
 
 pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
 	encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False,\
-	genomes=genomes,sexes=sexes,record=record)
+	noMaleCost = True, genomes=genomes,sexes=sexes,record=record)
 # pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)

@@ -228,6 +228,11 @@ class individual(object):
 			else:
 				return invHom1[ind1][1]
 		else:
+			# print(invHom1[ind1][:2])
+			# print(invHom2[ind2][:2])
+			# print(invHom1[ind1] == invHom2[ind2])
+			if invHom1[ind1][:2] == invHom2[ind2][:2]:
+				return -1
 			end1 = invHom1[ind1][1]
 			end2 = invHom2[ind2][1]
 			# Currently, inversions are counted as [1,2), so crossovers are inside or not following such
@@ -250,6 +255,7 @@ class individual(object):
 		gamGenome = []
 		for parChrom in self.genome:
 			numRecomb = np.random.poisson(self.recombRate)
+			# print('Recombinations: '+str(numRecomb))
 			currHom1 = bool(np.random.randint(2))
 			# This first copy step is necessary independent of conversion/recombination activity, 
 			# to prevent changes to shared-referent chromosomes
@@ -263,7 +269,10 @@ class individual(object):
 				else:
 					gamGenome += [chrom[1]]
 			else:
+				# NEED to allow for the span of positions in the chromosome if given positions outside [0,1)
 				recombPositions = np.random.ranf(numRecomb)
+				recombPositions.sort()
+				# print('Positions: '+str(recombPositions))
 				
 				# Construct a recombinant gamete from the recombination positions
 				gamMutations = []
@@ -413,7 +422,7 @@ def __genSexes(size, sexes, randomSex):
 def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1, 
 		genomes = [], sexes = []):
 	# Handling input size checking
-	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes)
+	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes) # UPDATE FOR NUMCHROM FROM MUT/INV LIST
 
 	# Generate the remaining sexes list
 	sexes = __genSexes(size, sexes, randomSex)
@@ -578,7 +587,7 @@ class SAIpop(object):
 	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate,
 			recombRate, encounterNum, choiceNoiseSD, invRecBuffer,
 			isFly = True, randomSex = True, numChrom = 1, willMutate = True, willMutInv = True,
-			willConvert = True, willRecombine = True,
+			willConvert = True, willRecombine = True, noMaleCost = False,
 			genomes = [], sexes = [], record = [[],[],[],[],[],[],[],[]]):
 		# super(simSAIpopulation, self).__init__()
 		self.size = size
@@ -586,7 +595,7 @@ class SAIpop(object):
 		self.mutRateInv = mutRateInv
 		self.expectedNumMut = mutRate * size
 		self.expectedNumInvMut = mutRateInv * size
-		# Keep trck of next mutation (or inversion) ID
+		# Keep track of next mutation (or inversion) ID
 		# self.__mutIDcount = 0
 		# self.__invIDcount = 0
 		self.__mutIDcount = len(record[1])
@@ -608,8 +617,11 @@ class SAIpop(object):
 		self.willMutInv = willMutInv
 		self.willConvert = willConvert
 		self.willRecombine = willRecombine
+		# For modeling survival and reproductive effects differently
+		self.noMaleCost = noMaleCost
 		# Record keeping variables, record data structure defined in __updateRecord
 		self.invRecBuffer = invRecBuffer
+		self.__invFixed = [False for i in range(self.__invIDcount)]
 		self.record = record
 		self.age = 0
 		# Handling input and default populations
@@ -701,6 +713,7 @@ class SAIpop(object):
 			if invCounts[ID] == 2*self.size:
 				inversionRemoved = True
 				# print("Inversion Removed")
+				self.__invFixed[ID] = True
 				inversion = self.record[3][ID]
 				length = self.record[3][ID][1] - self.record[3][ID][0]
 				invCenter = self.record[3][ID][0] + length/2.0
@@ -726,8 +739,8 @@ class SAIpop(object):
 							# Flip the mutation across the center
 							mut[0] = 2*invCenter-mut[0]
 						# print(mut)
-			# elif invCounts[i] > 2*self.size:
-			# 	print("Error: more inversions than alleles possible for ID " + str(i))
+			elif invCounts[ID] > 2*self.size:
+				print("Error: more inversions than alleles possible for ID " + str(i))
 		return inversionRemoved
 
 	# Simulating a single generational step
@@ -747,7 +760,10 @@ class SAIpop(object):
 		# maleGenQuality = []
 		for male in self.males:
 			# print(male.genome)
-			maleSurvivals += [male.survival()]
+			if self.noMaleCost:  #MAKE THIS LESS COSTLY TO COMPUTE (still runs .choice below)
+				maleSurvivals += [1]
+			else:
+				maleSurvivals += [male.survival()]
 			# maleGenQuality += [male.repQuality()]
 		# print("Male Survivals:" + str(maleSurvivals))
 		maleSurvivals = [s/sum(maleSurvivals) for s in maleSurvivals]
@@ -826,15 +842,17 @@ class SAIpop(object):
 				# self.record[2] += [[0]*self.age]
 				self.record[2] += [[0 for t in range(len(self.record[0]))]]
 		if self.willMutInv:
+			wholePop = self.males + self.females
 			# Add new inversions
 			numInvMuts = np.random.poisson(self.expectedNumInvMut)
-			indivWithInvMut = np.random.randint(self.size, size=numMuts)
+			indivWithInvMut = np.random.randint(self.size, size=numInvMuts)
 			for i in indivWithInvMut:
 				# Must account for failure due to no space on the genome
 				invData = wholePop[i].mutateInv(self.__invIDcount)
 				if not invData is None:
 					self.record[3] += [invData + [self.age]]
 					self.__invIDcount += 1
+					self.__invFixed += [False]
 					# self.record[4] += [[0]*self.age]
 					# self.record[4] += [(self.age,0)]
 					self.record[4] += [[0 for t in range(len(self.record[0]))]]
@@ -905,10 +923,13 @@ class SAIpop(object):
 			self.record[2][i] += [mutCounts[i]]
 		for j in range(self.__invIDcount):
 			count = invCounts[j]
-			# If no members of the inversion ID left, record averages as -1 ?
+			# If no members of the inversion ID left, record averages as -1 ? Try 'NA' for working with R?
 			# IMPORTANT - add a boolean list such that you can check if fixed and record the correct value?
 			if count == 0:
-				self.record[4][j] += [count]
+				if self.__invFixed[j]:
+					self.record[4][j] += [2*self.size]
+				else:
+					self.record[4][j] += [0]
 				self.record[5][j] += [-1]
 				self.record[6][j] += [-1]
 				self.record[7][j] += [-1]
