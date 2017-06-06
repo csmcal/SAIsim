@@ -5,19 +5,30 @@
 setwd("/Users/cmcallester/Documents/Pool Lab/SAIsim/Analysis")
 
 
-getMeanLast100Freqs <- function(spacing,fileName) {
-  mutFreq <- read.table(fileName,sep='\t',header=TRUE)
-  # print(colMeans(tail(mutFreq[,-1],n=100)))
-  # meanFinalFreq <- cbind(c(spacing),colMeans(tail(mutFreq[,-1],n=100)))
-  meanFinalFreq <- c(spacing,colMeans(tail(mutFreq[,-1],n=100)))
-  # print(meanFinalFreq)
-  return(meanFinalFreq)
-}
+# getMeanLast100Freqs <- function(spacing,fileName) {
+#   mutFreq <- read.table(fileName,sep='\t',header=TRUE)
+#   # print(colMeans(tail(mutFreq[,-1],n=100)))
+#   # meanFinalFreq <- cbind(c(spacing),colMeans(tail(mutFreq[,-1],n=100)))
+#   meanFinalFreq <- c(spacing,colMeans(tail(mutFreq[,-1],n=100)))
+#   # print(meanFinalFreq)
+#   return(meanFinalFreq)
+# }
+# 
+# getFinalFreq <- function(spacing,fileName) {
+#   mutFreq <- read.table(fileName,sep='\t',header=TRUE)
+#   finalFreq <- c(spacing,tail(mutFreq[,-1],n=1))
+#   return(finalFreq)
+# }
 
-getFinalFreq <- function(spacing,fileName) {
-  mutFreq <- read.table(fileName,sep='\t',header=TRUE)
-  finalFreq <- c(spacing,tail(mutFreq[,-1],n=1))
-  return(finalFreq)
+getFinalFreqMutInvHap <- function(spacing,mutFileName,invFileName,hapFileName) {
+  mutFreq <- read.table(mutFileName,sep='\t',header=TRUE)
+  invFreq <- read.table(invFileName,sep='\t',header=TRUE)
+  hapFreq <- read.table(hapFileName,sep='\t',header=TRUE)
+  lastMutFreqs <- unlist(tail(mutFreq[,-1],n=1))
+  lastInvFreq <- unlist(tail(invFreq[,2],n=1))
+  lastHapFreqs <- unlist(tail(hapFreq[,-1],n=1))
+  finalGenData <- c(spacing,lastMutFreqs,lastInvFreq,lastHapFreqs)
+  return(finalGenData)
 }
 
 getFreqsAtSpa <- function(spacing,filePrefix) {
@@ -25,16 +36,18 @@ getFreqsAtSpa <- function(spacing,filePrefix) {
   # print(s)
   fileBase <- paste(filePrefix,"spacing",s,"n", sep="")
   # print(fileBase)
-  equilFreqs <- cbind()
+  finalFreqs <- cbind()
   for (num in seq(50)-1) {
     n <- formatC(num, width = 3, format = "d", flag = "0")
     try({
-      fileName <- paste(fileBase,n,"Inv.txt",sep="")
-      equilFreqs <- rbind(equilFreqs,getMeanLast100Freqs(spacing,fileName))
+      invFileName <- paste(fileBase,n,"Inv.txt",sep="")
+      mutFileName <- paste(fileBase,n,"Mut.txt",sep="")
+      hapFileName <- paste(fileBase,n,"Hap.txt",sep="")
+      finalFreqs <- rbind(finalFreqs,getFinalFreqMutInvHap(spacing,mutFileName,invFileName,hapFileName))
     })
   }
-  # print(equilFreqs)
-  return(equilFreqs)
+  # print(finalFreqs)
+  return(finalFreqs)
 }
 
 genFreqSpaTable <- function(filePrefix) {
@@ -48,7 +61,11 @@ genFreqSpaTable <- function(filePrefix) {
     #   
     # }
   }
+  freqSpaTable <- as.data.frame(freqSpaTable)
   colnames(freqSpaTable)[1]<-"Spacing"
+  colnames(freqSpaTable)[2]<-"M1"
+  colnames(freqSpaTable)[3]<-"M2"
+  colnames(freqSpaTable)[4]<-"I1"
   # print(freqSpaTable)
   return(freqSpaTable)
 }
@@ -172,10 +189,101 @@ spacingFreqScatter <- function(freqSpaTable) {
           legend.position=c(0.28,0.8))               # Position legend in bottom right
 }
 
-# freqSpaTable <- genFreqSpaTable("../Results/Spa.86.06.7.15e100InvShort/sS0.860rS0.060sB0.700rB0.150")
-# sumFreqSpa <- summarySE()
-# spacingFreqPlot(freqSpaTable)
-spacingFreqScatter(freqSpaTable)
+summaryFixLoss <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                           .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N     = length2(xx[[col]], na.rm=na.rm),
+                     Nfix  = length2(subset(xx[[col]],xx[[col]]==2000), na.rm=na.rm),
+                     Nloss = length2(subset(xx[[col]],xx[[col]]==0), na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  datac$Pfix <- datac$Nfix/datac$N
+  datac$Ploss <- datac$Nloss/datac$N
+  datac$Peither <- datac$Pfix + datac$Ploss
+  
+  return(datac)
+}
+
+spacingInvPropFixPlot <- function(freqSpaInvTable) {
+  fixLossTable <- summaryFixLoss(freqSpaInvTable,groupvars = "Spacing",
+                                 measurevar = "I1")
+  print(fixLossTable)
+  
+  library(ggplot2)
+  pd = position_dodge(0.01)
+  # ggplot(frqsSE, aes(x=Spacing, y=Count, colour=Mutation, group=Mutation)) + 
+  ggplot(fixLossTable) + 
+    geom_line(aes(x=Spacing, y=Peither, group=1), colour="black") +
+    geom_line(aes(x=Spacing, y=Pfix, group=1), colour="blue") +
+    geom_line(aes(x=Spacing, y=Ploss, group=1), colour="red") +
+    # geom_point(position=pd, size=3, shape=21, fill="white") + # 21 is filled circle
+    xlab("Spacing (M)") +
+    ylab("Percent of Simulations") +
+    scale_colour_hue(name="Inversion",    # Legend label, use darker colors
+                     breaks=c("1", "2"),
+                     labels=c("Inv 0.02-0.38", "Mut 2"),
+                     l=40) +                    # Use darker colors, lightness=40
+    ggtitle("Inversion Fixation and Loss Frequencies by Spacing") +
+    expand_limits(y=0) +                        # Expand y range
+    # scale_y_continuous(breaks=0:20*4) +         # Set tick every 4
+    theme_bw() +
+    theme(legend.justification=c(1,0),
+          legend.position=c(0.28,0.8))               # Position legend in bottom right
+}
+
+removeFixLoss <- function(freqSpaInvTable){
+  
+}
+
+spacingInvHapPlot <- function(freqSpaInvTable) {
+  fixLossTable <- summaryFixLoss(freqSpaInvTable,groupvars = "Spacing",
+                                 measurevar = "I1")
+  print(fixLossTable)
+  
+  library(ggplot2)
+  pd = position_dodge(0.01)
+  # ggplot(frqsSE, aes(x=Spacing, y=Count, colour=Mutation, group=Mutation)) + 
+  ggplot(fixLossTable) + 
+    geom_line(aes(x=Spacing, y=Peither, group=1), colour="black") +
+    geom_line(aes(x=Spacing, y=Pfix, group=1), colour="blue") +
+    geom_line(aes(x=Spacing, y=Ploss, group=1), colour="red") +
+    # geom_point(position=pd, size=3, shape=21, fill="white") + # 21 is filled circle
+    xlab("Spacing (M)") +
+    ylab("Percent of Simulations") +
+    scale_colour_hue(name="Inversion",    # Legend label, use darker colors
+                     breaks=c("1", "2"),
+                     labels=c("Inv 0.02-0.38", "Mut 2"),
+                     l=40) +                    # Use darker colors, lightness=40
+    ggtitle("Inversion Fixation and Loss Frequencies by Spacing") +
+    expand_limits(y=0) +                        # Expand y range
+    # scale_y_continuous(breaks=0:20*4) +         # Set tick every 4
+    theme_bw() +
+    theme(legend.justification=c(1,0),
+          legend.position=c(0.28,0.8))               # Position legend in bottom right
+}
+
+# freqSpaInvTable <- genFreqSpaTable("../Results/TwoMutSpacing/SpaInvShortEqHap/sS0.860rS0.060sB0.700rB0.150")
+# save(freqSpaInvTable,file="SpaInvEqHapFreqTable.Rdata")
+spacingInvPropFixPlot(freqSpaInvTable)
+# spacingFreqPlot(freqSpaInvTable)
+# spacingFreqScatter(freqSpaTable)
+
+# test<-subset(freqSpaInvTable,I1!=0 & I1!=2000)
+# testSum <- summarySE(freqSpaInvTable,measurevar = "I1",groupvars = c("Spacing"))
 
 #library(MASS)
 #write.matrix(freqGridMatrix,file="effectGridEqFreqMatrix.txt",sep=" ")

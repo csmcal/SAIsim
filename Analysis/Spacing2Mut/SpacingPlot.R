@@ -222,7 +222,7 @@ spacingFreqPlot <- function(freqSpaTable) {
           legend.position=c(0.34,0.01))               # Position legend in bottom right
 }
 
-freqSpaTable <- genFreqSpaTable("../Results/Spa.86.06.7.15e100InvShort/sS0.860rS0.060sB0.700rB0.150")
+freqSpaTable <- genFreqSpaTable("../Results/TwoMutSpacing/Spa.86.06.7.15e100Short/sS0.860rS0.060sB0.700rB0.150")
 # sumFreqSpa <- summarySE()
 spacingFreqPlot(freqSpaTable)
 

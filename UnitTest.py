@@ -3,8 +3,8 @@
 
 import SAIsim as sim
 
-# Whoops, a possibility with randomly assigned sexes is population death
-size = 100
+# Limited size for testing
+size = 10
 # given 10^-8 SAmut/base/gen and 
 mutRate = .1
 # Approximated by 

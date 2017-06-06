@@ -52,6 +52,8 @@ hapList = [[[[[mut0,mut1],[inv0]]],6],[[[[mut0],[inv0]]],4]]
 
 
 numGens = 500
+numGenStep = 50
+numChecks = 10
 
 # Now run the simulator session in length and recording intervals as desired using above parameters
 
@@ -65,6 +67,9 @@ pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversi
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)
 pop.recordNGens(numGens)
+for i in range(numChecks):
+	pop.recordNGens(numGenStep)
 # pop.printGenomes()
 # pop.printRecord()
 pop.writeRecordTables('testOutput/Test1')
+print(len())

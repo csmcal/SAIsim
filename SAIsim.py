@@ -17,7 +17,7 @@ import numpy as np
 # ideally: genome = [[[chr1hom1],[chr1hom2]],[[chr2hom1],[chr2hom2]],..]
 class individual(object):
 	"""individuals represent members of simSAIpopulations"""
-	def __init__(self, sex, mutEffectDiffSD, recombRate, conversionRate, minInvLen,
+	def __init__(self, sex, mutEffectDiffSD, recombRate, conversionRate, minInvLen, lenChrom,
 			isFly, willConvert, willRecombine, genome = [[[[],[]],[[],[]]]]):
 		# super(individual, self).__init__()
 		self.sex = sex
@@ -25,6 +25,7 @@ class individual(object):
 		self.recombRate = recombRate
 		self.conversionRate = conversionRate
 		self.minInvLen = minInvLen
+		self.lenChrom = lenChrom
 		# CONSIDER JUST PASSING VARIABLES WHEN NEEDED
 		self.isFly = isFly
 		self.willConvert = willConvert
@@ -66,10 +67,10 @@ class individual(object):
 		# Survival mult., Quality additive
 		return [1-base+offset,base+offset]
 
-	#Generates a mutation of the form [position, survival effect, rep effect, ID]
+	# Generates a mutation of the form [position, survival effect, rep effect, ID]
 	def mutate(self,ID):
 		# print(self.genome)
-		mutPos = np.random.ranf()
+		mutPos = np.random.ranf()*self.lenChrom
 		mutEffects = self.__genEffectSizes()
 		mutation = [mutPos]+mutEffects+[ID]
 		# Pick a chromosome
@@ -105,7 +106,7 @@ class individual(object):
 				openRegIndexes += [index]
 			potentialStart = inversion[1]
 			index += 1
-		length = 1 - potentialStart
+		length = self.lenChrom - potentialStart
 		if length > self.minInvLen:
 			openRegLengths += [length]
 			openRegStarts += [potentialStart]
@@ -124,10 +125,10 @@ class individual(object):
 		# Return the inversion data to record
 		return inversion[0:2]+[chromIndex]
 
-	# For updating the repQuality and survival if pre-calculated
-	# Not currently used (obviously)
-	def updatePhenotypes(self):
-		return
+	# # For updating the repQuality and survival if pre-calculated
+	# # Not currently used (obviously)
+	# def updatePhenotypes(self):
+	# 	return
 
 	# Negative survival effects are independent and multiplicative
 	def survival(self):
@@ -270,7 +271,7 @@ class individual(object):
 					gamGenome += [chrom[1]]
 			else:
 				# NEED to allow for the span of positions in the chromosome if given positions outside [0,1)
-				recombPositions = np.random.ranf(numRecomb)
+				recombPositions = np.random.ranf(numRecomb)*self.lenChrom
 				recombPositions.sort()
 				# print('Positions: '+str(recombPositions))
 				
@@ -359,6 +360,7 @@ class individual(object):
 # Could be defined as Static methods inside the population class
 
 # For testing the inputs for correct size parameters
+# MAYY WANT TO TEST lenChrom
 def __inputSizeCheck(size, numChrom, genomes, sexes):
 	numGenomes = len(genomes)
 	if numGenomes > 0:
@@ -420,7 +422,7 @@ def __genSexes(size, sexes, randomSex):
 #   Allow limiting the number of further genomes to generate? How will this interact with having at least 1 'M'/'F'?
 # @staticmethod
 def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1, 
-		genomes = [], sexes = []):
+		lenChrom = 1.0, genomes = [], sexes = []):
 	# Handling input size checking
 	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes) # UPDATE FOR NUMCHROM FROM MUT/INV LIST
 
@@ -433,9 +435,9 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 	# Will need to have separate lists per chromosome within these
 	posOrderedMut = [[] for i in range(numChrom)]
 	posOrderedInv = [[] for i in range(numChrom)]
-	# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
+	# Record should be returned with only [1,3] actually populated, [2,4..8] with empty lists 
 	#   for 0th generation update
-	record = [[],[],[],[],[],[],[],[]]
+	record = [[],[],[],[],[],[],[],[],[]]
 
 	numMut = len(mutList)
 	for m in range(numMut):
@@ -444,7 +446,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 			raise SAIpop.InputError(mutList,'Mutation counts must be less than the remaining population size')
 		mutation = mutList[m][0:3]+[m]
 		chrom = mutList[m][3]
-		record[1] += [mutList[m][0:4]+[0]]
+		record[1] += [mutList[m][0:4]+[0,-1]]
 		record[2] += [[]]
 		# Insert the mutation and count to the ordered list for addition to the genomes
 		i = 0
@@ -458,7 +460,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 			raise SAIpop.InputError(invList,'Inversion counts must be less than the remaining population size')
 		inversion = invList[i][0:2]+[i]
 		chrom = invList[i][2]
-		record[3] += [invList[i][0:3]+[0]]
+		record[3] += [invList[i][0:3]+[0,-1]]
 		record[4] += [[]]
 		record[5] += [[]]
 		record[6] += [[]]
@@ -506,7 +508,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 # IMPORTANT - FOR CORRECT RECORD KEEPING, ALL MUT OF THE SAME ID IN HAPS MUST BE SAME OBJECT/REFERENCE
 # @staticmethod
 def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True, numChrom = 1, 
-		genomes = [], sexes = []):
+		lenChrom = 1.0, genomes = [], sexes = []):
 	# Handling input size checking
 	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes)
 	# Check that the haplotype chromosome size matches the pre-specified genomes
@@ -555,12 +557,12 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 
 	# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
 	#   for 0th generation update
-	record = [[],[],[],[],[],[],[],[]]
+	record = [[],[],[],[],[],[],[],[],[]]
 	for m in range(len(mutList)):
-		record[1] += [mutList[m][0:4]+[0]]
+		record[1] += [mutList[m][0:4]+[0,-1]]
 		record[2] += [[]]
 	for i in range(len(invList)):
-		record[3] += [invList[i][0:3]+[0]]
+		record[3] += [invList[i][0:3]+[0,-1]]
 		record[4] += [[]]
 		record[5] += [[]]
 		record[6] += [[]]
@@ -586,9 +588,9 @@ class SAIpop(object):
 	"""simSAIpopulation represents populations for sexually antagonistic inversion simulation"""
 	def __init__(self, size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate,
 			recombRate, encounterNum, choiceNoiseSD, invRecBuffer,
-			isFly = True, randomSex = True, numChrom = 1, willMutate = True, willMutInv = True,
-			willConvert = True, willRecombine = True, noMaleCost = False,
-			genomes = [], sexes = [], record = [[],[],[],[],[],[],[],[]]):
+			isFly = True, randomSex = True, numChrom = 1, lenChrom = 1.0, willMutate = True,
+			willMutInv = True, willConvert = True, willRecombine = True, noMaleCost = False,
+			genomes = [], sexes = [], record = [[],[],[],[],[],[],[],[],[]]):
 		# super(simSAIpopulation, self).__init__()
 		self.size = size
 		self.mutRate = mutRate
@@ -612,6 +614,7 @@ class SAIpop(object):
 		self.isFly = isFly
 		self.randomSex = randomSex
 		self.numChrom = numChrom
+		self.lenChrom = lenChrom #FINISH IMPLEMENTATION
 		# For modeling equlibrium dynamics without further mutation or other mechanics
 		self.willMutate = willMutate
 		self.willMutInv = willMutInv
@@ -622,6 +625,7 @@ class SAIpop(object):
 		# Record keeping variables, record data structure defined in __updateRecord
 		self.invRecBuffer = invRecBuffer
 		self.__invFixed = [False for i in range(self.__invIDcount)]
+		self.__mutFixed = [False for m in range(self.__mutIDcount)]
 		self.record = record
 		self.age = 0
 		# Handling input and default populations
@@ -637,20 +641,20 @@ class SAIpop(object):
 				for i in range(numGenomes):
 					if sexes[i] == 'F':
 						self.females += [individual('F',mutEffectDiffSD,recombRate,conversionRate,\
-							minInvLen,isFly,willConvert,willRecombine,genomes[i])]
+							minInvLen,lenChrom,isFly,willConvert,willRecombine,genomes[i])]
 					else:
 						self.males += [individual('M',mutEffectDiffSD,recombRate,conversionRate,\
-							minInvLen,isFly,willConvert,willRecombine,genomes[i])]
+							minInvLen,lenChrom,isFly,willConvert,willRecombine,genomes[i])]
 			numLeft = size-numGenomes
 			if len(self.females) < 1:
 				numLeft -= 1
 				self.females += [individual('F',mutEffectDiffSD,recombRate,conversionRate,\
-					minInvLen,isFly,willConvert,willRecombine,\
+					minInvLen,lenChrom,isFly,willConvert,willRecombine,\
 					[[[[],[]],[[],[]]] for i in range(self.numChrom)])]
 			if len(self.males) < 1:
 				numLeft -= 1
 				self.males += [individual('M',mutEffectDiffSD,recombRate,conversionRate,\
-					minInvLen,isFly,willConvert,willRecombine,\
+					minInvLen,lenChrom,isFly,willConvert,willRecombine,\
 					[[[[],[]],[[],[]]] for i in range(self.numChrom)])]
 			# Generate the remaining set of 'size' individuals
 			#   with random or equal probability sex and no mutations or inversions
@@ -659,10 +663,10 @@ class SAIpop(object):
 			else:
 				numMales = int(numLeft/2)
 			self.males += [individual('M',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
-				isFly,willConvert,willRecombine,\
+				lenChrom,isFly,willConvert,willRecombine,\
 				[[[[],[]],[[],[]]] for i in range(self.numChrom)]) for i in range(numMales)]
 			self.females += [individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
-				isFly,willConvert,willRecombine,\
+				lenChrom,isFly,willConvert,willRecombine,\
 				[[[[],[]],[[],[]]] for i in range(self.numChrom)]) for j in range(numLeft-numMales)]
 			# Generate the generation 0 record
 			self.__updateRecord()
@@ -691,6 +695,7 @@ class SAIpop(object):
 	# changes the position of internal mutations to reflect true position (flips around the center of the inversion)
 	# the old position of the mutations is lost
 	# WORTH IMPROVING PERFORMANCE: merge with record keeping in record generations? also reduce loop number
+	# ^ Just add a record flag to the step, you *could* mask this with step{step(false)}, recordStep{step(true)}
 	def __removeFixedInv(self):
 		wholePop = self.males + self.females
 		invCounts = [0]*self.__invIDcount
@@ -714,7 +719,7 @@ class SAIpop(object):
 				inversionRemoved = True
 				# print("Inversion Removed")
 				self.__invFixed[ID] = True
-				inversion = self.record[3][ID]
+				inversion = selcord[3][ID]
 				length = self.record[3][ID][1] - self.record[3][ID][0]
 				invCenter = self.record[3][ID][0] + length/2.0
 				for [i,c,h,invIndex] in invPos[ID]:
@@ -742,6 +747,101 @@ class SAIpop(object):
 			elif invCounts[ID] > 2*self.size:
 				print("Error: more inversions than alleles possible for ID " + str(i))
 		return inversionRemoved
+
+	# Removes mutations and inversions that are fixed in the population,
+	# changes the position of internal mutations to reflect true position (flips around the center of the inversion)
+	# the old position of the mutations is lost
+	# WORTH IMPROVING PERFORMANCE: merge with record keeping in record generations? and generating new individuals. also reduce loop number
+	# ^ Just add a record flag to the step, you *could* mask this with step{step(false)}, recordStep{step(true)}
+	def __removeFixed(self):
+		wholePop = self.males + self.females
+		mutCounts = [0]*self.__mutIDcount
+		mutPos = [[]]*self.__mutIDcount
+		invCounts = [0]*self.__invIDcount
+		invPos = [[]]*self.__invIDcount
+		# Generate count and position data
+		for i in range(len(wholePop)):
+			for c in range(self.numChrom):
+				for h in range(2):
+					chromHomMut = wholePop[i].genome[c][h][0]
+					for mutIndex in range(len(chromHomMut)):
+						mutation = chromHomMut[mutIndex]
+						mutCounts[mutation[3]] += 1
+						mutPos[mutation[3]] += [[i,c,h,mutIndex]]
+					chromHomInv = wholePop[i].genome[c][h][1]
+					for invIndex in range(len(chromHomInv)):
+						inversion = chromHomInv[invIndex]
+						# print(inversion)
+						invCounts[inversion[2]] += 1
+						invPos[inversion[2]] += [[i,c,h,invIndex]]
+		# Remove fixed inversions
+		mutationRemoved = False
+		for ID in range(self.__mutIDcount):
+			count = mutCounts[ID]
+			# print("Mut "+str(ID)+" Count "+str(count))
+			if count == 2*self.size:
+				mutationRemoved = True
+				print("Mutation Removed")
+				self.__mutFixed[ID] = True
+				for [i,c,h,mutIndex] in mutPos[ID]:
+					# Remove the mutation
+					print("Removal Attempt")
+					print(wholePop[i].genome[c][h][0])
+					wholePop[i].genome[c][h][0][mutIndex:mutIndex+1] = []
+					print(wholePop[i].genome[c][h][0])
+			elif count == 0:
+				if self.record[1][ID][5] < self.record[1][ID][4]: # Change to use another flag? mutLost?
+					# self.__mutLost[ID] = True
+					self.record[1][ID][5] = self.age
+			elif count > 2*self.size:
+				print("Error: more mutations than alleles possible for ID "+str(ID)+" Count "+str(count))
+				# self.printGenomes()
+		# All mutations are passed as references, so don't want to change more than one
+		# Also, no mutations will be in multiple fixed inversions, so the scope is fine :P
+		firstMutEncounter = [True]*self.__mutIDcount
+		inversionRemoved = False
+		# Remove fixed inversions
+		inversionRemoved = False
+		for ID in range(self.__invIDcount):
+			if invCounts[ID] == 2*self.size:
+				inversionRemoved = True
+				print("Inversion Removed")
+				self.__invFixed[ID] = True
+				inversion = self.record[3][ID]
+				length = self.record[3][ID][1] - self.record[3][ID][0]
+				invCenter = self.record[3][ID][0] + length/2.0
+				for [i,c,h,invIndex] in invPos[ID]:
+					# Remove the inversion
+					print("Removal Attempt")
+					print(wholePop[i].genome[c][h][1])
+					wholePop[i].genome[c][h][1][invIndex:invIndex+1] = []
+					print(wholePop[i].genome[c][h][1])
+					# Rearrange the mutation positions to reflect the loss of inversion data
+					mutHom = wholePop[i].genome[c][h][0]
+					index = 0
+					mutInside = []
+					while index < len(mutHom) and mutHom[index][0] < inversion[0]:
+						index += 1
+					startIndex = index
+					while index < len(mutHom) and mutHom[index][0] < inversion[1]:
+						mutInside = [mutHom[index]] + mutInside
+						index += 1
+					# Replace the mutations inside with ones in inverted order
+					mutHom[startIndex:index] = mutInside
+					# Flip the mutation positions around the center of the removed inversion
+					for mut in mutInside:
+						if firstMutEncounter[mut[3]]:
+							firstMutEncounter[mut[3]] = False
+							# Flip the mutation across the center
+							mut[0] = 2*invCenter-mut[0]
+						# print(mut)
+			elif invCounts[ID] == 0:
+				if self.record[3][ID][4] < self.record[3][ID][3]: # Change to use another flag? invLost?
+					# self.__invLost[ID] = True
+					self.record[3][ID][4] = self.age
+			elif invCounts[ID] > 2*self.size:
+				print("Error: more inversions than alleles possible for ID " + str(invCounts[ID]))
+		return (mutationRemoved, inversionRemoved)
 
 	# Simulating a single generational step
 	def step(self):
@@ -804,30 +904,32 @@ class SAIpop(object):
 				# Instantiate the new population member with a random sex
 				if np.random.randint(2):
 					newFemales += [individual('F',self.mutEffectDiffSD,self.recombRate,self.conversionRate,\
-						self.minInvLen,self.isFly,self.willConvert,self.willRecombine,genome)]
+						self.minInvLen,self.lenChrom,self.isFly,self.willConvert,self.willRecombine,genome)]
 				else:
 					newMales += [individual('M',self.mutEffectDiffSD,self.recombRate,self.conversionRate,\
-						self.minInvLen,self.isFly,self.willConvert,self.willRecombine,genome)]
+						self.minInvLen,self.lenChrom,self.isFly,self.willConvert,self.willRecombine,genome)]
 			else:
 				# Instantiate the new population member with determinate sex
 				# MAY NEED TO ENSURE THAT MOTHERS AREN'T ALWAYS GIVING SONS, ETC
 				if numExpectedMales > 0:
 					newMales += [individual('M',self.mutEffectDiffSD,self.recombRate,self.conversionRate,\
-						self.minInvLen,self.isFly,self.willConvert,self.willRecombine,genome)]
+						self.minInvLen,self.lenChrom,self.isFly,self.willConvert,self.willRecombine,genome)]
 					numExpectedMales -= 1
 				else:
 					newFemales += [individual('F',self.mutEffectDiffSD,self.recombRate,self.conversionRate,\
-						self.minInvLen,self.isFly,self.willConvert,self.willRecombine,genome)]
+						self.minInvLen,self.lenChrom,self.isFly,self.willConvert,self.willRecombine,genome)]
 
 
 		self.females = newFemales
 		self.males = newMales
 
-		# Remove fixed inversions and rearrange internal mutations
-		self.__removeFixedInv()
-
 		# Update the age of the population
 		self.age = self.age + 1
+
+		# # Remove fixed inversions and rearrange internal mutations
+		# self.__removeFixedInv()
+		# Remove fixed mutations and inversions, and rearrange mutations in removed inversions
+		self.__removeFixed()
 
 		if self.willMutate:
 			# print ("Generation " + str(self.age) + " Mutation")
@@ -837,10 +939,11 @@ class SAIpop(object):
 			numMuts = np.random.poisson(self.expectedNumMut)
 			indivWithMut = np.random.randint(self.size, size=numMuts)
 			for i in indivWithMut:
-				self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age]]
+				# Add the mutation to the record, with start and end generations of polymorphism
+				self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age,-1]]
 				self.__mutIDcount += 1
-				# self.record[2] += [[0]*self.age]
-				self.record[2] += [[0 for t in range(len(self.record[0]))]]
+				self.__mutFixed += [False]
+				# self.record[2] += [[0 for t in range(len(self.record[0]))]]
 		if self.willMutInv:
 			wholePop = self.males + self.females
 			# Add new inversions
@@ -850,15 +953,13 @@ class SAIpop(object):
 				# Must account for failure due to no space on the genome
 				invData = wholePop[i].mutateInv(self.__invIDcount)
 				if not invData is None:
-					self.record[3] += [invData + [self.age]]
+					self.record[3] += [invData + [self.age,-1]]
 					self.__invIDcount += 1
 					self.__invFixed += [False]
-					# self.record[4] += [[0]*self.age]
-					# self.record[4] += [(self.age,0)]
-					self.record[4] += [[0 for t in range(len(self.record[0]))]]
-					self.record[5] += [[0 for t in range(len(self.record[0]))]]
-					self.record[6] += [[0 for t in range(len(self.record[0]))]]
-					self.record[7] += [[0 for t in range(len(self.record[0]))]]
+					# self.record[4] += [[0 for t in range(len(self.record[0]))]]
+					# self.record[5] += [[0 for t in range(len(self.record[0]))]]
+					# self.record[6] += [[0 for t in range(len(self.record[0]))]]
+					# self.record[7] += [[0 for t in range(len(self.record[0]))]]
 		# Could update phenotype values here
 		return
 
@@ -870,10 +971,12 @@ class SAIpop(object):
 	# For updating all recorded information on the population, record structured as:
 	# [0] a list of ages at which an update was made
 	# [1] a list of all mutations, indexed by ID, with each entry as 
-	#      [position,survival effect,reproductive effect,chromosome,age at which mutation occured]
+	#      [position,survival effect,reproductive effect,chromosome,age at which mutation occured,age at fixation/loss]
+	#      -1 means the mutation is not fixed/lost yet
 	# [2] a list of counts, indexed by ID, of the mutation at each age noted in [0]
 	# [3] a list of all inversions, indexed by ID, with each entry as 
-	#      [start position,end position,chromosome,age at which mutation occured]
+	#      [start position,end position,chromosome,age at which mutation occured,age at fixation/loss]
+	#      -1 means the mutation is not fixed/lost yet
 	# [4] a list of counts, indexed by ID, of the inversion at each age noted in [0]
 	# [5] a list of average count of mutations within the buffer region across the entire population,
 	#      indexed by ID, of each inversion at each age noted in [0]
@@ -881,11 +984,13 @@ class SAIpop(object):
 	#      indexed by ID, of each inversion at each age noted in [0]
 	# [7] a list of average reproductive effect within buffer region across the entire population,
 	#      indexed by ID, of each inversion at each age noted in [0]
-	# ADD: pop size for changing pop size?
+	# [8] a list of pop size at each recorded generation
 	def __updateRecord(self):
 		# print ("Record Update")
 	 	# Record the age of the record update
 		self.record[0] += [self.age]
+	 	# Record the population size at the time of the of the record update
+		self.record[8] += [self.size]
 		# Count the number of each mutation/ID
 		mutCounts = [0]*self.__mutIDcount
 		invCounts = [0]*self.__invIDcount
@@ -919,38 +1024,60 @@ class SAIpop(object):
 						survEffectTotalInBufferMultiplicative[inv[2]] += thisSurvEffect
 						reprEffectTotalInBuffer[inv[2]] += thisReprEffect
 		# Update the record, get averages for record[5,6,7]
+		# for i in range(self.__mutIDcount):
+		# 	count = mutCounts[i]
+		# 	if count == 0:
+		# 		if self.__mutFixed[i]:
+		# 			self.record[2][i] += [2*self.size]
+		# 		else:
+		# 			self.record[2][i] += [0]
+		# 	else:
+		# 		self.record[2][i] += [count]
+		# for j in range(self.__invIDcount):
+		# 	count = invCounts[j]
+		# 	# If no members of the inversion ID left, record averages as -1 ? Try 'NA' for working with R?
+		# 	# IMPORTANT - add a boolean list such that you can check if fixed and record the correct value?
+		# 	if count == 0:
+		# 		if self.__invFixed
+		# 			self.record[4]+= [2*self.size]
+		# 		else:
+		# 			self.record[4][j] += [0]
+		# 		self.record[5][j] += [-1]
+		# 		self.record[6][j] += [-1]
+		# 		self.record[7][j] += [-1]
+		# 	else:
+		# 		self.record[4][j] += [count]
+		# 		self.record[5][j] += [numMutInBuffer[j]/(float(count))]
+		# 		self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
+		# 		self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
 		for i in range(self.__mutIDcount):
-			self.record[2][i] += [mutCounts[i]]
+			count = mutCounts[i]
+			if count != 0:
+				self.record[2][i] += [count]
 		for j in range(self.__invIDcount):
 			count = invCounts[j]
-			# If no members of the inversion ID left, record averages as -1 ? Try 'NA' for working with R?
-			# IMPORTANT - add a boolean list such that you can check if fixed and record the correct value?
-			if count == 0:
-				if self.__invFixed[j]:
-					self.record[4][j] += [2*self.size]
-				else:
-					self.record[4][j] += [0]
-				self.record[5][j] += [-1]
-				self.record[6][j] += [-1]
-				self.record[7][j] += [-1]
-			else:
+			if count != 0:
 				self.record[4][j] += [count]
 				self.record[5][j] += [numMutInBuffer[j]/(float(count))]
 				self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
 				self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
 
+	# # Checks the record to see if all mutations/inversions are fixed
+	# def checkAllRecMutFixed(self):
+	# 	lastRecord = len(self.record[0])-1
+	# 	for m in range(self.__mutIDcount):
+	# 		mutCount = self.record[2][m][lastRecord]
+	# 		if not (mutCount == 0 or mutCount == 2*self.size):
+	# 			return False
+	# 	for i in range(self.__invIDcount):
+	# 		invCount = self.record[4][i][lastRecord]
+	# 		if not (invCount == 0 or invCount == 2*self.size):
+	# 			return False
+	# 	return True
+
 	# Checks the record to see if all mutations/inversions are fixed
 	def checkAllRecMutFixed(self):
-		lastRecord = len(self.record[0])-1
-		for m in range(self.__mutIDcount):
-			mutCount = self.record[2][m][lastRecord]
-			if not (mutCount == 0 or mutCount == 2*self.size):
-				return False
-		for i in range(self.__invIDcount):
-			invCount = self.record[4][i][lastRecord]
-			if not (invCount == 0 or invCount == 2*self.size):
-				return False
-		return True
+		return all(self.__mutFixed) and all(self.__invFixed)
 
 
 	# For simulating a number of generations sequentially
@@ -1008,14 +1135,15 @@ class SAIpop(object):
 					g = self.record[0][lastRecord]
 					for addRecord in range(1,numSets-i):
 						self.record[0] += [g+addRecord*setSize]
-						for m in range(self.__mutIDcount):
-							# print(self.record[2][m])
-							self.record[2][m] += [self.record[2][m][lastRecord]]
-						for i in range(self.__invIDcount):
-							self.record[4][i] += [self.record[4][i][lastRecord]]
-							self.record[5][i] += [self.record[5][i][lastRecord]]
-							self.record[6][i] += [self.record[6][i][lastRecord]]
-							self.record[7][i] += [self.record[7][i][lastRecord]]
+						self.record[8] += [self.size]
+						# for m in range(self.__mutIDcount):
+						# 	# print(self.record[2][m])
+						# 	self.record[2][m] += [self.record[2][m][lastRecord]]
+						# for i in range(self.__invIDcount):
+						# 	self.record[4][i] += [self.record[4][i][lastRecord]]
+						# 	self.record[5][i] += [self.record[5][i][lastRecord]]
+						# 	self.record[6][i] += [self.record[6][i][lastRecord]]
+						# 	self.record[7][i] += [self.record[7][i][lastRecord]]
 				return
 		return
 
@@ -1033,22 +1161,46 @@ class SAIpop(object):
 
 	# Takes a filename and mutation ID
 	# Writes a tab delineated file of the generation and count data for that mutation
-	def writeMutation(self,filename,ID):
+	def writeMutation(self,filename,ID,fillRecord = False):
 		outfile = open(filename, 'w')
 		# outfile.write('Mutation '+str(ID)+'\n')
 		outfile.write('Generation\tCount\n')
 		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[2][ID][0]) + '\n')
 		# outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
 		# for t in range(1,len(self.record[0])):
-		for t in range(len(self.record[0])):
-			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[2][ID][t]) + '\n')
+		(firstGen, finalGen) = self.record[1][ID][4:6]
+		if finalGen < firstGen:
+			finalGen = self.age
+		t = 0
+		recordGen = self.record[0][t]
+		while recordGen < firstGen:
+			if fillRecord:
+				outfile.write(str(recordGen) + '\t0\n')
+			t += 1
+			recordGen = self.record[0][t]
+		offset = t
+		while recordGen < finalGen:
+			m = t - offset
+			outfile.write(str(recordGen) + '\t' + str(self.record[2][ID][m]) + '\n')
+			t += 1
+			recordGen = self.record[0][t]
+		if fillRecord:
+			while t < len(self.record[0]):
+				if self.__mutFixed[ID]:
+					outfile.write(str(recordGen) + '\t' + str(self.record[8][t]) + '\n')
+				else:
+					outfile.write(str(recordGen) + '\t0\n')
+				t += 1
+				recordGen = self.record[0][t]
+		# for t in range(len(self.record[0])):
+		# 	outfile.write(str(self.record[0][t]) + '\t' + str(self.record[2][ID][t]) + '\n')
 		outfile.close()
 
 	# Takes a filename and inversion ID
 	# Writes a tab delineated file of the generation, count, 
 	#  average number of mutations in buffer, average cumulative survival,
 	#  and average cumulative effect data for that inversion
-	def writeInversion(self,filename,ID):
+	def writeInversion(self,filename,ID,fillRecord = False):
 		outfile = open(filename, 'w')
 		# outfile.write('Inversion '+str(ID)+'\n')
 		outfile.write('Generation\tCount\tAvgNumMut\tAvgSurEff\tAvgRepEff\n')
@@ -1060,10 +1212,36 @@ class SAIpop(object):
 		# outfile.write(str(self.record[3][ID][3]) + '\t' + str(1) + '\t' + 'NA' + '\t'\
 		# 	+ 'NA' + '\t' + 'NA' + '\n')
 		# for t in range(1,len(self.record[0])):
-		for t in range(len(self.record[0])):
-			outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t'\
-				+ str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t'\
-				+ str(self.record[7][ID][t]) + '\n')
+		(firstGen, finalGen) = self.record[3][ID][3:5]
+		if finalGen < firstGen:
+			finalGen = self.age
+		t = 0
+		recordGen = self.record[0][t]
+		while recordGen < firstGen:
+			if fillRecord:
+				outfile.write(str(recordGen) + '\t0\n')
+			t += 1
+			recordGen = self.record[0][t]
+		offset = t
+		while recordGen < finalGen:
+			i = t - offset
+			outfile.write(str(recordGen) + '\t' + str(self.record[4][ID][i]) + '\t'\
+				+ str(self.record[5][ID][i]) + '\t' + str(self.record[6][ID][i]) + '\t'\
+				+ str(self.record[7][ID][i]) + '\n')
+			t += 1
+			recordGen = self.record[0][t]
+		if fillRecord:
+			while t < len(self.record[0]):
+				if self.__invFixed[ID]:
+					outfile.write(str(recordGen) + '\t' + str(self.record[8][t]) + '\t-1\t-1\t-1\n')
+				else:
+					outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\n')
+				t += 1
+				recordGen = self.record[0][t]
+		# for t in range(len(self.record[0])):
+		# 	outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t'\
+		# 		+ str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t'\
+		# 		+ str(self.record[7][ID][t]) + '\n')
 		outfile.close()
 
 	# Takes a filename and writes a tab delineated file of the mutation frequency 
@@ -1071,13 +1249,41 @@ class SAIpop(object):
 	def writeAllMutFreqTable(self,filename):
 		outfile = open(filename, 'w')
 		header = 'Generation'
+		mutInit = []
+		mutFinal = []
+		offsets = []
 		for m in range(self.__mutIDcount):
-			header += '\t'+str(m)
+			print(m)
+			# header += '\t'+str(m)
+			header += '\tM'+str(m)
+			initGen = self.record[1][m][4]
+			finalGen = self.record[1][m][5]
+			mutInit += [initGen]
+			if initGen > finalGen:
+				mutFinal += [self.age]
+			else:
+				mutFinal += [finalGen]
+			offsets += [-1]
+		print(mutInit)
+		print(mutFinal)
+		print(self.record[1])
 		outfile.write(header + '\n')
 		for g in range(len(self.record[0])):
-			genLine = str(self.record[0][g]) 
+			gen = self.record[0][g]
+			genLine = str(gen) 
 			for m in range(self.__mutIDcount):
-				genLine += '\t' + str(self.record[2][m][g])
+				if gen < mutInit[m]:
+					genLine += '\t0'
+				elif gen < mutFinal[m]: # The last generation isn't recorded as it is removed first
+					if offsets[m] > 0:
+						genLine += '\t' + str(self.record[2][m][g-offsets[m]])
+					else:
+						offsets[m] = g
+						genLine += '\t' + str(self.record[2][m][0])
+				elif self.__mutFixed[m]:
+					genLine += '\t' + str(self.record[8][g])
+				else:
+					genLine += '\t0'
 			outfile.write(genLine + '\n')
 		outfile.close()
 
@@ -1086,13 +1292,39 @@ class SAIpop(object):
 	def writeAllInvFreqTable(self,filename):
 		outfile = open(filename, 'w')
 		header = 'Generation'
+		invInit = []
+		invFinal = []
+		offsets = []
 		for i in range(self.__invIDcount):
-			header += '\t'+str(i)
+			# header += '\t'+str(i)
+			header += '\tI'+str(i)
+			initGen = self.record[3][i][3]
+			finalGen = self.record[3][i][4]
+			invInit += [initGen]
+			if initGen > finalGen:
+				invFinal += [self.age]
+			else:
+				invFinal += [finalGen]
+			offsets += [-1]
 		outfile.write(header + '\n')
 		for g in range(len(self.record[0])):
-			genLine = str(self.record[0][g]) 
+			gen = self.record[0][g]
+			genLine = str(gen) 
 			for i in range(self.__invIDcount):
-				genLine += '\t' + str(self.record[4][i][g])
+				if gen < invInit[i]:
+					genLine += '\t0'
+				elif gen < invFinal[i]:
+					if offsets[i] > 0:
+						# print("Offset "+str(offsets[i]))
+						# print("Index "+str(g-offsets[i]))
+						genLine += '\t' + str(self.record[4][i][g-offsets[i]])
+					else:
+						offsets[i] = g
+						genLine += '\t' + str(self.record[4][i][0])
+				elif self.__invFixed[i]:
+					genLine += '\t' + str(self.record[8][g])
+				else:
+					genLine += '\t0'
 			outfile.write(genLine + '\n')
 		outfile.close()
 
@@ -1100,7 +1332,7 @@ class SAIpop(object):
 	#   and initial generation data for all mutations
 	def writeMutCharTable(self,filename):
 		outfile = open(filename, 'w')
-		outfile.write('Position\tSurEffect\tRepEffect\tChromosome\tInitGen\n')
+		outfile.write('Position\tSurEffect\tRepEffect\tChromosome\tInitGen\tFinalGen\n')
 		for m in range(len(self.record[1])):
 			line = ''
 			for datum in self.record[1][m]:
@@ -1112,7 +1344,7 @@ class SAIpop(object):
 	#   and initial generation data for all inversions
 	def writeInvCharTable(self,filename):
 		outfile = open(filename, 'w')
-		outfile.write('Position1\tPosition2\tChromosome\tInitGen\n')
+		outfile.write('Position1\tPosition2\tChromosome\tInitGen\tFinalGen\n')
 		for i in range(len(self.record[3])):
 			line = ''
 			for datum in self.record[3][i]:
