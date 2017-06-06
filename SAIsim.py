@@ -71,6 +71,7 @@ class individual(object):
 	def mutate(self,ID):
 		# print(self.genome)
 		mutPos = np.random.ranf()*self.lenChrom
+		# mutPos = np.random.ranf()
 		mutEffects = self.__genEffectSizes()
 		mutation = [mutPos]+mutEffects+[ID]
 		# Pick a chromosome
@@ -107,6 +108,7 @@ class individual(object):
 			potentialStart = inversion[1]
 			index += 1
 		length = self.lenChrom - potentialStart
+		# length = 1 - potentialStart
 		if length > self.minInvLen:
 			openRegLengths += [length]
 			openRegStarts += [potentialStart]
@@ -272,6 +274,7 @@ class individual(object):
 			else:
 				# NEED to allow for the span of positions in the chromosome if given positions outside [0,1)
 				recombPositions = np.random.ranf(numRecomb)*self.lenChrom
+				# recombPositions = np.random.ranf(numRecomb)
 				recombPositions.sort()
 				# print('Positions: '+str(recombPositions))
 				
@@ -719,7 +722,7 @@ class SAIpop(object):
 				inversionRemoved = True
 				# print("Inversion Removed")
 				self.__invFixed[ID] = True
-				inversion = selcord[3][ID]
+				inversion = self.record[3][ID]
 				length = self.record[3][ID][1] - self.record[3][ID][0]
 				invCenter = self.record[3][ID][0] + length/2.0
 				for [i,c,h,invIndex] in invPos[ID]:
@@ -927,9 +930,9 @@ class SAIpop(object):
 		self.age = self.age + 1
 
 		# # Remove fixed inversions and rearrange internal mutations
-		# self.__removeFixedInv()
+		self.__removeFixedInv()
 		# Remove fixed mutations and inversions, and rearrange mutations in removed inversions
-		self.__removeFixed()
+		# self.__removeFixed()
 
 		if self.willMutate:
 			# print ("Generation " + str(self.age) + " Mutation")
@@ -1050,6 +1053,7 @@ class SAIpop(object):
 		# 		self.record[5][j] += [numMutInBuffer[j]/(float(count))]
 		# 		self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
 		# 		self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
+		print(mutCounts)
 		for i in range(self.__mutIDcount):
 			count = mutCounts[i]
 			if count != 0:

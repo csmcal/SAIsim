@@ -13,6 +13,8 @@ mutRateInv = .1
 mutEffectDiffSD = .2
 # Reasonable minimum length given that 1 distance unit on the chromosome = 1 Morgan
 minInvLen = .1
+# Chromosome length in M, Drosophila arms are 50 cM
+lenChrom = 1.0
 # The expected # of crossovers per chromosome arm
 # parameter = 1 gives 1 Morgan chromosome arm
 recombRate = 1 
@@ -47,7 +49,7 @@ def testSameInvRec():
 	print(testGenome)
 	for i in range(10):
 		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
-			isFly,willConvert,willRecombine,testGenome)
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
 		print(fly.genGamete())
 
 def testSameInvDiffLabelRec():
@@ -57,7 +59,7 @@ def testSameInvDiffLabelRec():
 	print(testGenome)
 	for i in range(10):
 		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
-			isFly,willConvert,willRecombine,testGenome)
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
 		print(fly.genGamete())
 
 # Run the tests
