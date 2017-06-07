@@ -694,62 +694,62 @@ class SAIpop(object):
 		self.size = newSize
 		return
 
-	# Removes inversions that are fixed in the population,
-	# changes the position of internal mutations to reflect true position (flips around the center of the inversion)
-	# the old position of the mutations is lost
-	# WORTH IMPROVING PERFORMANCE: merge with record keeping in record generations? also reduce loop number
-	# ^ Just add a record flag to the step, you *could* mask this with step{step(false)}, recordStep{step(true)}
-	def __removeFixedInv(self):
-		wholePop = self.males + self.females
-		invCounts = [0]*self.__invIDcount
-		invPos = [[]]*self.__invIDcount
-		# All mutations are passed as references, so don't want to change more than one
-		firstMutEncounter = [True]*self.__mutIDcount
+	# # Removes inversions that are fixed in the population,
+	# # changes the position of internal mutations to reflect true position (flips around the center of the inversion)
+	# # the old position of the mutations is lost
+	# # WORTH IMPROVING PERFORMANCE: merge with record keeping in record generations? also reduce loop number
+	# # ^ Just add a record flag to the step, you *could* mask this with step{step(false)}, recordStep{step(true)}
+	# def __removeFixedInv(self):
+	# 	wholePop = self.males + self.females
+	# 	invCounts = [0]*self.__invIDcount
+	# 	invPos = [[]]*self.__invIDcount
+	# 	# All mutations are passed as references, so don't want to change more than one
+	# 	firstMutEncounter = [True]*self.__mutIDcount
 
-		inversionRemoved = False
-		# Generate count and position data
-		for i in range(len(wholePop)):
-			for c in range(self.numChrom):
-				for h in range(2):
-					chromHomInv = wholePop[i].genome[c][h][1]
-					for invIndex in range(len(chromHomInv)):
-						inversion = chromHomInv[invIndex]
-						# print(inversion)
-						invCounts[inversion[2]] += 1
-						invPos[inversion[2]] += [[i,c,h,invIndex]]
-		for ID in range(self.__invIDcount):
-			if invCounts[ID] == 2*self.size:
-				inversionRemoved = True
-				# print("Inversion Removed")
-				self.__invFixed[ID] = True
-				inversion = self.record[3][ID]
-				length = self.record[3][ID][1] - self.record[3][ID][0]
-				invCenter = self.record[3][ID][0] + length/2.0
-				for [i,c,h,invIndex] in invPos[ID]:
-					# Remove the inversion
-					wholePop[i].genome[c][h][1][invIndex:invIndex+1] = []
-					# Rearrange the mutation positions to reflect the loss of inversion data
-					mutHom = wholePop[i].genome[c][h][0]
-					index = 0
-					mutInside = []
-					while index < len(mutHom) and mutHom[index][0] < inversion[0]:
-						index += 1
-					startIndex = index
-					while index < len(mutHom) and mutHom[index][0] < inversion[1]:
-						mutInside = [mutHom[index]] + mutInside
-						index += 1
-					# Replace the mutations inside with ones in inverted order
-					mutHom[startIndex:index] = mutInside
-					# Flip the mutation positions around the center of the removed inversion
-					for mut in mutInside:
-						if firstMutEncounter[mut[3]]:
-							firstMutEncounter[mut[3]] = False
-							# Flip the mutation across the center
-							mut[0] = 2*invCenter-mut[0]
-						# print(mut)
-			elif invCounts[ID] > 2*self.size:
-				print("Error: more inversions than alleles possible for ID " + str(i))
-		return inversionRemoved
+	# 	inversionRemoved = False
+	# 	# Generate count and position data
+	# 	for i in range(len(wholePop)):
+	# 		for c in range(self.numChrom):
+	# 			for h in range(2):
+	# 				chromHomInv = wholePop[i].genome[c][h][1]
+	# 				for invIndex in range(len(chromHomInv)):
+	# 					inversion = chromHomInv[invIndex]
+	# 					# print(inversion)
+	# 					invCounts[inversion[2]] += 1
+	# 					invPos[inversion[2]] += [[i,c,h,invIndex]]
+	# 	for ID in range(self.__invIDcount):
+	# 		if invCounts[ID] == 2*self.size:
+	# 			inversionRemoved = True
+	# 			# print("Inversion Removed")
+	# 			self.__invFixed[ID] = True
+	# 			inversion = self.record[3][ID]
+	# 			length = self.record[3][ID][1] - self.record[3][ID][0]
+	# 			invCenter = self.record[3][ID][0] + length/2.0
+	# 			for [i,c,h,invIndex] in invPos[ID]:
+	# 				# Remove the inversion
+	# 				wholePop[i].genome[c][h][1][invIndex:invIndex+1] = []
+	# 				# Rearrange the mutation positions to reflect the loss of inversion data
+	# 				mutHom = wholePop[i].genome[c][h][0]
+	# 				index = 0
+	# 				mutInside = []
+	# 				while index < len(mutHom) and mutHom[index][0] < inversion[0]:
+	# 					index += 1
+	# 				startIndex = index
+	# 				while index < len(mutHom) and mutHom[index][0] < inversion[1]:
+	# 					mutInside = [mutHom[index]] + mutInside
+	# 					index += 1
+	# 				# Replace the mutations inside with ones in inverted order
+	# 				mutHom[startIndex:index] = mutInside
+	# 				# Flip the mutation positions around the center of the removed inversion
+	# 				for mut in mutInside:
+	# 					if firstMutEncounter[mut[3]]:
+	# 						firstMutEncounter[mut[3]] = False
+	# 						# Flip the mutation across the center
+	# 						mut[0] = 2*invCenter-mut[0]
+	# 					# print(mut)
+	# 		elif invCounts[ID] > 2*self.size:
+	# 			print("Error: more inversions than alleles possible for ID " + str(i))
+	# 	return inversionRemoved
 
 	# Removes mutations and inversions that are fixed in the population,
 	# changes the position of internal mutations to reflect true position (flips around the center of the inversion)
@@ -784,15 +784,18 @@ class SAIpop(object):
 			# print("Mut "+str(ID)+" Count "+str(count))
 			if count == 2*self.size:
 				mutationRemoved = True
-				print("Mutation Removed")
+				print("Mutation Removed, mutFixed["+str(ID)+"]=True at gen "+str(self.age))
+				# Update the fix/loss record
 				self.__mutFixed[ID] = True
+				self.record[1][ID][5] = self.age
 				for [i,c,h,mutIndex] in mutPos[ID]:
 					# Remove the mutation
-					print("Removal Attempt")
-					print(wholePop[i].genome[c][h][0])
+					# print("Removal Attempt")
+					# print(wholePop[i].genome[c][h][0])
 					wholePop[i].genome[c][h][0][mutIndex:mutIndex+1] = []
-					print(wholePop[i].genome[c][h][0])
+					# print(wholePop[i].genome[c][h][0])
 			elif count == 0:
+				# Update the fix/loss record
 				if self.record[1][ID][5] < self.record[1][ID][4]: # Change to use another flag? mutLost?
 					# self.__mutLost[ID] = True
 					self.record[1][ID][5] = self.age
@@ -808,17 +811,19 @@ class SAIpop(object):
 		for ID in range(self.__invIDcount):
 			if invCounts[ID] == 2*self.size:
 				inversionRemoved = True
-				print("Inversion Removed")
+				print("Inversion Removed, invFixed["+str(ID)+"]=True at gen "+str(self.age))
+				# Update the fix/loss record
 				self.__invFixed[ID] = True
+				self.record[3][ID][4] = self.age
 				inversion = self.record[3][ID]
 				length = self.record[3][ID][1] - self.record[3][ID][0]
 				invCenter = self.record[3][ID][0] + length/2.0
 				for [i,c,h,invIndex] in invPos[ID]:
 					# Remove the inversion
-					print("Removal Attempt")
-					print(wholePop[i].genome[c][h][1])
+					# print("Removal Attempt")
+					# print(wholePop[i].genome[c][h][1])
 					wholePop[i].genome[c][h][1][invIndex:invIndex+1] = []
-					print(wholePop[i].genome[c][h][1])
+					# print(wholePop[i].genome[c][h][1])
 					# Rearrange the mutation positions to reflect the loss of inversion data
 					mutHom = wholePop[i].genome[c][h][0]
 					index = 0
@@ -839,11 +844,13 @@ class SAIpop(object):
 							mut[0] = 2*invCenter-mut[0]
 						# print(mut)
 			elif invCounts[ID] == 0:
+				# Update the fix/loss record
 				if self.record[3][ID][4] < self.record[3][ID][3]: # Change to use another flag? invLost?
 					# self.__invLost[ID] = True
 					self.record[3][ID][4] = self.age
 			elif invCounts[ID] > 2*self.size:
 				print("Error: more inversions than alleles possible for ID " + str(invCounts[ID]))
+				# self.printGenomes()
 		return (mutationRemoved, inversionRemoved)
 
 	# Simulating a single generational step
@@ -930,9 +937,9 @@ class SAIpop(object):
 		self.age = self.age + 1
 
 		# # Remove fixed inversions and rearrange internal mutations
-		self.__removeFixedInv()
+		# self.__removeFixedInv()
 		# Remove fixed mutations and inversions, and rearrange mutations in removed inversions
-		# self.__removeFixed()
+		self.__removeFixed()
 
 		if self.willMutate:
 			# print ("Generation " + str(self.age) + " Mutation")
@@ -1053,7 +1060,8 @@ class SAIpop(object):
 		# 		self.record[5][j] += [numMutInBuffer[j]/(float(count))]
 		# 		self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
 		# 		self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
-		print(mutCounts)
+		# print(mutCounts)
+		# print(invCounts)
 		for i in range(self.__mutIDcount):
 			count = mutCounts[i]
 			if count != 0:
@@ -1111,7 +1119,7 @@ class SAIpop(object):
 			self.__updateRecord()
 		return
 
-	# For simulating setSize*setNum generations sequentially, recording every setSize'th generation
+	# For simulating numGens generations sequentially, recording every setSize'th generation
 	def recordNthInNGens(self, setSize, numGens):
 		# Be wary of this, it may not simulate the full number of generations,
 		#   but really you wouldn't necessarily record the final step anyway
@@ -1279,9 +1287,15 @@ class SAIpop(object):
 				if gen < mutInit[m]:
 					genLine += '\t0'
 				elif gen < mutFinal[m]: # The last generation isn't recorded as it is removed first
-					if offsets[m] > 0:
+					if offsets[m] >= 0:
+						# print("g "+str(g)+" gen "+str(gen)+" Init "+str(mutInit[m])+" Final "+str(mutFinal[m]))
+						# print("Offset "+str(offsets[m]))
+						# print("Index "+str(g-offsets[m]))
+						# print(self.record[2][m][g-offsets[m]-2:])
 						genLine += '\t' + str(self.record[2][m][g-offsets[m]])
 					else:
+						# print("Setting Offset:")
+						# print(" g|offset "+str(g)+" gen "+str(gen)+" Init "+str(mutInit[m])+" Final "+str(mutFinal[m]))
 						offsets[m] = g
 						genLine += '\t' + str(self.record[2][m][0])
 				elif self.__mutFixed[m]:
@@ -1310,6 +1324,9 @@ class SAIpop(object):
 			else:
 				invFinal += [finalGen]
 			offsets += [-1]
+		print(invInit)
+		print(invFinal)
+		print(self.record[3])
 		outfile.write(header + '\n')
 		for g in range(len(self.record[0])):
 			gen = self.record[0][g]
@@ -1318,11 +1335,15 @@ class SAIpop(object):
 				if gen < invInit[i]:
 					genLine += '\t0'
 				elif gen < invFinal[i]:
-					if offsets[i] > 0:
-						# print("Offset "+str(offsets[i]))
-						# print("Index "+str(g-offsets[i]))
+					if offsets[i] >= 0:
+						# print("g "+str(g)+" gen "+str(gen)+" Offset "+str(offsets[i])+" Index "+str(g-offsets[i])+" Init "+str(invInit[i])+" Final "+str(invFinal[i]))
+						# print(len(self.record[4][i]))
+						# print(self.record[4][i][g-offsets[i]-2:])
 						genLine += '\t' + str(self.record[4][i][g-offsets[i]])
 					else:
+						# print("Setting Offset:")
+						# print("g|offset "+str(g)+" gen "+str(gen)+" Init "+str(invInit[i])+" Final "+str(invFinal[i]))
+						# print(self.record[4][i])
 						offsets[i] = g
 						genLine += '\t' + str(self.record[4][i][0])
 				elif self.__invFixed[i]:

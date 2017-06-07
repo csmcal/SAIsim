@@ -66,10 +66,9 @@ pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversi
 # pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)
-pop.recordNGens(numGens)
-for i in range(numChecks):
-	pop.recordNGens(numGenStep)
-# pop.printGenomes()
-# pop.printRecord()
+# pop.recordNGens(numGens)
+# for i in range(numChecks):
+# 	pop.recordNGens(numGenStep)
+pop.recordNthForNSets(10,100)
 pop.writeRecordTables('testOutput/Test1')
-print(len())
+
