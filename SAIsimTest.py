@@ -7,10 +7,10 @@ import SAIsim as sim
 size = 100
 
 # given 10^-8 SAmut/base/gen and 
-mutRate = .1
+mutRate = .01
 
 # Approximated by 
-mutRateInv = .1
+mutRateInv = .01
 
 # Deviation of normally distributed offset of mutation effects from [x,1-x], with x = uniform[0,1)
 mutEffectDiffSD = .2
@@ -63,12 +63,16 @@ numChecks = 10
 pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
 	encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False,\
 	noMaleCost = True, genomes=genomes,sexes=sexes,record=record)
+
+mutPop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
+	encounterNum, choiceNoiseSD, invRecBuffer, willMutInv = False,\
+	noMaleCost = True)
 # pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)
 # pop.recordNGens(numGens)
 # for i in range(numChecks):
 # 	pop.recordNGens(numGenStep)
-pop.recordNthForNSets(10,100)
-pop.writeRecordTables('testOutput/Test1')
+mutPop.recordNthForNSets(10,100)
+mutPop.writeRecordTables('testOutput/Test1')
 

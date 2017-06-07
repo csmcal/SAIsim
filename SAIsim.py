@@ -951,6 +951,7 @@ class SAIpop(object):
 			for i in indivWithMut:
 				# Add the mutation to the record, with start and end generations of polymorphism
 				self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age,-1]]
+				self.record[2] += [[]]
 				self.__mutIDcount += 1
 				self.__mutFixed += [False]
 				# self.record[2] += [[0 for t in range(len(self.record[0]))]]
@@ -964,6 +965,10 @@ class SAIpop(object):
 				invData = wholePop[i].mutateInv(self.__invIDcount)
 				if not invData is None:
 					self.record[3] += [invData + [self.age,-1]]
+					self.record[4] += [[]]
+					self.record[5] += [[]]
+					self.record[6] += [[]]
+					self.record[7] += [[]]
 					self.__invIDcount += 1
 					self.__invFixed += [False]
 					# self.record[4] += [[0 for t in range(len(self.record[0]))]]
@@ -1265,7 +1270,6 @@ class SAIpop(object):
 		mutFinal = []
 		offsets = []
 		for m in range(self.__mutIDcount):
-			print(m)
 			# header += '\t'+str(m)
 			header += '\tM'+str(m)
 			initGen = self.record[1][m][4]
@@ -1276,9 +1280,9 @@ class SAIpop(object):
 			else:
 				mutFinal += [finalGen]
 			offsets += [-1]
-		print(mutInit)
-		print(mutFinal)
-		print(self.record[1])
+		# print(mutInit)
+		# print(mutFinal)
+		# print(self.record[1])
 		outfile.write(header + '\n')
 		for g in range(len(self.record[0])):
 			gen = self.record[0][g]
@@ -1324,9 +1328,9 @@ class SAIpop(object):
 			else:
 				invFinal += [finalGen]
 			offsets += [-1]
-		print(invInit)
-		print(invFinal)
-		print(self.record[3])
+		# print(invInit)
+		# print(invFinal)
+		# print(self.record[3])
 		outfile.write(header + '\n')
 		for g in range(len(self.record[0])):
 			gen = self.record[0][g]
