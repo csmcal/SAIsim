@@ -62,6 +62,7 @@ def testSameInvDiffLabelRec():
 			lenChrom,isFly,willConvert,willRecombine,testGenome)
 		print(fly.genGamete())
 
+
 # Run the tests
 testSameInvRec()
 testSameInvDiffLabelRec()

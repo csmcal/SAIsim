@@ -43,12 +43,12 @@ genomes = [[[[[],[]],[[],[]]]]]
 sexes = ['F']
 
 # For genGenoSexFromWholeGenHap
-mutList = [[0.5,0.95,0.1,0],[0.04,0.45,0.45,0]]
+mutList = [[0.5,0.5,0.1,0],[0.04,0.45,0.45,0]]
 invList = [[0.01,0.06,0]]
 mut0 = [0.5,0.95,0.1,0]
 mut1 = [0.04,0.45,0.45,1]
 inv0 = [0.01,0.06,0]
-hapList = [[[[[mut0,mut1],[inv0]]],6],[[[[mut0],[inv0]]],4]]
+hapList = [[[[[mut1,mut0],[inv0]]],6],[[[[mut0],[inv0]]],4]]
 
 
 numGens = 500
@@ -60,19 +60,44 @@ numChecks = 10
 # (genomes,sexes,record) = sim.genGenomesSexes(size,initMutList,initInvList,genomes=genomes,sexes=sexes)
 (genomes,sexes,record) = sim.genGenoSexFromWholeGenHap(size,mutList,invList,hapList,genomes=genomes,sexes=sexes)
 
-pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
-	encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False,\
-	noMaleCost = True, genomes=genomes,sexes=sexes,record=record)
+# print("Record: "+str(record))
+
+# pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
+# 	encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False, willConvert = False,\
+# 	noMaleCost = True, genomes=genomes,sexes=sexes,record=record)
+
+# convPop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
+# 	encounterNum, choiceNoiseSD, invRecBuffer, willMutate = False, willMutInv = False, willConvert = True,\
+# 	noMaleCost = True, genomes=genomes,sexes=sexes,record=record)
+
+# mutConvPop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
+# 	encounterNum, choiceNoiseSD, invRecBuffer, willMutInv = False,\
+# 	noMaleCost = True)
 
 mutPop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
-	encounterNum, choiceNoiseSD, invRecBuffer, willMutInv = False,\
+	encounterNum, choiceNoiseSD, invRecBuffer, willMutInv = False, willConvert = False,\
 	noMaleCost = True)
+
 # pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,encounterNum, choiceNoiseSD, invRecBuffer)
 # pop.stepNGens(numGens)
 # pop.recordEveryNGens(10,200)
 # pop.recordNGens(numGens)
 # for i in range(numChecks):
 # 	pop.recordNGens(numGenStep)
-mutPop.recordNthForNSets(10,100)
+
+# pop.recordNGens(100)
+# pop.recordNthForNSets(10,100)
+# pop.writeRecordTables('testOutput/Test1')
+
+# convPop.recordNthForNSets(10,100)
+# convPop.writeRecordTables('testOutput/Test1')
+
+# mutPop.recordNGens(100)
+# mutPop.writeRecordTables('testOutput/Test1')
+
+mutPop.recordNGens(200)
+# mutPop.recordNthForNSets(10,100)
 mutPop.writeRecordTables('testOutput/Test1')
+
+# print("Record: "+str(record))
 

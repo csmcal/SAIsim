@@ -172,6 +172,7 @@ class individual(object):
 				homInd2 += 1
 			if mut1[0] < mut2[0]:
 				if np.random.ranf() < self.conversionRate:
+					# print("Attempting Conversion")
 					if np.random.randint(2):
 						chrom[0][0][homInd1:homInd1+1] = []
 					else:
@@ -509,6 +510,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 # Currently doesn't allow description of prior record
 #   How to model starting with mutations specific to sexes?
 # IMPORTANT - FOR CORRECT RECORD KEEPING, ALL MUT OF THE SAME ID IN HAPS MUST BE SAME OBJECT/REFERENCE
+# AND THE HAPLOTYPES MUST HAVE MUTATIONS AND INVERSIONS IN INCREASING POSITION (write a check function?)
 # @staticmethod
 def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True, numChrom = 1, 
 		lenChrom = 1.0, genomes = [], sexes = []):
@@ -672,7 +674,10 @@ class SAIpop(object):
 				lenChrom,isFly,willConvert,willRecombine,\
 				[[[[],[]],[[],[]]] for i in range(self.numChrom)]) for j in range(numLeft-numMales)]
 			# Generate the generation 0 record
+			# print("Gen 0 Record: "+str(record))
 			self.__updateRecord()
+			# print("Update: "+str(self.record))
+
 
 	class InputError(Exception):
 		"""Exception raised for errors in the input.
@@ -759,9 +764,9 @@ class SAIpop(object):
 	def __removeFixed(self):
 		wholePop = self.males + self.females
 		mutCounts = [0]*self.__mutIDcount
-		mutPos = [[]]*self.__mutIDcount
+		mutPos = [[] for i in range(self.__mutIDcount)]
 		invCounts = [0]*self.__invIDcount
-		invPos = [[]]*self.__invIDcount
+		invPos = [[] for i in range(self.__invIDcount)]
 		# Generate count and position data
 		for i in range(len(wholePop)):
 			for c in range(self.numChrom):
@@ -784,7 +789,8 @@ class SAIpop(object):
 			# print("Mut "+str(ID)+" Count "+str(count))
 			if count == 2*self.size:
 				mutationRemoved = True
-				print("Mutation Removed, mutFixed["+str(ID)+"]=True at gen "+str(self.age))
+				# print("Mutation Removed, mutFixed["+str(ID)+"]=True at gen "+str(self.age)+" count "+str(mutCounts[ID]))
+				# print(str(len(mutPos[ID]))+" mutPus entries")
 				# Update the fix/loss record
 				self.__mutFixed[ID] = True
 				self.record[1][ID][5] = self.age
@@ -794,6 +800,15 @@ class SAIpop(object):
 					# print(wholePop[i].genome[c][h][0])
 					wholePop[i].genome[c][h][0][mutIndex:mutIndex+1] = []
 					# print(wholePop[i].genome[c][h][0])
+				testMutCounts = [0]*self.__mutIDcount
+				for i in range(len(wholePop)):
+					for c in range(self.numChrom):
+						for h in range(2):
+							chromHomMut = wholePop[i].genome[c][h][0]
+							for mutIndex in range(len(chromHomMut)):
+								mutation = chromHomMut[mutIndex]
+								testMutCounts[mutation[3]] += 1
+				# print(str(testMutCounts[ID])+" remaining after removal")
 			elif count == 0:
 				# Update the fix/loss record
 				if self.record[1][ID][5] < self.record[1][ID][4]: # Change to use another flag? mutLost?
@@ -811,7 +826,7 @@ class SAIpop(object):
 		for ID in range(self.__invIDcount):
 			if invCounts[ID] == 2*self.size:
 				inversionRemoved = True
-				print("Inversion Removed, invFixed["+str(ID)+"]=True at gen "+str(self.age))
+				# print("Inversion Removed, invFixed["+str(ID)+"]=True at gen "+str(self.age)+" count "+str(invCounts[ID]))
 				# Update the fix/loss record
 				self.__invFixed[ID] = True
 				self.record[3][ID][4] = self.age
@@ -902,8 +917,13 @@ class SAIpop(object):
 			# Generate the genome of the new member from the parents
 			genome = []
 			fatherGamete = father.genGamete()
-			# print("father gamete" + str(fatherGamete))
+			# if len(fatherGamete[0][0]) > 2:
+			# 	print("father gamete" + str(fatherGamete))
+			# 	print("father genome" + str(father.genome))
 			motherGamete = mother.genGamete()
+			# if len(motherGamete[0][0]) > 2:
+			# 	print("mother gamete" + str(motherGamete))
+			# 	print("mother genome" + str(mother.genome))
 			# print("mother gamete" + str(motherGamete))
 			for chrom in range(len(fatherGamete)):
 				genome += [[fatherGamete[chrom],motherGamete[chrom]]]
@@ -1361,7 +1381,8 @@ class SAIpop(object):
 	#   and initial generation data for all mutations
 	def writeMutCharTable(self,filename):
 		outfile = open(filename, 'w')
-		outfile.write('Position\tSurEffect\tRepEffect\tChromosome\tInitGen\tFinalGen\n')
+		# outfile.write('Position\tSurEffect\tRepEffect\tChromosome\tInitGen\tFinalGen\n')
+		outfile.write('Pos\tSurEf\tRepEf\tChrom\tInitGen\tFinalGen\n')
 		for m in range(len(self.record[1])):
 			line = ''
 			for datum in self.record[1][m]:
@@ -1373,7 +1394,8 @@ class SAIpop(object):
 	#   and initial generation data for all inversions
 	def writeInvCharTable(self,filename):
 		outfile = open(filename, 'w')
-		outfile.write('Position1\tPosition2\tChromosome\tInitGen\tFinalGen\n')
+		# outfile.write('Position1\tPosition2\tChromosome\tInitGen\tFinalGen\n')
+		outfile.write('Pos1\tPos2\tChrom\tInitGen\tFinalGen\n')
 		for i in range(len(self.record[3])):
 			line = ''
 			for datum in self.record[3][i]:
