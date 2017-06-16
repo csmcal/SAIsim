@@ -1,0 +1,2 @@
+Generation	Count	AvgNumMut	AvgSurEff	AvgRepEff	ModeNumMut	ModeSurEff	ModeRepEff
+90	134	0.320895522388	0.963074082656	0.282106384636	0	1	0

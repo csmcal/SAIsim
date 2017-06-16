@@ -1,0 +1,4 @@
+Generation	Count
+50	30
+60	82
+70	40

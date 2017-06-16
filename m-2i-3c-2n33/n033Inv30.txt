@@ -1,0 +1,1 @@
+Generation	Count	AvgNumMut	AvgSurEff	AvgRepEff	ModeNumMut	ModeSurEff	ModeRepEff

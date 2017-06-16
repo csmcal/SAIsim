@@ -73,7 +73,7 @@ getFreqsAtSpa <- function(spacing,filePrefix) {
   for (num in seq(50)-1) {
     n <- formatC(num, width = 3, format = "d", flag = "0")
     try({
-      fileName <- paste(fileBase,n,"Mut.txt",sep="")
+      fileName <- paste(fileBase,n,"All.txt",sep="")
       # thisFreq <- getMeanLast100Freqs(spacing,fileName)
       # if (thisFreq != 0 && thisFreq != 2000) { # Needs to check values not table
       #   equilFreqs <- rbind(equilFreqs,thisFreq)

@@ -6,7 +6,14 @@
 
 # REWRITE WITH NUMPY ARRAYS/VECTORS?
 
+# TODO:
+#  fix chrom length by collapsing to just recomb. rate or length param. (prob. recomb. rate)
+#  add full record of offspring/values for individuals/gen. instead of means/var
+#  combine record keeping into the step function to speed up/make simpler (how much benefit?)
+
 import numpy as np
+from collections import Counter
+
 
 # The object representing an individual in the population under simulation,
 # contains methods for generating mutation position and effects, and new recombinant gametes
@@ -67,12 +74,18 @@ class individual(object):
 		# Survival mult., Quality additive
 		return [1-base+offset,base+offset]
 
+
+	# generates mutations with effects drawn from independent uniform ditributions
+	# with 
+	def __genEffectSizesRand(self):
+		return [1-np.random.ranf(),np.random.ranf()]
+
 	# Generates a mutation of the form [position, survival effect, rep effect, ID]
 	def mutate(self,ID):
 		# print(self.genome)
 		mutPos = np.random.ranf()*self.lenChrom
 		# mutPos = np.random.ranf()
-		mutEffects = self.__genEffectSizes()
+		mutEffects = self.__genEffectSizesRand()
 		mutation = [mutPos]+mutEffects+[ID]
 		# Pick a chromosome
 		chromIndex = np.random.randint(0,len(self.genome))
@@ -157,13 +170,40 @@ class individual(object):
 				# quality *= mut[2]
 		return quality
 
+
+	def __convCheck(self, chrom, parChrom):
+		mutIDs0 = [x[3] for x in chrom[0][0]]
+		invIDs0 = [x[2] for x in chrom[0][1]]
+		mutIDs1 = [x[3] for x in chrom[1][0]]
+		invIDs1 = [x[2] for x in chrom[1][1]]
+		# print(mutIDs0+mutIDs1)
+		mutCounts = Counter(mutIDs0+mutIDs1)
+		# print(mutCounts)
+		invCounts = Counter(invIDs0+invIDs1)
+		if len(mutCounts) > 0:
+			highestMutCount = mutCounts.most_common(1)[0][1]
+			if highestMutCount > 2:
+				print("Failed Conversion: "+str(highestMutCount)+" copies of mut "+str(mutCounts.most_common(1)[0][0]))
+				print("ParHap0: "+str([x[3] for x in parChrom[0][0]]))
+				print("ParHap1: "+str([x[3] for x in parChrom[0][1]]))
+				print("ConHap0: "+str(mutIDs0))
+				print("ConHap1: "+str(mutIDs1))
+				print(parChrom)
+				print(chrom)
+		if len(invCounts) > 0:
+			highestInvCount = invCounts.most_common(1)[0][1]
+			if highestInvCount > 2:
+				print("Failed Conversion from crossover? / too many inversions? Inv data shouldn't be changed")
+
+
 	# Takes a chromosome and returns the chromosome with converted mutations
 	# May want to allow for a boolean hasConversion to turn this off in the simulation
 	def __convertChrom(self,chrom):
+		# parChrom = [[list(chrom[0][0]),list(chrom[0][1])],[list(chrom[1][0]),list(chrom[1][1])]]
 		homInd1 = 0
 		homInd2 = 0
 		# Check for heterozygosity and add/remove mutations following conversionRate probability
-		# Relies on the invariant that earlier indexed mutations have earlier position
+		# !!!! Relies on the invariant that earlier indexed mutations have earlier position
 		while homInd1 < len(chrom[0][0]) and homInd2 < len(chrom[1][0]):
 			mut1 = chrom[0][0][homInd1]
 			mut2 = chrom[1][0][homInd2]
@@ -200,6 +240,8 @@ class individual(object):
 				else:
 					chrom[1][0] += [chrom[0][0][homInd1]]
 					homInd1 += 1
+					homInd2 += 1 # IMPORTANT (so it doesn't think an added mut is unfinished prcessing \
+								 # in the next While loop)
 			else:
 				homInd1 += 1
 		while homInd2 < len(chrom[1][0]):
@@ -211,6 +253,7 @@ class individual(object):
 					homInd2 += 1
 			else:
 				homInd2 += 1
+		# self.__convCheck(chrom, parChrom)
 		return chrom
 
 
@@ -439,9 +482,10 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 	# Will need to have separate lists per chromosome within these
 	posOrderedMut = [[] for i in range(numChrom)]
 	posOrderedInv = [[] for i in range(numChrom)]
-	# Record should be returned with only [1,3] actually populated, [2,4..8] with empty lists 
+	# Record should be returned with only [1,3] actually populated, [2,4..15] with empty lists 
 	#   for 0th generation update
-	record = [[],[],[],[],[],[],[],[],[]]
+	# record = [[],[],[],[],[],[],[],[],[],[],[]]
+	record = [[] for x in range(16)]
 
 	numMut = len(mutList)
 	for m in range(numMut):
@@ -469,6 +513,8 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 		record[5] += [[]]
 		record[6] += [[]]
 		record[7] += [[]]
+		record[8] += [[]]
+		record[9] += [[]]
 		# Insert the inversion and count to the ordered list for addition to the genomes
 		i = 0
 		while (i < len(posOrderedInv[chrom])) and (posOrderedInv[chrom][i][0][1] <= inversion[0]):
@@ -562,7 +608,8 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 
 	# Record should be returned with only [1,3] actually populated, [2,4..7] with empty lists 
 	#   for 0th generation update
-	record = [[],[],[],[],[],[],[],[],[]]
+	# record = [[],[],[],[],[],[],[],[],[],[],[]]
+	record = [[] for x in range(16)]
 	for m in range(len(mutList)):
 		record[1] += [mutList[m][0:4]+[0,-1]]
 		record[2] += [[]]
@@ -572,6 +619,8 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 		record[5] += [[]]
 		record[6] += [[]]
 		record[7] += [[]]
+		record[8] += [[]]
+		record[9] += [[]]
 
 	return (genomes,sexes,record)
 
@@ -595,7 +644,7 @@ class SAIpop(object):
 			recombRate, encounterNum, choiceNoiseSD, invRecBuffer,
 			isFly = True, randomSex = True, numChrom = 1, lenChrom = 1.0, willMutate = True,
 			willMutInv = True, willConvert = True, willRecombine = True, noMaleCost = False,
-			genomes = [], sexes = [], record = [[],[],[],[],[],[],[],[],[]]):
+			genomes = [], sexes = [], record = [[] for x in range(16)]):
 		# super(simSAIpopulation, self).__init__()
 		self.size = size
 		self.mutRate = mutRate
@@ -989,6 +1038,9 @@ class SAIpop(object):
 					self.record[5] += [[]]
 					self.record[6] += [[]]
 					self.record[7] += [[]]
+					self.record[8] += [[]]
+					self.record[9] += [[]]
+					self.record[10] += [[]]
 					self.__invIDcount += 1
 					self.__invFixed += [False]
 					# self.record[4] += [[0 for t in range(len(self.record[0]))]]
@@ -1002,6 +1054,14 @@ class SAIpop(object):
 	# # Has 
 	# def __repeat(self,l):
 	# 	l += l[len(l)-1]
+
+	# Mode function (so that scipy isn't needed)
+	# returns a mode as a random sample from among the most frequent classes
+	def __randomizedMode(self, data):
+		# from collections import Counter
+		highFreqCounts = Counter(data).most_common(1)
+		return highFreqCounts[np.random.choice(len(highFreqCounts))][0]
+
 
 	# For updating all recorded information on the population, record structured as:
 	# [0] a list of ages at which an update was made
@@ -1019,25 +1079,47 @@ class SAIpop(object):
 	#      indexed by ID, of each inversion at each age noted in [0]
 	# [7] a list of average reproductive effect within buffer region across the entire population,
 	#      indexed by ID, of each inversion at each age noted in [0]
-	# [8] a list of pop size at each recorded generation
+	# [8] a list of mode count of mutations within the buffer region across the entire population,
+	#      indexed by ID, of each inversion at each age noted in [0]
+	# [9] a list of mode survival effect within buffer region across the entire population,
+	#      indexed by ID, of each inversion at each age noted in [0]
+	# [10] a list of mode reproductive effect within buffer region across the entire population,
+	#      indexed by ID, of each inversion at each age noted in [0]
+	# [11] a list of pop size at each recorded generation
+	# [12] mean population survival value
+	# [13] variance in population survival value
+	# [14] mean population reproductive value
+	# [15] variance in population reproductive value
 	def __updateRecord(self):
 		# print ("Record Update")
+		# print ("curr record: "+str(self.record))
 	 	# Record the age of the record update
 		self.record[0] += [self.age]
 	 	# Record the population size at the time of the of the record update
-		self.record[8] += [self.size]
-		# Count the number of each mutation/ID
+		self.record[11] += [self.size]
+		# Count the number of each mutation/inversion by ID
 		mutCounts = [0]*self.__mutIDcount
 		invCounts = [0]*self.__invIDcount
-		numMutInBuffer = [0]*self.__invIDcount
-		# survEffectTotalInBuffer = [0]*self.__invIDcount
-		survEffectTotalInBufferMultiplicative = [0]*self.__invIDcount
-		reprEffectTotalInBuffer = [0]*self.__invIDcount
+		# Account metrics of value associations for the inversions
+		# numMutInBuffer = [0]*self.__invIDcount
+		# survEffectInBuffer = [0]*self.__invIDcount
+		# reprEffectInBuffer = [0]*self.__invIDcount
+		mutNumsInBuffer = [[] for i in range(self.__invIDcount)]
+		survEffectsInBuffer = [[] for i in range(self.__invIDcount)]
+		reprEffectsInBuffer = [[] for i in range(self.__invIDcount)]
+		# Account whole population statistics (mean and variance of values/individual)
+		popSurvVals = []
+		popReprVals = []
+		# consider ^ statistics.median
 		for indiv in self.males + self.females:
+			indivSur = 1
+			indivRep = 0
 			for chrom in indiv.genome:
 				for hom in chrom:
 					for mut in hom[0]:
 						mutCounts[mut[3]] += 1
+						indivSur *= mut[1]
+						indivRep += mut[2]
 					lowerMutInd = 0
 					upperMutInd = 0
 					for inv in hom[1]:
@@ -1055,9 +1137,14 @@ class SAIpop(object):
 							numMutInside += 1
 							thisSurvEffect *= mut[1]
 							thisReprEffect += mut[2]
-						numMutInBuffer[inv[2]] += numMutInside
-						survEffectTotalInBufferMultiplicative[inv[2]] += thisSurvEffect
-						reprEffectTotalInBuffer[inv[2]] += thisReprEffect
+						# numMutInBuffer[inv[2]] += numMutInside
+						# survEffectInBuffer[inv[2]] += thisSurvEffect
+						# reprEffectInBuffer[inv[2]] += thisReprEffect
+						mutNumsInBuffer[inv[2]] += [numMutInside]
+						survEffectsInBuffer[inv[2]] += [thisSurvEffect]
+						reprEffectsInBuffer[inv[2]] += [thisReprEffect]
+			popSurvVals += [indivSur]
+			popReprVals += [indivRep]
 		# Update the record, get averages for record[5,6,7]
 		# for i in range(self.__mutIDcount):
 		# 	count = mutCounts[i]
@@ -1095,9 +1182,21 @@ class SAIpop(object):
 			count = invCounts[j]
 			if count != 0:
 				self.record[4][j] += [count]
-				self.record[5][j] += [numMutInBuffer[j]/(float(count))]
-				self.record[6][j] += [survEffectTotalInBufferMultiplicative[j]/(float(count))]
-				self.record[7][j] += [reprEffectTotalInBuffer[j]/(float(count))]
+				# self.record[5][j] += [numMutInBuffer[j]/(float(count))]
+				# self.record[6][j] += [survEffectInBuffer[j]/(float(count))]
+				# self.record[7][j] += [reprEffectInBuffer[j]/(float(count))]
+				self.record[5][j] += [np.mean(mutNumsInBuffer[j])]
+				self.record[6][j] += [np.mean(survEffectsInBuffer[j])]
+				self.record[7][j] += [np.mean(reprEffectsInBuffer[j])]
+				self.record[8][j] += [self.__randomizedMode(mutNumsInBuffer[j])]
+				self.record[9][j] += [self.__randomizedMode(survEffectsInBuffer[j])]
+				self.record[10][j] += [self.__randomizedMode(reprEffectsInBuffer[j])]
+		# Record Population Statistics
+		# MAYBE JUST RECORD ALL THE VALUES FOR LATER ANALYSIS?
+		self.record[12] += [np.mean(popSurvVals)]
+		self.record[13] += [np.var(popSurvVals)]
+		self.record[14] += [np.mean(popReprVals)]
+		self.record[15] += [np.var(popReprVals)]
 
 	# # Checks the record to see if all mutations/inversions are fixed
 	# def checkAllRecMutFixed(self):
@@ -1172,7 +1271,7 @@ class SAIpop(object):
 					g = self.record[0][lastRecord]
 					for addRecord in range(1,numSets-i):
 						self.record[0] += [g+addRecord*setSize]
-						self.record[8] += [self.size]
+						self.record[11] += [self.size]
 						# for m in range(self.__mutIDcount):
 						# 	# print(self.record[2][m])
 						# 	self.record[2][m] += [self.record[2][m][lastRecord]]
@@ -1224,7 +1323,7 @@ class SAIpop(object):
 		if fillRecord:
 			while t < len(self.record[0]):
 				if self.__mutFixed[ID]:
-					outfile.write(str(recordGen) + '\t' + str(self.record[8][t]) + '\n')
+					outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\n')
 				else:
 					outfile.write(str(recordGen) + '\t0\n')
 				t += 1
@@ -1240,7 +1339,7 @@ class SAIpop(object):
 	def writeInversion(self,filename,ID,fillRecord = False):
 		outfile = open(filename, 'w')
 		# outfile.write('Inversion '+str(ID)+'\n')
-		outfile.write('Generation\tCount\tAvgNumMut\tAvgSurEff\tAvgRepEff\n')
+		outfile.write('Generation\tCount\tAvgNumMut\tAvgSurEff\tAvgRepEff\tModeNumMut\tModeSurEff\tModeRepEff\n')
 		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[4][ID][0]) + '\t'\
 		# 	+ str(self.record[5][ID][0]) + '\t' + str(self.record[6][ID][0]) + '\t'\
 		# 	+ str(self.record[7][ID][0]) + '\n')
@@ -1264,13 +1363,14 @@ class SAIpop(object):
 			i = t - offset
 			outfile.write(str(recordGen) + '\t' + str(self.record[4][ID][i]) + '\t'\
 				+ str(self.record[5][ID][i]) + '\t' + str(self.record[6][ID][i]) + '\t'\
-				+ str(self.record[7][ID][i]) + '\n')
+				+ str(self.record[7][ID][i]) + '\t' + str(self.record[8][ID][i]) + '\t'\
+				+ str(self.record[9][ID][i]) + '\t' + str(self.record[10][ID][i]) + '\n')
 			t += 1
 			recordGen = self.record[0][t]
 		if fillRecord:
 			while t < len(self.record[0]):
 				if self.__invFixed[ID]:
-					outfile.write(str(recordGen) + '\t' + str(self.record[8][t]) + '\t-1\t-1\t-1\n')
+					outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\t-1\t-1\t-1\n')
 				else:
 					outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\n')
 				t += 1
@@ -1323,7 +1423,7 @@ class SAIpop(object):
 						offsets[m] = g
 						genLine += '\t' + str(self.record[2][m][0])
 				elif self.__mutFixed[m]:
-					genLine += '\t' + str(self.record[8][g])
+					genLine += '\t' + str(self.record[11][g])
 				else:
 					genLine += '\t0'
 			outfile.write(genLine + '\n')
@@ -1371,7 +1471,7 @@ class SAIpop(object):
 						offsets[i] = g
 						genLine += '\t' + str(self.record[4][i][0])
 				elif self.__invFixed[i]:
-					genLine += '\t' + str(self.record[8][g])
+					genLine += '\t' + str(self.record[11][g])
 				else:
 					genLine += '\t0'
 			outfile.write(genLine + '\n')
@@ -1403,9 +1503,19 @@ class SAIpop(object):
 			outfile.write(line[:-1] + '\n')
 		outfile.close()
 
+	# Takes a filename and writes a tab delineated file of the population statistics
+	#   by generation in the first column
+	def writePopStatTable(self,filename):
+		with open(filename, 'w') as outfile:
+			outfile.write('Generation\tSurMean\tSurVar\tRepMean\tRepVar\n')
+			for g in range(len(self.record[0])):
+				outfile.write(str(self.record[0][g]) + '\t' + str(self.record[12][g]) + '\t'\
+				+ str(self.record[13][g]) + '\t' + str(self.record[14][g]) + '\t'\
+				+ str(self.record[15][g]) + '\n')
+
 	# Writes a summary file for the parameters of the simulation run
 	# UPDATE - changeable size and additional parameters
-	def writeSummary(self,filename):
+	def writeParamSummary(self,filename):
 		outfile = open(filename, 'w')
 		outfile.write('Parameter\tValue\n')
 		outfile.write('Size\t'+str(self.size)+'\n')
@@ -1434,11 +1544,12 @@ class SAIpop(object):
 	# Tab delineated table with generation and count data for every mutation
 	# Tab delineated table with generation, count, etc. additional data for every inversion
 	def writeRecordTables(self,outFilePrefix):
-		self.writeSummary(outFilePrefix+'ParamSumm.txt')
+		self.writeParamSummary(outFilePrefix+'ParamSumm.txt')
 		self.writeMutCharTable(outFilePrefix+'MutSumm.txt')
 		self.writeInvCharTable(outFilePrefix+'InvSumm.txt')
 		self.writeAllMutFreqTable(outFilePrefix+'MutFreqs.txt')
 		self.writeAllInvFreqTable(outFilePrefix+'InvFreqs.txt')
+		self.writePopStatTable(outFilePrefix+'PopStats.txt')
 		for mutID in range(self.__mutIDcount):
 			filename = outFilePrefix+'Mut'+str(mutID)+'.txt'
 			self.writeMutation(filename,mutID)

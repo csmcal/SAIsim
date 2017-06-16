@@ -1,0 +1,17 @@
+Parameter	Value
+Size	1000
+NumChromosomes	1
+MutationRate	0.01
+InversionMutationRate	0.001
+MutationEffectOffsetSD	0.2
+MinimumInversionLength	0.1
+ConversionRate	0.01
+RecombinationRate	1
+EncounterNumber	100
+FemaleChoiceNoiseSD	0.5
+InversionRecordBuffer	0.1
+RandomSex	True
+WillMutate	True
+WillMutInv	True
+WillConvert	True
+WillRecombine	True

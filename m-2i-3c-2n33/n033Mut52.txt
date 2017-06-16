@@ -1,0 +1,2 @@
+Generation	Count
+10	28

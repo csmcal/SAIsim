@@ -214,6 +214,7 @@ summaryFixLoss <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   datac$Pfix <- datac$Nfix/datac$N
   datac$Ploss <- datac$Nloss/datac$N
   datac$Peither <- datac$Pfix + datac$Ploss
+  # datac$Ppoly <- data$N - data$Peither
   
   return(datac)
 }
@@ -276,8 +277,9 @@ spacingInvHapPlot <- function(freqSpaInvTable) {
           legend.position=c(0.28,0.8))               # Position legend in bottom right
 }
 
-# freqSpaInvTable <- genFreqSpaTable("../Results/TwoMutSpacing/SpaInvShortEqHap/sS0.860rS0.060sB0.700rB0.150")
-# save(freqSpaInvTable,file="SpaInvEqHapFreqTable.Rdata")
+freqSpaInvTable <- genFreqSpaTable("../Results/TwoMutSpacing/SpaInvShortEqHap/sS0.860rS0.060sB0.700rB0.150")
+save(freqSpaInvTable,file="SpaInvEqHapFreqTable.Rdata")
+# load(file="SpaInvEqHapFreqTable.Rdata")
 spacingInvPropFixPlot(freqSpaInvTable)
 # spacingFreqPlot(freqSpaInvTable)
 # spacingFreqScatter(freqSpaTable)
