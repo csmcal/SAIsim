@@ -1,2 +1,0 @@
-Generation	Count
-10	10

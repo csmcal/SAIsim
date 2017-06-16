@@ -1,2 +1,0 @@
-Generation	Count	AvgNumMut	AvgSurEff	AvgRepEff	ModeNumMut	ModeSurEff	ModeRepEff
-50	2	4.0	0.47712464669	3.19544732755	4	0.4771246466903276	3.195447327545236

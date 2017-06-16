@@ -1,4 +1,0 @@
-Generation	Count
-70	297
-80	1063
-90	1293

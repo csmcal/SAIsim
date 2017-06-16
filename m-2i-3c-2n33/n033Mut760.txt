@@ -1,3 +1,0 @@
-Generation	Count
-80	7
-90	6
