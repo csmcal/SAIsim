@@ -12,7 +12,6 @@
 universe = vanilla
 log = Log/full_$(Cluster).log
 error = Log/full_$(Cluster)_$(Process).err
-#initialdir = NeutralInversion
 
 #
 # Specify executable (binary or script), arguments, 
@@ -41,5 +40,6 @@ request_disk = 100MB
 #
 # Tell HTCondor to run 100 instances of our job:
 
-queue 100
+queue 1
+# queue 100
 

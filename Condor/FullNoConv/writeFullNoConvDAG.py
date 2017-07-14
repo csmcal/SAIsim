@@ -14,4 +14,4 @@ for mutPower in [-3,-4]:
 		outfile.write(jobLine)
 		outfile.write(varsLine)
 
-outfile.write('../CONFIG effectGridDAG.config\n')
+outfile.write('CONFIG ../effectGridDAG.config\n')

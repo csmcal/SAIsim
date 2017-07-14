@@ -60,7 +60,8 @@ getMeanLast100Freqs <- function(spacing,fileName) {
 
 getFinalFreq <- function(spacing,fileName) {
   mutFreq <- read.table(fileName,sep='\t',header=TRUE)
-  finalFreq <- c(spacing,tail(mutFreq[,-1],n=1))
+  lastMutFreqs <- unlist(tail(mutFreq[,-1],n=1))
+  finalFreq <- c(spacing,lastMutFreqs)
   return(finalFreq)
 }
 
@@ -78,7 +79,8 @@ getFreqsAtSpa <- function(spacing,filePrefix) {
       # if (thisFreq != 0 && thisFreq != 2000) { # Needs to check values not table
       #   equilFreqs <- rbind(equilFreqs,thisFreq)
       # }
-      equilFreqs <- rbind(equilFreqs,getMeanLast100Freqs(spacing,fileName))
+      # equilFreqs <- rbind(equilFreqs,getMeanLast100Freqs(spacing,fileName))
+      equilFreqs <- rbind(equilFreqs,getFinalFreq(spacing,fileName))
     })
   }
   # print(equilFreqs)
@@ -96,8 +98,10 @@ genFreqSpaTable <- function(filePrefix) {
     #   
     # }
   }
+  freqSpaTable <- as.data.frame(freqSpaTable)
   colnames(freqSpaTable)[1]<-"Spacing"
-  # print(freqSpaTable)
+  colnames(freqSpaTable)[2]<-"M1"
+  colnames(freqSpaTable)[3]<-"M2"
   return(freqSpaTable)
 }
 
@@ -155,14 +159,14 @@ convertToFactors <- function(freqSpaTable) {
   factorizedTable <- cbind()
   for (m in 2:ncol(freqSpaTable)) {
     mutationData <- freqSpaTable[,c(1,m)]
-    mutationData <- cbind(m-1,mutationData)
+    mutationData <- cbind(colnames(freqSpaTable)[m],mutationData)
     # print(mutationData)
+    colnames(mutationData) <- c("Mutation","Spacing","Count")
     factorizedTable <- rbind(factorizedTable,mutationData)
   }
-  colnames(factorizedTable)[1] <- "Mutation"
-  colnames(factorizedTable)[3] <- "Count"
+  # colnames(factorizedTable)[1] <- "Mutation"
+  # colnames(factorizedTable)[3] <- "Count"
   factorizedTable <- as.data.frame(factorizedTable)
-  # print(head(factorizedTable))
   factorizedTable$Mutation <- as.factor(factorizedTable$Mutation)
   # print(factorizedTable)
   return(factorizedTable)
@@ -193,8 +197,17 @@ spacingFreqPlot1 <- function(freqSpaTable) {
           legend.position=c(0.34,0.01))               # Position legend in bottom right
 }
 
+removeFixLoss <- function(freqSpaInvTable,measurevar){
+  temp <- subset(freqSpaInvTable,freqSpaInvTable[[measurevar]]!=2000)
+  temp <- subset(temp,temp[[measurevar]]!=0)
+  return(temp)
+}
+
 spacingFreqPlot <- function(freqSpaTable) {
-  frqs <- convertToFactors(freqSpaTable)
+  frqs <- removeFixLoss(freqSpaTable,'M1')
+  frqs <- convertToFactors(frqs)
+  frqs$Count <- frqs$Count/2000
+  # print(head(frqs))
   # frqsSE <- summarySE(frqs,measurevar = "Count",groupvars = c("Mutation","Spacing"))
   # print(frqsSE)
   
@@ -205,11 +218,12 @@ spacingFreqPlot <- function(freqSpaTable) {
     # geom_errorbar(aes(ymin=Count-sd, ymax=Count+sd), colour="black", width=.02, position=pd) +
     # geom_line(position=pd) +
     # geom_point(position=pd, size=3, shape=21, fill="white") + # 21 is filled circle
-    geom_boxplot(data=subset(frqs,Mutation==1), aes(x=Spacing, y=Count, colour=Mutation, group=Spacing)) +
+    geom_boxplot(data=subset(frqs,Mutation=='M1'), aes(x=Spacing, y=Count, colour=Mutation, group=Spacing), color ="red3") +
     # geom_boxplot(data=subset(subset(frqs,Mutation==1),Count!=0), aes(x=Spacing, y=Count, colour=Mutation, group=Spacing)) +
-    geom_boxplot(data=subset(frqs,Mutation==2), aes(x=Spacing, y=Count, colour=Mutation, group=Spacing)) +
+    geom_boxplot(data=subset(frqs,Mutation=='M2'), aes(x=Spacing, y=Count, colour=Mutation, group=Spacing), color ="cyan4") +
     xlab("Spacing (M)") +
     ylab("Count") +
+    coord_cartesian(ylim = c(0, 1.0),xlim = c(0, .35)) +
     scale_colour_hue(name="Mutation",    # Legend label, use darker colors
                      breaks=c("1", "2"),
                      labels=c("Sur 0.86 Rep 0.06","Sur 0.70 Rep 0.15"),
@@ -220,9 +234,74 @@ spacingFreqPlot <- function(freqSpaTable) {
     theme_bw() +
     theme(legend.justification=c(1,0),
           legend.position=c(0.34,0.01))               # Position legend in bottom right
+  ggsave("Mutation Frequency No Inv.png", units="in", width=4, height=3, dpi=300, device = 'png')
 }
 
-freqSpaTable <- genFreqSpaTable("../Results/TwoMutSpacing/Spa.86.06.7.15e100Short/sS0.860rS0.060sB0.700rB0.150")
+summaryFixLoss <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                           .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N     = length2(xx[[col]], na.rm=na.rm),
+                     Nfix  = length2(subset(xx[[col]],xx[[col]]==2000), na.rm=na.rm),
+                     Nloss = length2(subset(xx[[col]],xx[[col]]==0), na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  datac$Pfix <- datac$Nfix/datac$N
+  datac$Ploss <- datac$Nloss/datac$N
+  datac$Peither <- datac$Pfix + datac$Ploss
+  datac$Ppoly <- rep(1.0,length(datac$Peither)) - datac$Peither
+  
+  return(datac)
+}
+
+spacingMutPropFixPlot <- function(freqSpaTable) {
+  fixLossTable0 <- summaryFixLoss(freqSpaTable,groupvars = "Spacing",
+                                 measurevar = "M1")
+  fixLossTable1 <- summaryFixLoss(freqSpaTable,groupvars = "Spacing",
+                                  measurevar = "M2")
+  
+  library(ggplot2)
+  pd = position_dodge(0.01)
+  # ggplot(frqsSE, aes(x=Spacing, y=Count, colour=Mutation, group=Mutation)) + 
+  p <- ggplot() + 
+    geom_line(data=fixLossTable0,aes(x=Spacing, y=Ppoly, group=1), colour="red3") +
+    geom_line(data=fixLossTable1,aes(x=Spacing, y=Ppoly, group=1), colour="cyan4") +
+    # geom_line(aes(x=Spacing, y=Pfix, group=1), colour="blue") +
+    # geom_line(aes(x=Spacing, y=Ploss, group=1), colour="red") +
+    # geom_point(position=pd, size=3, shape=21, fill="white") + # 21 is filled circle
+    xlab("Spacing (M)") +
+    ylab("Percent of Simulations") +
+    coord_cartesian(ylim = c(0, 1.0),xlim = c(0, .35)) +
+    scale_colour_hue(name="Inversion",    # Legend label, use darker colors
+                     breaks=c("1", "2"),
+                     labels=c("Inv 0.02-0.38", "Mut 2"),
+                     l=40) +                    # Use darker colors, lightness=40
+    ggtitle("Inversion Fixation and Loss Frequencies by Spacing") +
+    expand_limits(y=0) +                        # Expand y range
+    # scale_y_continuous(breaks=0:20*4) +         # Set tick every 4
+    theme_bw() +
+    theme(legend.justification=c(1,0),
+          legend.position=c(0.28,0.8))               # Position legend in bottom right
+  ggsave("Mutation Polymorphism No Inv.png", units="in", width=4, height=3, dpi=300, device = 'png')
+}
+
+# freqSpaTable <- genFreqSpaTable("../Results/TwoMutSpacing/Spa.86.06.7.15e100Short/sS0.860rS0.060sB0.700rB0.150")
+# save(freqSpaTable,file="twoMutSpaTable.Rdata")
+load(file="twoMutSpaTable.Rdata")
+spacingMutPropFixPlot(freqSpaTable)
 # sumFreqSpa <- summarySE()
 spacingFreqPlot(freqSpaTable)
 

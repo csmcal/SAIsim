@@ -10,9 +10,9 @@
 #  assigned to this set of jobs at the time of submission.
 
 universe = vanilla
-log = twoSpacing_$(Cluster).log
-error = twoSpacing_$(Cluster)_$(Process).err
-initialdir = SpaMutShort
+log = Log/twoSpacing_$(Cluster).log
+error = Log/twoSpacing_$(Cluster)_$(Process).err
+#initialdir = SpaMutShort
 
 #
 # Specify executable (binary or script), arguments, 
@@ -21,7 +21,7 @@ initialdir = SpaMutShort
 
 executable = SAIsim_TwoSpacing.sh
 arguments = "$(sur1) $(rep1) $(sur2) $(rep2) $(spa) $(Process)"
-output = twoSpacing_$(Cluster)_$(Process).out
+output = Log/twoSpacing_$(Cluster)_$(Process).out
 requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
 
 #
@@ -29,7 +29,7 @@ requirements = (OpSys == "LINUX") && (OpSysMajorVer == 6)
 
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = SAIsim_TwoSpacing.py, SAIsim.py, http://proxy.chtc.wisc.edu/SQUID/cmcallester/python.tar.gz
+transfer_input_files = SAIsim_TwoSpacing.py, ../SAIsim.py, http://proxy.chtc.wisc.edu/SQUID/cmcallester/python.tar.gz
 
 #
 # Requesting from HTCondor compute resources/job
@@ -39,7 +39,7 @@ request_memory = 2GB
 request_disk = 100MB
 
 #
-# Tell HTCondor to run 1 instances of our job:
+# Tell HTCondor to run 100 instances of our job:
 
-queue 50
+queue 100
 

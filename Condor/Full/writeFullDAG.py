@@ -4,16 +4,16 @@
 import numpy as np
 
 submitFile = 'SAIsim_Full.sub'
-outfile = open('SAIsim_FullParam.dag','w')
+outfile = open('SAIsim_Full.dag','w')
 
 for mutPower in [-3,-4]:
 	for invMutPower in [-3,-4]:
-		for convPower in [-2]:
-			jobName = 'm'+repr(-mutPower)+'i'+repr(-invMutFreq)+'c'+repr(-convPower)
+		for convPower in [-2,-5]:
+			jobName = 'm'+repr(-mutPower)+'i'+repr(-invMutPower)+'c'+repr(-convPower)
 			jobLine = 'JOB '+jobName+' '+submitFile+'\n'
-			varsLine = 'VARS '+jobName+' mut=\"'+str(mutPower)+'\" inv=\"'+str(invMutFreq)\
+			varsLine = 'VARS '+jobName+' mut=\"'+str(mutPower)+'\" inv=\"'+str(invMutPower)\
 				+'\" con=\"'+str(convPower)+'\"\n'
 			outfile.write(jobLine)
 			outfile.write(varsLine)
 
-outfile.write('../CONFIG effectGridDAG.config\n')
+outfile.write('CONFIG ../effectGridDAG.config\n')

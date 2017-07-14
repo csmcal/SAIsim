@@ -10,8 +10,8 @@ invMutPower = float(sys.argv[2])
 convPower = float(sys.argv[3])
 replicateNum = int(sys.argv[4])
 size = 1000
-# numGens = 20000
-numGens = 100
+numGens = 20000
+# numGens = 100
 recordEveryN = 10
 
 
@@ -33,8 +33,6 @@ def genFullPop(mutPower,invMutPower,convPower,size):
 	# Generate the population
 	pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
 		encounterNum, choiceNoiseSD, invRecBuffer)
-	# pop = sim.SAIpop(size, mutRate, mutRateInv, mutEffectDiffSD, minInvLen, conversionRate, recombRate,\
-	# 	encounterNum, choiceNoiseSD, invRecBuffer, willConvert = False)
 	return pop
 
 # Run the Simulation

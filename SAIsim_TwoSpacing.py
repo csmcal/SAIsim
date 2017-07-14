@@ -61,12 +61,13 @@ surEffStrB = repr(surEffectB)+'0'*(5-len(repr(surEffectB)))
 repEffStrB = repr(repEffectB)+'0'*(5-len(repr(repEffectB)))
 spacing = repr(spacing)+'0'*(5-len(repr(spacing)))
 repNumStr = '0'*(3-len(str(replicateNum)))+str(replicateNum)
-mutFileName = 'sS'+surEffStrS+'rS'+repEffStrS+'sB'+surEffStrB+'rB'+repEffStrB\
-	+'spacing'+spacing+'n'+repNumStr
+# mutFileName = 'sS'+surEffStrS+'rS'+repEffStrS+'sB'+surEffStrB+'rB'+repEffStrB\
+# 	+'spacing'+spacing+'n'+repNumStr
+mutFileName = 'spacing'+spacing+'n'+repNumStr
 # mutFileName = 'spacing'+spacing+'n'+repNumStr
 # pop.writeMutation(mutFileName+'Small.txt',0)
 # pop.writeMutation(mutFileName+'Big.txt',1)
-pop.writeAllMutFreqTable(mutFileName+'All.txt')
+pop.writeAllMutFreqTable(mutFileName+'Mut.txt')
 # pop.printGenomes()
 
 

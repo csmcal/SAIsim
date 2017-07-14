@@ -8,8 +8,9 @@
 
 # TODO:
 #  fix chrom length by collapsing to just recomb. rate or length param. (prob. recomb. rate)
-#  add full record of offspring/values for individuals/gen. instead of means/var
+#  add full record of offspring/values for individuals/gen. instead of means/var (also use coeff. of var. for surv.)
 #  combine record keeping into the step function to speed up/make simpler (how much benefit?)
+#  
 
 import numpy as np
 from collections import Counter
@@ -296,9 +297,120 @@ class individual(object):
 			else:
 				return -1
 
+	# For returning recombination points that are balanced, with correct resampling
+	def __getBalancedRecomb(self):
+		return
+
+	# For efficiently resampling recombination breakpoints
+	# when they would otherwise generate unbalanced gametes
+	def genGameteResample(self):
+		gamGenome = []
+		for parChrom in self.genome:
+			(numRecomb, recombPositions) = self.__getBalancedRecomb()
+			# print('Recombinations: '+str(numRecomb))
+			currHom1 = bool(np.random.randint(2))
+			# This first copy step is necessary independent of conversion/recombination activity, 
+			# to prevent changes to shared-referent chromosomes
+			chrom = [[list(parChrom[0][0]),list(parChrom[0][1])],[list(parChrom[1][0]),list(parChrom[1][1])]]
+			# Perform fly-specific non-recombination non-conversion check for males
+			if self.willConvert and (self.sex == 'F' or (not self.isFly)):
+				chrom = self.__convertChrom(chrom)
+			if (not self.willRecombine) or numRecomb == 0 or (self.isFly and self.sex == 'M'):
+				if currHom1:
+					gamGenome += [chrom[0]]
+				else:
+					gamGenome += [chrom[1]]
+			else:
+				# NEED to allow for the span of positions in the chromosome if given positions outside [0,1)
+				recombPositions = np.random.ranf(numRecomb)*self.lenChrom
+				# recombPositions = np.random.ranf(numRecomb)
+				recombPositions.sort()
+				# print('Positions: '+str(recombPositions))
+				
+				# Construct a recombinant gamete from the recombination positions
+				gamMutations = []
+				gamInversions = []
+
+				
+				recIndex = 0
+
+				invInd1 = 0
+				invInd2 = 0
+				invHom1 = chrom[0][1]
+				invHom2 = chrom[1][1]
+				mutInd1 = 0
+				mutInd2 = 0
+
+				prevInvInd1 = 0
+				prevInvInd2 = 0
+				prevMutInd1 = 0
+				prevMutInd2 = 0
+
+				while recIndex < numRecomb:
+					recPos = recombPositions[recIndex]
+					while (mutInd1 < len(chrom[0][0])) and (chrom[0][0][mutInd1][0] <= recPos):
+						mutInd1 += 1
+					while (mutInd2 < len(chrom[1][0])) and (chrom[1][0][mutInd2][0] <= recPos):
+						mutInd2 += 1
+					while (invInd1 < len(chrom[0][1])) and (chrom[0][1][invInd1][0] <= recPos):
+						invInd1 += 1
+					while (invInd2 < len(chrom[1][1])) and (chrom[1][1][invInd2][0] <= recPos):
+						invInd2 += 1
+					# Add the mutations and inversions to the gamete chromosome
+					if currHom1:
+						gamMutations += chrom[0][0][prevMutInd1:mutInd1]
+						gamInversions += chrom[0][1][prevInvInd1:invInd1]
+					else:
+						gamMutations += chrom[1][0][prevMutInd2:mutInd2]
+						gamInversions += chrom[1][1][prevInvInd2:invInd2]
+					# Update the mutation/inversion indexes of the previous breakpoint
+					prevInvInd1 = invInd1
+					prevInvInd2 = invInd2
+					prevMutInd1 = mutInd1
+					prevMutInd2 = mutInd2
+					# Deal with crossovers in regions potentially generating aneuploidy
+					aneupRegEnd = self.__getAneupRegion(invHom1,invHom2,invInd1-1,invInd2-1,recPos)
+					if aneupRegEnd == -1:
+						currHom1 = not currHom1
+						recIndex += 1
+					else:
+						otherRecInReg = []
+						recIndex += 1
+						while (recIndex < numRecomb) and (recombPositions[recIndex] < aneupRegEnd):
+							otherRecInReg += [recombPositions[recIndex]]
+							recIndex += 1
+						# If there's an even number of recombinations in the region in total:
+						if len(otherRecInReg)%2:
+							currHom1 = not currHom1
+							for recPos in otherRecInReg:
+								while (mutInd1 < len(chrom[0][0])) and (chrom[0][0][mutInd1][0] <= recPos):
+									mutInd1 += 1
+								while (mutInd2 < len(chrom[1][0])) and (chrom[1][0][mutInd2][0] <= recPos):
+									mutInd2 += 1
+								# Add the mutations to the gamete chromosome (no inversion change in region)
+								if currHom1:
+									gamMutations += chrom[0][0][prevMutInd1:mutInd1]
+								else:
+									gamMutations += chrom[1][0][prevMutInd2:mutInd2]
+								# Update the mutation indexes of the previous breakpoint
+								prevMutInd1 = mutInd1
+								prevMutInd2 = mutInd2
+								# Switch the current chromosome from the crossover event
+								currHom1 = not currHom1
+				# Add the last mutations and inversions to the gamete chromosome
+				if currHom1:
+					gamMutations += chrom[0][0][prevMutInd1:len(chrom[0][0])]
+					gamInversions += chrom[0][1][prevInvInd1:len(chrom[0][1])]
+				else:
+					gamMutations += chrom[1][0][prevMutInd2:len(chrom[1][0])]
+					gamInversions += chrom[1][1][prevInvInd2:len(chrom[1][1])]
+				gamGenome += [[gamMutations,gamInversions]]
+		return gamGenome
+
+
 	# Model independently per chromosome, currently doesn't redraw if recombination events fail,
 	# just throws out all recombination events in an aneuploidy-causing region if they are odd in number
-	def genGamete(self):
+	def genGameteDropUnb(self):
 		gamGenome = []
 		for parChrom in self.genome:
 			numRecomb = np.random.poisson(self.recombRate)
@@ -402,6 +514,13 @@ class individual(object):
 				gamGenome += [[gamMutations,gamInversions]]
 		return gamGenome
 
+	# For deciding which recombination breakpoint sampling to use
+	def genGamete(self):
+		resampleUnbalanced = False
+		if resampleUnbalanced:
+			return self.genGameteResample()
+		else:
+			return self.genGameteDropUnb()
 
 # Module methods for preparing populations (genomes/sexes) from mutation/haplotype data
 # Could be defined as Static methods inside the population class
@@ -515,6 +634,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 		record[7] += [[]]
 		record[8] += [[]]
 		record[9] += [[]]
+		record[10] += [[]]
 		# Insert the inversion and count to the ordered list for addition to the genomes
 		i = 0
 		while (i < len(posOrderedInv[chrom])) and (posOrderedInv[chrom][i][0][1] <= inversion[0]):
@@ -621,6 +741,7 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 		record[7] += [[]]
 		record[8] += [[]]
 		record[9] += [[]]
+		record[10] += [[]]
 
 	return (genomes,sexes,record)
 
@@ -1295,6 +1416,13 @@ class SAIpop(object):
 			genomes += [indiv.genome]
 		print(genomes)
 
+	# Writing the mutation details from a single generation, for writeMutation()
+	def __writeMutStep(self,outfile,recordGen,ID,i):
+		outfile.write(str(recordGen) + '\t' + str(self.record[4][ID][i]) + '\t'\
+			+ str(self.record[5][ID][i]) + '\t' + str(self.record[6][ID][i]) + '\t'\
+			+ str(self.record[7][ID][i]) + '\t' + str(self.record[8][ID][i]) + '\t'\
+			+ str(self.record[9][ID][i]) + '\t' + str(self.record[10][ID][i]) + '\n')
+
 	# Takes a filename and mutation ID
 	# Writes a tab delineated file of the generation and count data for that mutation
 	def writeMutation(self,filename,ID,fillRecord = False):
@@ -1305,8 +1433,6 @@ class SAIpop(object):
 		# outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
 		# for t in range(1,len(self.record[0])):
 		(firstGen, finalGen) = self.record[1][ID][4:6]
-		if finalGen < firstGen:
-			finalGen = self.age
 		t = 0
 		recordGen = self.record[0][t]
 		while recordGen < firstGen:
@@ -1315,22 +1441,31 @@ class SAIpop(object):
 			t += 1
 			recordGen = self.record[0][t]
 		offset = t
-		while recordGen < finalGen:
-			m = t - offset
-			outfile.write(str(recordGen) + '\t' + str(self.record[2][ID][m]) + '\n')
-			t += 1
-			recordGen = self.record[0][t]
-		if fillRecord:
-			while t < len(self.record[0]):
-				if self.__mutFixed[ID]:
-					outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\n')
-				else:
-					outfile.write(str(recordGen) + '\t0\n')
+		if finalGen < firstGen:
+			for t in range(t,len(self.record[0])):
+				m = t - offset
+				recordGen = self.record[0][t]
+				outfile.write(str(recordGen) + '\t' + str(self.record[2][ID][m]) + '\n')
+		else:
+			while recordGen < finalGen:
+				m = t - offset
+				outfile.write(str(recordGen) + '\t' + str(self.record[2][ID][m]) + '\n')
 				t += 1
 				recordGen = self.record[0][t]
-		# for t in range(len(self.record[0])):
-		# 	outfile.write(str(self.record[0][t]) + '\t' + str(self.record[2][ID][t]) + '\n')
+			if fillRecord:
+				for t in range(t,len(self.record[0])):
+					if self.__invFixed[ID]:
+						outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\n')
+					else:
+						outfile.write(str(recordGen) + '\t0\n')
 		outfile.close()
+
+	# Writing the inversion details from a single generation, for writeInversion()
+	def __writeInvStep(self,outfile,recordGen,ID,i):
+		outfile.write(str(recordGen) + '\t' + str(self.record[4][ID][i]) + '\t'\
+			+ str(self.record[5][ID][i]) + '\t' + str(self.record[6][ID][i]) + '\t'\
+			+ str(self.record[7][ID][i]) + '\t' + str(self.record[8][ID][i]) + '\t'\
+			+ str(self.record[9][ID][i]) + '\t' + str(self.record[10][ID][i]) + '\n')
 
 	# Takes a filename and inversion ID
 	# Writes a tab delineated file of the generation, count, 
@@ -1349,32 +1484,49 @@ class SAIpop(object):
 		# 	+ 'NA' + '\t' + 'NA' + '\n')
 		# for t in range(1,len(self.record[0])):
 		(firstGen, finalGen) = self.record[3][ID][3:5]
-		if finalGen < firstGen:
-			finalGen = self.age
 		t = 0
 		recordGen = self.record[0][t]
 		while recordGen < firstGen:
 			if fillRecord:
-				outfile.write(str(recordGen) + '\t0\n')
+				outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\t-1\t-1\t-1\n')
 			t += 1
 			recordGen = self.record[0][t]
 		offset = t
-		while recordGen < finalGen:
-			i = t - offset
-			outfile.write(str(recordGen) + '\t' + str(self.record[4][ID][i]) + '\t'\
-				+ str(self.record[5][ID][i]) + '\t' + str(self.record[6][ID][i]) + '\t'\
-				+ str(self.record[7][ID][i]) + '\t' + str(self.record[8][ID][i]) + '\t'\
-				+ str(self.record[9][ID][i]) + '\t' + str(self.record[10][ID][i]) + '\n')
-			t += 1
-			recordGen = self.record[0][t]
-		if fillRecord:
-			while t < len(self.record[0]):
-				if self.__invFixed[ID]:
-					outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\t-1\t-1\t-1\n')
-				else:
-					outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\n')
+		if finalGen < firstGen:
+			for t in range(t,len(self.record[0])):
+				i = t - offset
+				recordGen = self.record[0][t]
+				self.__writeInvStep(outfile,recordGen,ID,i)
+			# while t < len(self.record[0]):
+			# 	i = t - offset
+			# 	self.__writeInvStep(outfile,recordGen,ID,i)
+			# 	t += 1
+			# 	recordGen = self.record[0][t]
+			# i = t - offset
+			# self.__writeInvStep(outfile,recordGen,ID,i)
+		else:
+			while recordGen < finalGen:
+				i = t - offset
+				self.__writeInvStep(outfile,recordGen,ID,i)
 				t += 1
 				recordGen = self.record[0][t]
+			if fillRecord:
+				while t < len(self.record[0]):
+					for t in range(t,len(self.record[0])):
+						if self.__invFixed[ID]:
+							outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\t-1\t-1\t-1\t-1\t-1\t-1\n')
+						else:
+							outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\t-1\t-1\t-1\n')
+				# 	if self.__invFixed[ID]:
+				# 		outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\t-1\t-1\t-1\n')
+				# 	else:
+				# 		outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\n')
+				# 	t += 1
+				# 	recordGen = self.record[0][t]
+				# if self.__invFixed[ID]:
+				# 	outfile.write(str(recordGen) + '\t' + str(self.record[11][t]) + '\t-1\t-1\t-1\n')
+				# else:
+				# 	outfile.write(str(recordGen) + '\t0\t-1\t-1\t-1\n')
 		# for t in range(len(self.record[0])):
 		# 	outfile.write(str(self.record[0][t]) + '\t' + str(self.record[4][ID][t]) + '\t'\
 		# 		+ str(self.record[5][ID][t]) + '\t' + str(self.record[6][ID][t]) + '\t'\
@@ -1396,7 +1548,7 @@ class SAIpop(object):
 			finalGen = self.record[1][m][5]
 			mutInit += [initGen]
 			if initGen > finalGen:
-				mutFinal += [self.age]
+				mutFinal += [self.age+1]
 			else:
 				mutFinal += [finalGen]
 			offsets += [-1]
@@ -1444,7 +1596,7 @@ class SAIpop(object):
 			finalGen = self.record[3][i][4]
 			invInit += [initGen]
 			if initGen > finalGen:
-				invFinal += [self.age]
+				invFinal += [self.age+1]
 			else:
 				invFinal += [finalGen]
 			offsets += [-1]
@@ -1558,32 +1710,81 @@ class SAIpop(object):
 			self.writeInversion(filename,invID)
 		return
 
-	# # Scratch for testing mutation data change (due to shared reference)
-	# def testSharedData(self):
-	# 	mutCounts = [0]*self.__mutIDcount
-	# 	for indiv in self.males + self.females:
-	# 		for chrom in indiv.genome:
-	# 			for hom in chrom:
-	# 				for mut in hom[0]:
-	# 					mutCounts[mut[3]] += 1
-	# 	for i in range(self.__mutIDcount):
-	# 		if mutCounts[i] == 2*self.size:
-	# 			# self.record[1][i] = mut
-	# 			# mut[2] = 'test'
-	# 			print('Starting test for ID '+ str(i))
-	# 			# print(mut)
-	# 			# print(self.record[1][i])
-	# 			firstEncounter = True
-	# 			for indiv in self.males + self.females:
-	# 				for chrom in indiv.genome:
-	# 					for hom in chrom:
-	# 						for mut in hom[0]:
-	# 							if mut[3] == i:
-	# 								if firstEncounter:
-	# 									mut[2] = 'test'
-	# 									firstEncounter = False
-	# 								print(mut)
-	# 	return
+
+
+# For running a simulation from a model file
+def runModelFile(param_file,output_file_path):
+    # Verify that the input and output filenames are provided
+    assert os.path.isfile(param_file),\
+        'Model specification file argument (--model {}) \
+        is not a file path'.format(param_file)
+    assert os.path.isfile(output_file_path),\
+        'Output file path argument (--out {}) \
+        is not a file path or is not given'.format(param_file)
+
+
+# # For handling direct calls to SAIsim.py, for easier definition of models from input files.
+# def main(args):
+# 	param_file = args.model
+# 	output_file_path = args.out
+# 	if param_file != '':
+# 		runModelFile(param_file,output_file_path)
+# 	else:
+# 	    # Parse input arguments
+# 	    size = args.size
+# 		mutRate = mutRate
+# 		mutRateInv = mutRateInv
+# 		#
+# 		mutEffectDiffSD = mutEffectDiffSD
+# 		minInvLen = minInvLen
+# 		conversionRate = conversionRate
+# 		recombRate = recombRate
+# 		encounterNum = encounterNum
+# 		choiceNoiseSD = choiceNoiseSD
+# 		# For modeling D.mel specific recombination/other biology
+# 		isFly = isFly
+# 		randomSex = randomSex
+# 		numChrom = numChrom
+# 		# For modeling equlibrium dynamics without further mutation or other mechanics
+# 		willMutate = willMutate
+# 		willMutInv = willMutInv
+# 		willConvert = willConvert
+# 		willRecombine = willRecombine
+# 		# For modeling survival and reproductive effects differently
+# 		noMaleCost = noMaleCost
+# 		# Record keeping variables, record data structure defined in __updateRecord
+# 		invRecBuffer = invRecBuffer = args.dataset
+# 	    bin_num = args.bin_num
+# 	    output_file_path = args.out
+# 	    bin_str = args.bin_str.lower()
+
+# 	    assert (size>1), 'size argument (--size) {} \
+# 	        must be larger than 1'.format(size)
+# 	    assert (output_file_path!=''),'MI output file path (--out) {} \
+# 	        not given'.format(output_file_path)
+
+# 	    # Run the simulation
+
+
+# # Runs if SAIsim.py is the main script
+# if __name__ == "__main__":
+#     # Collect input arguments
+#     # CHECK argparse documentation for other input ideas (positional arguments? other?)
+#     parser = argparse.ArgumentParser(
+#         description=__doc__,
+#         formatter_class=argparse.RawDescriptionHelpFormatter)
+#     parser.add_argument('--model',
+#                         help='parameter and epoch file, see documentation',
+#                         type=str,
+#                         default='')
+#     parser.add_argument('--out',
+#                         help='output path and file prefix',
+#                         type=str,
+#                         default='')
+
+#     args = parser.parse_args()
+
+#     main(args)
 
 
 

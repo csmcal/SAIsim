@@ -17,8 +17,8 @@ mutPos2 = 0.05 + spacing
 size = 1000
 numGens = 20000
 # numGens = 3000
-# numGens = 100
-# numGens = 100
+# numGens = 1000
+numGens = 200
 recordEveryN = 10
 
 
@@ -32,7 +32,7 @@ def genPopTwoMutInvHap(mutPos1,surEffectS,repEffectS,mutPos2,surEffectB,repEffec
 	mutationB = [mutPos2,surEffectB,repEffectB,1]
 	mutList = [[mutPos1,surEffectS,repEffectS,0],[mutPos2,surEffectB,repEffectB,0]]
 
-	inversion = [0.02,0.38,0]
+	inversion = [0.03,0.35,0]
 	invList = [inversion]
 	# invList = [inversion,inversion,inversion,inversion]
 	# inversion2 = [0.02,0.38,1]
@@ -157,6 +157,9 @@ pop, hapCounts = genPopTwoMutInvHap(mutPos1,surEffectS,repEffectS,mutPos2,surEff
 # pop.recordNthInNStopWhenFixed(recordEveryN,numGens)
 hapCounts = recordNthInNGensWithHap(pop, recordEveryN, numGens, hapCounts)
 
+print('Gen '+str(pop.record[0][-1])+', Inv Freq '+str(pop.record[4][0][-1])+\
+	', Mut S Freq '+str(pop.record[2][0][-1])+', Mut B Freq '+str(pop.record[2][1][-1]))
+
 # Record Relevant Output
 # ASSUMES MUTATION ID = 0, effect values only to two decimal places, =< four digit replicate ID
 surEffStrS = repr(surEffectS)+'0'*(5-len(repr(surEffectS)))
@@ -165,8 +168,9 @@ surEffStrB = repr(surEffectB)+'0'*(5-len(repr(surEffectB)))
 repEffStrB = repr(repEffectB)+'0'*(5-len(repr(repEffectB)))
 spacing = repr(spacing)+'0'*(5-len(repr(spacing)))
 repNumStr = '0'*(3-len(str(replicateNum)))+str(replicateNum)
-mutFileName = 'sS'+surEffStrS+'rS'+repEffStrS+'sB'+surEffStrB+'rB'+repEffStrB\
-	+'spacing'+spacing+'n'+repNumStr
+# mutFileName = 'sS'+surEffStrS+'rS'+repEffStrS+'sB'+surEffStrB+'rB'+repEffStrB\
+# 	+'spacing'+spacing+'n'+repNumStr
+mutFileName = 'spacing'+spacing+'n'+repNumStr
 # mutFileName = 'spacing'+spacing+'n'+repNumStr
 # pop.writeMutation(mutFileName+'Small.txt',0)
 # pop.writeMutation(mutFileName+'Big.txt',1)

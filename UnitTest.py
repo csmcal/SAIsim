@@ -153,6 +153,39 @@ testConv2MSame()
 testConv2MNull()
 testConvNull2M()
 
+
+
+
+# # Scratch for testing mutation data change (due to shared reference)
+# def testSharedData(self):
+# 	mutCounts = [0]*self.__mutIDcount
+# 	for indiv in self.males + self.females:
+# 		for chrom in indiv.genome:
+# 			for hom in chrom:
+# 				for mut in hom[0]:
+# 					mutCounts[mut[3]] += 1
+# 	for i in range(self.__mutIDcount):
+# 		if mutCounts[i] == 2*self.size:
+# 			# self.record[1][i] = mut
+# 			# mut[2] = 'test'
+# 			print('Starting test for ID '+ str(i))
+# 			# print(mut)
+# 			# print(self.record[1][i])
+# 			firstEncounter = True
+# 			for indiv in self.males + self.females:
+# 				for chrom in indiv.genome:
+# 					for hom in chrom:
+# 						for mut in hom[0]:
+# 							if mut[3] == i:
+# 								if firstEncounter:
+# 									mut[2] = 'test'
+# 									firstEncounter = False
+# 								print(mut)
+# 	return
+
+
+
+
 # # For genGenomesSexes
 # initMutList = [[0.5,0.95,0.1,0,40]]
 # initInvList = [[0.01,0.06,0,60]]
