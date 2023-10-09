@@ -1,0 +1,31 @@
+JOB TSI0000.0 SAIsim_TwoSpacingInv.sub
+VARS TSI0000.0 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0" batchNum="0"
+JOB TSI0000.1 SAIsim_TwoSpacingInv.sub
+VARS TSI0000.1 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0" batchNum="1"
+JOB TSI0000.2 SAIsim_TwoSpacingInv.sub
+VARS TSI0000.2 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0" batchNum="2"
+JOB TSI0000.3 SAIsim_TwoSpacingInv.sub
+VARS TSI0000.3 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0" batchNum="3"
+JOB TSI0000.4 SAIsim_TwoSpacingInv.sub
+VARS TSI0000.4 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0" batchNum="4"
+JOB TSI0250.0 SAIsim_TwoSpacingInv.sub
+VARS TSI0250.0 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.025" batchNum="0"
+JOB TSI0250.1 SAIsim_TwoSpacingInv.sub
+VARS TSI0250.1 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.025" batchNum="1"
+JOB TSI0250.2 SAIsim_TwoSpacingInv.sub
+VARS TSI0250.2 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.025" batchNum="2"
+JOB TSI0250.3 SAIsim_TwoSpacingInv.sub
+VARS TSI0250.3 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.025" batchNum="3"
+JOB TSI0250.4 SAIsim_TwoSpacingInv.sub
+VARS TSI0250.4 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.025" batchNum="4"
+JOB TSI0375.0 SAIsim_TwoSpacingInv.sub
+VARS TSI0375.0 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0375" batchNum="0"
+JOB TSI0375.1 SAIsim_TwoSpacingInv.sub
+VARS TSI0375.1 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0375" batchNum="1"
+JOB TSI0375.2 SAIsim_TwoSpacingInv.sub
+VARS TSI0375.2 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0375" batchNum="2"
+JOB TSI0375.3 SAIsim_TwoSpacingInv.sub
+VARS TSI0375.3 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0375" batchNum="3"
+JOB TSI0375.4 SAIsim_TwoSpacingInv.sub
+VARS TSI0375.4 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0375" batchNum="4"
+CONFIG ../SAIsimDAG.config

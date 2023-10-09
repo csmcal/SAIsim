@@ -3,17 +3,15 @@
 # SAIsim_BigSmallBatch.sh
 # A wrapper for running the SAIsim_BigSmall.py python script 10 times
 
-
 # untar the python installation
-tar -xzf python.tar.gz
+# tar -xzf python.tar.gz
+
 # make sure the script will use the python installation
-export PATH=$(pwd)/python/bin:$PATH
+# export PATH=$(pwd)/python/bin:$PATH
 # (and a good home directory?)
-mkdir home
-export HOME=$(pwd)/home
+# mkdir home
+# export HOME=$(pwd)/home
 
-
-# Old portion of the script for running replicates using the script, not the job submission
 # for locNum in `seq 0 9`;
 # do
 # 	# run python script
@@ -26,15 +24,29 @@ export HOME=$(pwd)/home
 # 	python SAIsim_TwoSpacing.py ${ARGUMENTS}$locNum
 # done
 
-
 args=("$@")
-# combine the batch and process number to the rep number
 repNum=${args[6]}
-while [ ${#repNum} -ne 2 ];
+echo $repNum
+while [ ${#repNum} -ne 3 ];
 do
 	repNum="0"$repNum
 done
+echo $repNum
 repNum=${args[5]}$repNum
-# pass the arguments to the pyhton script
-ARGUMENTS=''${args[0]}' '${args[1]}' '${args[2]}' '${args[3]}' '${args[4]}' '$repNum''
-python SAIsim_TwoSpacing.py ${ARGUMENTS}
+echo $repNum
+ARGUMENTS=''${args[0]}' '${args[1]}' '${args[2]}' '${args[3]}' '${args[4]}' '${args[5]}''
+echo $ARGUMENTS
+ARGUMENTS1=${args[0]}' '${args[1]}' '${args[2]}' '${args[3]}' '${args[4]}' '${args[5]}
+echo $ARGUMENTS1
+if [ "$ARGUMENTS" = "$ARGUMENTS1" ];
+then
+	echo 'Equal'
+	echo "$ARGUMENTS"
+else
+	echo 'not equal'
+	echo "$ARGUMENTS"
+fi
+ARGUMENTS2=${args[0]}' '${args[1]}' '${args[2]}' '${args[3]}' '${args[4]}' '$repNum
+echo $ARGUMENTS2
+
+# python SAIsim_TwoSpacingInv.py ${ARGUMENTS}

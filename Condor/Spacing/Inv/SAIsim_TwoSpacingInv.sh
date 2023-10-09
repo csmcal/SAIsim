@@ -37,4 +37,4 @@ done
 repNum=${args[5]}$repNum
 # pass the arguments to the pyhton script
 ARGUMENTS=''${args[0]}' '${args[1]}' '${args[2]}' '${args[3]}' '${args[4]}' '$repNum''
-python SAIsim_TwoSpacing.py ${ARGUMENTS}
+python SAIsim_TwoSpacingInv.py ${ARGUMENTS}

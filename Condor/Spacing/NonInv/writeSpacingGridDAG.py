@@ -5,18 +5,18 @@ import numpy as np
 
 submitFile = 'SAIsim_TwoSpacing.sub'
 
-smallSurvEffect = '0.860'
-smallReprEffect = '0.06'
+smallSurvEffect = '0.86'
+smallReprEffect = '0.11'
 
 bigSurvEffect = '0.7'
-bigReprEffect = '0.15'
+bigReprEffect = '0.3'
 
 #the script runs batches of 100, so n * 100 total
-numBatches = 5
+numBatches = 10
 
 with open('SAIsim_TwoSpacingGrid.dag','w') as outfile:
 	# Set the spacing, generally every 0.0125 or 0.025
-	for spacing in np.around(np.linspace(0.0,0.65,num=53),8):
+	for spacing in np.around(np.linspace(0.0,0.75,num=61),8):
 		# Add replicates for large sample sizes
 		for batch in np.arange(numBatches):
 			jobName = 'TS_'+'0'*(4-len(str(int(spacing*10000))))+str(int(spacing*10000))+"_"+str(batch)

@@ -1,0 +1,7 @@
+JOB EG_0.7000_0.1000 SAIsim_EffectGridTest.sub
+VARS EG_0.7000_0.1000 sur="0.7" rep="0.1"
+JOB EG_0.7000_0.1500 SAIsim_EffectGridTest.sub
+VARS EG_0.7000_0.1500 sur="0.7" rep="0.15"
+JOB EG_0.7500_0.1500 SAIsim_EffectGridTest.sub
+VARS EG_0.7500_0.1500 sur="0.75" rep="0.15"
+CONFIG ../SAIsimDAG.config

@@ -1,7 +1,21 @@
 *.pyc
+*.png
+*.svg
+*.gif
+*.pickle
+*.Rdata
+*.Rhistory
 testOutput/
 Reference/
 Papers/
 __pycache__/
+*__pycache__/
 Results/
-.DS_Store
+*Old\ Plots
+*.DS_Store
+*home/
+Workspace/
+*.log
+scratch.py
+*DAGs/*
+*.dag
