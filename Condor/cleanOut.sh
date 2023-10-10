@@ -5,3 +5,5 @@
 
 rm *.out
 rm *.err
+rm Log/*.out
+rm Log/*.err

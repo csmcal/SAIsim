@@ -19,3 +19,4 @@ Workspace/
 scratch.py
 *DAGs/*
 *.dag
+*backups/

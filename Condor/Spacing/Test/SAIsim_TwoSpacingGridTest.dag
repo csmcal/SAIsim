@@ -1,5 +1,0 @@
-JOB 0 SAIsim_TwoSpacingTest.sub
-VARS 0 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.0" batchNum="0"
-JOB 650 SAIsim_TwoSpacingTest.sub
-VARS 650 sur1="0.860" rep1="0.06" sur2="0.7" rep2="0.15" spa="0.65" batchNum="9"
-CONFIG ../SAIsimDAG.config
