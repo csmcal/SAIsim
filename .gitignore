@@ -20,3 +20,4 @@ scratch.py
 *DAGs/*
 *.dag
 *backups/
+*test/

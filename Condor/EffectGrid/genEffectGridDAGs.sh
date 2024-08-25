@@ -33,6 +33,8 @@ DAGSCRIPTPATH='writeEffectGridDAG.py'
 DAGFOLDERPATH='DAGs/'
 
 # Combinable arg inputs
+NUMREPLICATES='50'
+REPNFLAG='--rep_N '${NUMREPLICATES}
 TESTINGFLAG='--test'
 NMCFLAGS='--no_male_costs'
 NFCFLAGS='--no_female_costs'
@@ -57,11 +59,11 @@ effect_grid_job_names=(
 )
 
 effect_grid_partials=(
-	"--out ${DAGFOLDERPATH}${effect_grid_names[0]} --sub ${effect_grid_job_names[0]}"
-	"--out ${DAGFOLDERPATH}${effect_grid_names[1]} --sub ${effect_grid_job_names[1]} ${NMCFLAGS}"
-	"--out ${DAGFOLDERPATH}${effect_grid_names[2]} --sub ${effect_grid_job_names[2]} ${NFCFLAGS}"
-	"--out ${DAGFOLDERPATH}${effect_grid_names[3]} --sub ${effect_grid_job_names[3]} ${ENC10FLAGS}"
-	"--out ${DAGFOLDERPATH}${effect_grid_names[4]} --sub ${effect_grid_job_names[4]} ${N4POPFLAGS}"
+	"--out ${DAGFOLDERPATH}${effect_grid_names[0]} --sub ${effect_grid_job_names[0]} ${REPNFLAG}"
+	"--out ${DAGFOLDERPATH}${effect_grid_names[1]} --sub ${effect_grid_job_names[1]} ${REPNFLAG} ${NMCFLAGS}"
+	"--out ${DAGFOLDERPATH}${effect_grid_names[2]} --sub ${effect_grid_job_names[2]} ${REPNFLAG} ${NFCFLAGS}"
+	"--out ${DAGFOLDERPATH}${effect_grid_names[3]} --sub ${effect_grid_job_names[3]} ${REPNFLAG} ${ENC10FLAGS}"
+	"--out ${DAGFOLDERPATH}${effect_grid_names[4]} --sub ${effect_grid_job_names[4]} ${REPNFLAG} ${N4POPFLAGS}"
 )
 
 if [ "$test" = true ]; then

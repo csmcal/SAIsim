@@ -13,7 +13,7 @@
 #  
 
 import numpy as np
-import pickle as p
+# import pickle as p
 import itertools
 from collections import Counter
 
@@ -930,19 +930,19 @@ def __genSexes(size, sexes, randomSex, minNumPerSex):
 #   Allow limiting the number of further genomes to generate? How will this interact with having at least 1 'M'/'F'?
 # @staticmethod
 def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1, 
-		lenChrom = 1.0, genomes = [], sexes = [], minNumPerSex = 1):
+		lenChrom = 1.0, genomes = [], sexes = [], minNumPerSex = 1, verbose = False):
 	# Handling input size checking
-	print('Num Chromosomes provided: '+str(numChrom))
+	if verbose: print('Num Chromosomes provided: '+str(numChrom))
 	# print(genomes)
 	# print(sexes)
 	(numGenomes,numChrom) = __inputSizeCheck(size, numChrom, genomes, sexes) # UPDATE FOR NUMCHROM FROM MUT/INV LIST
-	print('Num Genomes already provided: '+str(numGenomes))
-	print('Num Chromosomes after checking if present in genomes provided: '+str(numChrom))
+	if verbose: print('Num Genomes already provided: '+str(numGenomes))
+	if verbose: print('Num Chromosomes after checking if present in genomes provided: '+str(numChrom))
 	# Generate the remaining sexes list
 	popSexes = __genSexes(size, sexes, randomSex, minNumPerSex)
 
 	# Generate the remaining genomes
-	print('Pop Size to be filled: '+str(size))
+	if verbose: print('Pop Size to be filled: '+str(size))
 	numNewGenomes = size-numGenomes
 	# print('Num Genomes not already provided: '+str(numNewGenomes))
 	newGenomes = [[[[[],[]],[[],[]]] for i in range(numChrom)] for j in range(numNewGenomes)]
@@ -957,7 +957,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 
 	numMut = len(mutList)
 	for m in range(numMut):
-		print('Accounting mutation: '+str(mutList[m]))
+		if verbose: print('Accounting mutation: '+str(mutList[m]))
 		count = mutList[m][4]
 		if count > 2*numNewGenomes:
 			raise SAIpop.InputError(mutList,'Mutation counts must be less than the remaining population size')
@@ -971,10 +971,10 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 		while (i < len(posOrderedMut[chrom])) and (posOrderedMut[chrom][i][0][0] < mutation[0]):
 			i += 1
 		posOrderedMut[chrom][i:i] = [(mutation,count)]
-	print('Position-ordered mutations: '+str(posOrderedMut))
+	if verbose: print('Position-ordered mutations: '+str(posOrderedMut))
 	numInv = len(invList)
 	for i in range(numInv):
-		print('Accounting inversion: '+str(invList[i]))
+		if verbose: print('Accounting inversion: '+str(invList[i]))
 		count = invList[i][3]
 		if count > 2*numNewGenomes:
 			raise SAIpop.InputError(invList,'Inversion counts must be less than the remaining population size')
@@ -996,7 +996,7 @@ def genGenomesSexes(size, mutList, invList, randomSex = True, numChrom = 1,
 		if i < len(posOrderedInv[chrom]) and posOrderedInv[chrom][i+1][0][0] <= inversion[1]:
 			raise SAIpop.InputError(invList,'Inversions cannot overlap')
 		posOrderedInv[chrom][i:i] = [(inversion,count)]
-	print('Position-ordered inversions: '+str(posOrderedInv))
+	if verbose: print('Position-ordered inversions: '+str(posOrderedInv))
 
 	# Preserve order by adding the mutations/inversions from position-ordered lists
 	# Need to ensure no double-placement at any position
@@ -1110,6 +1110,7 @@ def genGenoSexFromWholeGenHap(size, mutList, invList, hapList, randomSex = True,
 
 # For loading pickled population simulations
 def readPopPickle(filename):
+	import pickle as p
 	with open(filename,'rb') as infile:
 		pop = p.load(infile)
 	return pop
@@ -1566,6 +1567,7 @@ class SAIpop(object):
 	def __removeFixed(self):  # LOVE <3
 		if self.testing:
 			if self.storePickledPop:
+				import pickle as p
 				initPopBytes = p.dumps(self)
 			else:
 				initPopHapStr = self.__getStrPopChromCounts()
@@ -2031,10 +2033,10 @@ class SAIpop(object):
 				malRepDist[numOffspring] += 1
 			malRepDist[0] += numObsMales - numFathers
 			self.__updateRecord(lifeHistStage="Adult",
-				inFemales = inFemales,
-				inMales = inMales,
-				femRepDist = femRepDist,
-				malRepDist = malRepDist)
+				inFemaleInds = obsSurvFemInds,
+				inMaleInds = obsSurvMalInds,
+				motherCounter = motherCounter,
+				fatherCounter = fatherCounter)
 
 		# Record the arrangements in the parental population
 		if recParentalArr:
@@ -2079,7 +2081,7 @@ class SAIpop(object):
 			for i in indivWithMut:
 				# Add the mutation to the record, with start and end generations of polymorphism
 				self.record[1] += [wholePop[i].mutate(self.__mutIDcount) + [self.age,-1]]
-				self.record[2][self.__mutIDcount] = [[],[],[],[],[],[],[],[],[]]
+				self.record[2][self.__mutIDcount] = [[] for x in np.arange(18)]
 				self.__mutIDcount += 1
 				self.__locFixed += [False]
 				self.__mutLost += [False]
@@ -2129,7 +2131,7 @@ class SAIpop(object):
 						addedInvs += [invData]
 			for i in np.arange(len(addedInvs)):
 				self.record[3] += [addedInvs[i] + [self.age,-1]]
-				self.record[4][addedInvIDs[i]] = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+				self.record[4][addedInvIDs[i]] = [[] for x in np.arange(27)]
 				# self.__invIDcount += 1
 				self.__invFixed += [False]
 				self.__invLost += [False]
@@ -2163,9 +2165,17 @@ class SAIpop(object):
 		return indexSum
 
 	# For collecting record info on a pair of chromosomes from an individual
-	def __countIndChromMutInvGenotypes(self,chrom,sex,mutCounters,invCounters,hapCounters,invDataDict):
+	def __countIndChromMutInvGenotypes(self,chrom,sex,mutCounters,invCounters,hapCounters,invDataDict,
+					mutOffCounters,invOffCounters,hapOffCounters,indivOffCount):
 		chromSur = 1
 		chromRep = 0
+
+		assert((mutOffCounters is not None and invOffCounters is not None and hapOffCounters is not None and indivOffCount is not None) or \
+			(mutOffCounters is None and invOffCounters is None and hapOffCounters is None and indivOffCount is None)), \
+			"In counting variants in an individual for record keeping, either all offspring count inputs must be given or all set to None."
+		recOffCounts = False
+		if mutOffCounters is not None:
+			recOffCounts = True
 
 		# Account for haplotype recording. If no haplotypes are given, it should never run
 		if self.recordHaps:
@@ -2195,6 +2205,12 @@ class SAIpop(object):
 				invCounters[1][0].update(["Std"])
 			else:
 				invCounters[2][0].update(["Std"])
+			if recOffCounts:
+				invOffCounters[0][0].update(["Std"]*indivOffCount)
+				if sex == 'F':
+					invOffCounters[1][0].update(["Std"]*indivOffCount)
+				else:
+					invOffCounters[2][0].update(["Std"]*indivOffCount)
 			invIDsHom1 = ["Std"]
 			invBuffersHom1 = [[0-self.invRecBuffer,self.lenChrom+self.invRecBuffer]]
 			invsHom1numMutInside = [0]
@@ -2212,6 +2228,12 @@ class SAIpop(object):
 				invCounters[1][0].update(["Std"])
 			else:
 				invCounters[2][0].update(["Std"])
+			if recOffCounts:
+				invOffCounters[0][0].update(["Std"]*indivOffCount)
+				if sex == 'F':
+					invOffCounters[1][0].update(["Std"]*indivOffCount)
+				else:
+					invOffCounters[2][0].update(["Std"]*indivOffCount)
 			invIDsHom2 = ["Std"]
 			invBuffersHom2 = [[0-self.invRecBuffer,self.lenChrom+self.invRecBuffer]]
 			invsHom2numMutInside = [0]
@@ -2237,6 +2259,19 @@ class SAIpop(object):
 			else:
 				invCounters[2][2].update(["Std"])
 
+		if recOffCounts:
+			if numInvHom1 == 0 and numInvHom2 == 0:
+				invOffCounters[0][1].update(["Std"]*indivOffCount)
+				if sex == 'F':
+					invOffCounters[1][1].update(["Std"]*indivOffCount)
+				else:
+					invOffCounters[2][1].update(["Std"]*indivOffCount)
+			elif numInvHom1 == 0 or numInvHom2 == 0:
+				invOffCounters[0][2].update(["Std"]*indivOffCount)
+				if sex == 'F':
+					invOffCounters[1][2].update(["Std"]*indivOffCount)
+				else:
+					invOffCounters[2][2].update(["Std"]*indivOffCount)
 
 
 		homInd1 = 0
@@ -2261,6 +2296,15 @@ class SAIpop(object):
 				else:
 					invCounters[2][0].update([currID,currID])
 					invCounters[2][1].update([currID])
+				if recOffCounts:
+					invOffCounters[0][0].update([currID,currID]*indivOffCount)
+					invOffCounters[0][1].update([currID]*indivOffCount)
+					if sex == 'F':
+						invOffCounters[1][0].update([currID,currID]*indivOffCount)
+						invOffCounters[1][1].update([currID]*indivOffCount)
+					else:
+						invOffCounters[2][0].update([currID,currID]*indivOffCount)
+						invOffCounters[2][1].update([currID]*indivOffCount)
 				for hapInd in hapRange:
 					if currID in self.record[11][hapInd][1]:
 						hapsHom1[hapInd][1] += [currID]
@@ -2284,6 +2328,15 @@ class SAIpop(object):
 				else:
 					invCounters[2][0].update([currID])
 					invCounters[2][2].update([currID])
+				if recOffCounts:
+					invOffCounters[0][0].update([currID]*indivOffCount)
+					invOffCounters[0][2].update([currID]*indivOffCount)
+					if sex == 'F':
+						invOffCounters[1][0].update([currID]*indivOffCount)
+						invOffCounters[1][2].update([currID]*indivOffCount)
+					else:
+						invOffCounters[2][0].update([currID]*indivOffCount)
+						invOffCounters[2][2].update([currID]*indivOffCount)
 				for hapInd in hapRange:
 					if currID in self.record[11][hapInd][1]:
 						hapsHom1[hapInd][1] += [currID]
@@ -2303,6 +2356,15 @@ class SAIpop(object):
 				else:
 					invCounters[2][0].update([currID])
 					invCounters[2][2].update([currID])
+				if recOffCounts:
+					invOffCounters[0][0].update([currID]*indivOffCount)
+					invOffCounters[0][2].update([currID]*indivOffCount)
+					if sex == 'F':
+						invOffCounters[1][0].update([currID]*indivOffCount)
+						invOffCounters[1][2].update([currID]*indivOffCount)
+					else:
+						invOffCounters[2][0].update([currID]*indivOffCount)
+						invOffCounters[2][2].update([currID]*indivOffCount)
 				for hapInd in hapRange:
 					if currID in self.record[11][hapInd][1]:
 						hapsHom2[hapInd][1] += [currID]
@@ -2325,6 +2387,15 @@ class SAIpop(object):
 			else:
 				invCounters[2][0].update([currID])
 				invCounters[2][2].update([currID])
+			if recOffCounts:
+				invOffCounters[0][0].update([currID]*indivOffCount)
+				invOffCounters[0][2].update([currID]*indivOffCount)
+				if sex == 'F':
+					invOffCounters[1][0].update([currID]*indivOffCount)
+					invOffCounters[1][2].update([currID]*indivOffCount)
+				else:
+					invOffCounters[2][0].update([currID]*indivOffCount)
+					invOffCounters[2][2].update([currID]*indivOffCount)
 			for hapInd in hapRange:
 				if currID in self.record[11][hapInd][1]:
 					hapsHom1[hapInd][1] += [currID]
@@ -2345,6 +2416,15 @@ class SAIpop(object):
 			else:
 				invCounters[2][0].update([currID])
 				invCounters[2][2].update([currID])
+			if recOffCounts:
+				invOffCounters[0][0].update([currID]*indivOffCount)
+				invOffCounters[0][2].update([currID]*indivOffCount)
+				if sex == 'F':
+					invOffCounters[1][0].update([currID]*indivOffCount)
+					invOffCounters[1][2].update([currID]*indivOffCount)
+				else:
+					invOffCounters[2][0].update([currID]*indivOffCount)
+					invOffCounters[2][2].update([currID]*indivOffCount)
 			for hapInd in hapRange:
 				if currID in self.record[11][hapInd][1]:
 					hapsHom2[hapInd][1] += [currID]
@@ -2380,6 +2460,15 @@ class SAIpop(object):
 				else:
 					mutCounters[2][0].update([currID,currID])
 					mutCounters[2][1].update([currID])
+				if recOffCounts:
+					mutOffCounters[0][0].update([currID,currID]*indivOffCount)
+					mutOffCounters[0][1].update([currID]*indivOffCount)
+					if sex == 'F':
+						mutOffCounters[1][0].update([currID,currID]*indivOffCount)
+						mutOffCounters[1][1].update([currID]*indivOffCount)
+					else:
+						mutOffCounters[2][0].update([currID,currID]*indivOffCount)
+						mutOffCounters[2][1].update([currID]*indivOffCount)
 				for hapInd in hapRange:
 					if currID in self.record[11][hapInd][0]:
 						hapsHom1[hapInd][0] += [currID]
@@ -2410,6 +2499,15 @@ class SAIpop(object):
 				else:
 					mutCounters[2][0].update([currID])
 					mutCounters[2][2].update([currID])
+				if recOffCounts:
+					mutOffCounters[0][0].update([currID]*indivOffCount)
+					mutOffCounters[0][2].update([currID]*indivOffCount)
+					if sex == 'F':
+						mutOffCounters[1][0].update([currID]*indivOffCount)
+						mutOffCounters[1][2].update([currID]*indivOffCount)
+					else:
+						mutOffCounters[2][0].update([currID]*indivOffCount)
+						mutOffCounters[2][2].update([currID]*indivOffCount)
 				for hapInd in hapRange:
 					if currID in self.record[11][hapInd][0]:
 						hapsHom1[hapInd][0] += [currID]
@@ -2434,6 +2532,15 @@ class SAIpop(object):
 				else:
 					mutCounters[2][0].update([currID])
 					mutCounters[2][2].update([currID])
+				if recOffCounts:
+					mutOffCounters[0][0].update([currID]*indivOffCount)
+					mutOffCounters[0][2].update([currID]*indivOffCount)
+					if sex == 'F':
+						mutOffCounters[1][0].update([currID]*indivOffCount)
+						mutOffCounters[1][2].update([currID]*indivOffCount)
+					else:
+						mutOffCounters[2][0].update([currID]*indivOffCount)
+						mutOffCounters[2][2].update([currID]*indivOffCount)
 				for hapInd in hapRange:
 					if currID in self.record[11][hapInd][0]:
 						hapsHom2[hapInd][0] += [currID]
@@ -2461,6 +2568,15 @@ class SAIpop(object):
 			else:
 				mutCounters[2][0].update([currID])
 				mutCounters[2][2].update([currID])
+			if recOffCounts:
+				mutOffCounters[0][0].update([currID]*indivOffCount)
+				mutOffCounters[0][2].update([currID]*indivOffCount)
+				if sex == 'F':
+					mutOffCounters[1][0].update([currID]*indivOffCount)
+					mutOffCounters[1][2].update([currID]*indivOffCount)
+				else:
+					mutOffCounters[2][0].update([currID]*indivOffCount)
+					mutOffCounters[2][2].update([currID]*indivOffCount)
 			for hapInd in hapRange:
 				if currID in self.record[11][hapInd][0]:
 					hapsHom1[hapInd][0] += [currID]
@@ -2486,6 +2602,15 @@ class SAIpop(object):
 			else:
 				mutCounters[2][0].update([currID])
 				mutCounters[2][2].update([currID])
+			if recOffCounts:
+				mutOffCounters[0][0].update([currID]*indivOffCount)
+				mutOffCounters[0][2].update([currID]*indivOffCount)
+				if sex == 'F':
+					mutOffCounters[1][0].update([currID]*indivOffCount)
+					mutOffCounters[1][2].update([currID]*indivOffCount)
+				else:
+					mutOffCounters[2][0].update([currID]*indivOffCount)
+					mutOffCounters[2][2].update([currID]*indivOffCount)
 			for hapInd in hapRange:
 				if currID in self.record[11][hapInd][0]:
 					hapsHom2[hapInd][0] += [currID]
@@ -2540,6 +2665,25 @@ class SAIpop(object):
 				else:
 					hapCounters[h][2][2].update([hap1i,hap2i])
 
+			if recOffCounts:
+				hapOffCounters[h][0][0].update([hap1i,hap2i]*indivOffCount)
+				if hap1i == hap2i:
+					hapOffCounters[h][0][1].update([hap1i]*indivOffCount)
+				else:
+					hapOffCounters[h][0][2].update([hap1i,hap2i]*indivOffCount)
+				if sex == 'F':
+					hapOffCounters[h][1][0].update([hap1i,hap2i]*indivOffCount)
+					if hap1i == hap2i:
+						hapOffCounters[h][1][1].update([hap1i]*indivOffCount)
+					else:
+						hapOffCounters[h][1][2].update([hap1i,hap2i]*indivOffCount)
+				else:
+					hapOffCounters[h][2][0].update([hap1i,hap2i]*indivOffCount)
+					if hap1i == hap2i:
+						hapOffCounters[h][2][1].update([hap1i]*indivOffCount)
+					else:
+						hapOffCounters[h][2][2].update([hap1i,hap2i]*indivOffCount)
+
 		return (chromSur,chromRep)
 
 	# A helper function to ensure the same haplotype class range is used in each call
@@ -2559,11 +2703,20 @@ class SAIpop(object):
 	#      [1] count of the number of individuals homozygous for the mutation (implicitly the derived allele)
 	#      [2] count of the number of individuals heterozygous for the mutation
 	#      [3] count of the number of mutations in females
-	#      [4] count of the number of females homozygous for the mutation (implicitly the derived arrangement)
+	#      [4] count of the number of females homozygous for the mutation (implicitly the derived allele)
 	#      [5] count of the number of females heterozygous for the mutation
 	#      [6] count of the number of mutations in males
-	#      [7] count of the number of males homozygous for the mutation (implicitly the derived arrangement)
+	#      [7] count of the number of males homozygous for the mutation (implicitly the derived allele)
 	#      [8] count of the number of males heterozygous for the mutation
+	#      [9] counts of allelic descendants of the mutation across all individuals (1x homozygous offspring, 1/2 heterozygous)
+	#      [10] count of offspring of individuals homozygous for the mutation
+	#      [11] count of offspring of individuals heterozygous for the mutation
+	#      [12] counts of allelic descendants of the mutation across females
+	#      [13] count of offspring of females homozygous for the mutation
+	#      [14] count of offspring of females heterozygous for the mutation
+	#      [15] counts of allelic descendants of the mutation across males
+	#      [16] count of offspring of males homozygous for the mutation
+	#      [17] count of offspring of males heterozygous for the mutation
 	# [3] a list of all inversions, indexed by ID, with each entry as 
 	#      [start position,end position,chromosome,gen at which mutation occured,gen at fixation/loss]
 	#      -1 means the mutation is not fixed/lost yet
@@ -2597,6 +2750,15 @@ class SAIpop(object):
 	#      [15] count of the number of inversions in males
 	#      [16] count of the number of males homozygous for the inversion (implicitly the derived arrangement)
 	#      [17] count of the number of males heterozygous for the inversion
+	#      [18] counts of allelic descendants of the inversion across all individuals (1x homozygous offspring, 1/2 heterozygous)
+	#      [19] count of offspring of individuals homozygous for the inversion
+	#      [20] count of offspring of individuals heterozygous for the inversion
+	#      [21] counts of allelic descendants of the inversion across females
+	#      [22] count of offspring of females homozygous for the inversion
+	#      [23] count of offspring of females heterozygous for the inversion
+	#      [24] counts of allelic descendants of the inversion across males
+	#      [25] count of offspring of males homozygous for the inversion
+	#      [26] count of offspring of males heterozygous for the inversion
 	# [5] a list of pop size at each recorded generation
 	# [6] mean population survival value at each recorded generation
 	# [7] variance in population survival value at each recorded generation
@@ -2626,32 +2788,66 @@ class SAIpop(object):
 	#      [6] counts of each haplotype option in males, ordered as above
 	#      [7] counts of homozygotes for each haplotype option in males, ordered as above
 	#      [8] counts of heterozygotes for each haplotype option in males, ordered as above
+	#      [9] counts of allelic descendants of each haplotype across all individuals (1x homozygous offspring, 1/2 heterozygous)
+	#      [10] count of offspring of individuals homozygous for each haplotype option, ordered as above
+	#      [11] count of offspring of individuals heterozygous for each haplotype option, ordered as above
+	#      [12] counts of allelic descendants of each haplotype across females
+	#      [13] count of offspring of each homozygous haplotype option in females, ordered as above
+	#      [14] count of offspring of each heterozygous haplotype option in females, ordered as above
+	#      [15] counts of allelic descendants of each haplotype across males
+	#      [16] count of offspring of each homozygous haplotype option in males, ordered as above
+	#      [17] count of offspring of each heterozygous haplotype option in males, ordered as above
 	# [13] a list of number of female individuals at each record
 	# [14] a list of number of male individuals at each record
 	# [15] a distribution of number of offspring per mother at each recording of Adults, 'None' otherwise
 	# [16] a distribution of number of offspring per father at each recording of Adults, 'None' otherwise
-	def __updateRecord(self,lifeHistStage="Zygote",inFemales=None,inMales=None,femRepDist=None,malRepDist=None):
+	def __updateRecord(self,lifeHistStage="Zygote",inFemaleInds=None,inMaleInds=None,
+			motherCounter=None,fatherCounter=None):
 		# print ("Record Update")
 		# print ("curr record: "+str(self.record))
 
-		assert(lifeHistStage == "Zygote" or (inFemales is not None and inMales is not None)), "Life history stages "+\
+		assert(lifeHistStage == "Zygote" or (inFemaleInds is not None and inMaleInds is not None)), "Life history stages "+\
 			"other than zygote must have an input of female and male individuals"
 		assert(lifeHistStage != "Zygote" or (self.size == len(self.males)+len(self.females))), "At zygote life history stage, "+\
-			"expect self.males and self.females to total the set population size"
+			"expects self.males and self.females to total the set population size"
+		assert((motherCounter is not None and fatherCounter is not None) or (motherCounter is None and fatherCounter is None)), \
+			"If offspring counts are given, must be given for both mother and father counters."
+		recOffCounts = motherCounter is not None
 		# Record the age of the record update
 		currRecIndex = len(self.record[0])
 		self.record[0] += [self.age]
 		# Record the population size at the time of the of the record update, assemble the relevant individuals
 		if lifeHistStage != "Zygote":
-			numFemales = len(inFemales)
-			numMales = len(inMales)
-			currPopSize = len(inFemales)+len(inMales)
+			# Calculate the distribution of reproductive success
+			numFemales = len(inFemaleInds)
+			numMales = len(inMaleInds)
+			currPopSize = len(inFemaleInds)+len(inMaleInds)
+			inFemales = [self.females[i] for i in inFemaleInds]
+			inMales = [self.males[i] for i in inMaleInds]
 			currIndividuals = inFemales+inMales
+			inFemaleOffCounts = [motherCounter[i] for i in inFemaleInds]
+			inMaleOffCounts = [fatherCounter[i] for i in inMaleInds]
+			currIndivOffCounts = inFemaleOffCounts + inMaleOffCounts
+			numMothers = len(motherCounter)
+			numFathers = len(fatherCounter)
+			femRepDist = np.zeros(self.size+1)
+			malRepDist = np.zeros(self.size+1)
+			for m in inFemaleInds:
+				numOffspring = motherCounter[m]
+				femRepDist[numOffspring] += 1
+			# femRepDist[0] += numFemales - numMothers
+			for f in inMaleInds:
+				numOffspring = fatherCounter[f]
+				malRepDist[numOffspring] += 1
+			# malRepDist[0] += numMales - numFathers
 		else:
 			numFemales = len(self.females)
 			numMales = len(self.males)
 			currPopSize = self.size
 			currIndividuals = self.females+self.males
+			femRepDist = None
+			malRepDist = None
+			currIndivOffCounts = None
 		self.record[5] += [currPopSize]
 		# Record the life history stage
 		self.record[10] += [lifeHistStage]
@@ -2684,6 +2880,17 @@ class SAIpop(object):
 		mutCounters = [[Counter() for x in countRange] for y in sexRange]
 		invCounters = [[Counter() for x in countRange] for y in sexRange]
 		hapCounters = [[[Counter() for x in countRange] for y in sexRange] for h in hapRange]
+		if (motherCounter is not None and fatherCounter is not None):
+			mutOffCounters = [[Counter() for x in countRange] for y in sexRange]
+			invOffCounters = [[Counter() for x in countRange] for y in sexRange]
+			hapOffCounters = [[[Counter() for x in countRange] for y in sexRange] for h in hapRange]
+		else:
+			mutOffCounters = None
+			invOffCounters = None
+			hapOffCounters = None
+			# mutOffCounters = [[None for x in countRange] for y in sexRange]
+			# invOffCounters = [[None for x in countRange] for y in sexRange]
+			# hapOffCounters = [[[None for x in countRange] for y in sexRange] for h in hapRange]
 
 
 		# Generate the metrics of value associations for the inversions
@@ -2698,7 +2905,7 @@ class SAIpop(object):
 		# Account whole population statistics (mean and variance of values/individual)
 		popSurvVals = np.zeros(currPopSize)
 		popReprVals = np.zeros(currPopSize)
-		i = 0
+		# i = 0
 		# # Manage Haplotype Accounting
 		# mutsInHaps = set()
 		# invsInHaps = set()
@@ -2707,22 +2914,22 @@ class SAIpop(object):
 		# 		mutsInHaps.update(set(haplotype[0]))
 		# 		invsInHaps.update(set(haplotype[1]))
 
-		for indiv in currIndividuals:
+		for i in np.arange(currPopSize):
+			indiv = currIndividuals[i]
 			indivSur = 1
 			indivRep = 0
+			indivOffCount = None
+			if currIndivOffCounts is not None:
+				indivOffCount = currIndivOffCounts[i]
 			for chrom in indiv.genome:
-				(chromSur,chromRep) = self.__countIndChromMutInvGenotypes(chrom,indiv.sex,mutCounters,invCounters,hapCounters,invDataDict)
-					# mutCounts,mutHomCounts,mutHetCounts,invCounts,invHomCounts,invHetCounts,invDataDict,
-					# hapCountsList,hapHomCountsList,hapHetCountsList,
-					# mutCounts,mutHomCounts,mutHetCounts,invCounts,invHomCounts,invHetCounts,invDataDict,
-					# hapCountsList,hapHomCountsList,hapHetCountsList,
-					# mutCounts,mutHomCounts,mutHetCounts,invCounts,invHomCounts,invHetCounts,invDataDict,
-					# hapCountsList,hapHomCountsList,hapHetCountsList)
+				(chromSur,chromRep) = self.__countIndChromMutInvGenotypes(chrom,indiv.sex,
+					mutCounters,invCounters,hapCounters,invDataDict,
+					mutOffCounters,invOffCounters,hapOffCounters,indivOffCount)
 				indivSur *= chromSur
 				indivRep += chromRep
 			popSurvVals[i] = indivSur
 			popReprVals[i] = indivRep
-			i += 1
+			# i += 1
 		# Update the record, get averages for record[5,6,7]
 		# for i in range(self.__mutIDcount):
 		# 	count = mutCounts[i]
@@ -2756,7 +2963,7 @@ class SAIpop(object):
 			count = mutCounters[0][0][i]
 			if count != 0:
 				if i not in self.record[2]:
-					self.record[2][i] = [[],[],[],[],[],[],[],[],[]]
+					self.record[2][i] = [[] for x in np.arange(18)]
 				self.record[2][i][0] += [count]
 				self.record[2][i][1] += [mutCounters[0][1][i]]
 				self.record[2][i][2] += [mutCounters[0][2][i]]
@@ -2766,12 +2973,32 @@ class SAIpop(object):
 				self.record[2][i][6] += [mutCounters[2][0][i]]
 				self.record[2][i][7] += [mutCounters[2][1][i]]
 				self.record[2][i][8] += [mutCounters[2][2][i]]
+				if recOffCounts:
+					self.record[2][i][9] += [mutOffCounters[0][0][i]/2]
+					self.record[2][i][10] += [mutOffCounters[0][1][i]]
+					self.record[2][i][11] += [mutOffCounters[0][2][i]]
+					self.record[2][i][12] += [mutOffCounters[1][0][i]/2]
+					self.record[2][i][13] += [mutOffCounters[1][1][i]]
+					self.record[2][i][14] += [mutOffCounters[1][2][i]]
+					self.record[2][i][15] += [mutOffCounters[2][0][i]/2]
+					self.record[2][i][16] += [mutOffCounters[2][1][i]]
+					self.record[2][i][17] += [mutOffCounters[2][2][i]]
+				else:
+					self.record[2][i][9] += [None]
+					self.record[2][i][10] += [None]
+					self.record[2][i][11] += [None]
+					self.record[2][i][12] += [None]
+					self.record[2][i][13] += [None]
+					self.record[2][i][14] += [None]
+					self.record[2][i][15] += [None]
+					self.record[2][i][16] += [None]
+					self.record[2][i][17] += [None]
 			else:
 				raise self.SimulationStateError((i,count),"Recording had a mutation counter "+\
 					"ID/key with value 0, should never happen with a counter - Mutation ID "+str(i))
 		if "Std" not in invCounters[0][0].keys():
 			if "Std" not in self.record[4]:
-				self.record[4]["Std"] = [[] for x in np.arange(18)]
+				self.record[4]["Std"] = [[] for x in np.arange(27)]
 			self.record[4]["Std"][0] += [0]
 			self.record[4]["Std"][1] += [-1]
 			self.record[4]["Std"][2] += [-1]
@@ -2790,11 +3017,31 @@ class SAIpop(object):
 			self.record[4]["Std"][15] += [0]
 			self.record[4]["Std"][16] += [0]
 			self.record[4]["Std"][17] += [0]
+			if recOffCounts:
+				self.record[4]["Std"][18] += [0]
+				self.record[4]["Std"][19] += [0]
+				self.record[4]["Std"][20] += [0]
+				self.record[4]["Std"][21] += [0]
+				self.record[4]["Std"][22] += [0]
+				self.record[4]["Std"][23] += [0]
+				self.record[4]["Std"][24] += [0]
+				self.record[4]["Std"][25] += [0]
+				self.record[4]["Std"][26] += [0]
+			else:
+				self.record[4]["Std"][18] += [None]
+				self.record[4]["Std"][19] += [None]
+				self.record[4]["Std"][20] += [None]
+				self.record[4]["Std"][21] += [None]
+				self.record[4]["Std"][22] += [None]
+				self.record[4]["Std"][23] += [None]
+				self.record[4]["Std"][24] += [None]
+				self.record[4]["Std"][25] += [None]
+				self.record[4]["Std"][26] += [None]
 		for j in invCounters[0][0].keys():
 			count = invCounters[0][0][j]
 			if count != 0:
 				if j not in self.record[4]:
-					self.record[4][j] = [[] for x in np.arange(18)]
+					self.record[4][j] = [[] for x in np.arange(27)]
 				self.record[4][j][0] += [count]
 				self.record[4][j][1] += [np.mean(invDataDict[j][0])]
 				self.record[4][j][2] += [np.var(invDataDict[j][0])]
@@ -2813,6 +3060,26 @@ class SAIpop(object):
 				self.record[4][j][15] += [invCounters[2][0][j]]
 				self.record[4][j][16] += [invCounters[2][1][j]]
 				self.record[4][j][17] += [invCounters[2][2][j]]
+				if recOffCounts:
+					self.record[4][j][18] += [invOffCounters[0][0][j]/2]
+					self.record[4][j][19] += [invOffCounters[0][1][j]]
+					self.record[4][j][20] += [invOffCounters[0][2][j]]
+					self.record[4][j][21] += [invOffCounters[1][0][j]/2]
+					self.record[4][j][22] += [invOffCounters[1][1][j]]
+					self.record[4][j][23] += [invOffCounters[1][2][j]]
+					self.record[4][j][24] += [invOffCounters[2][0][j]/2]
+					self.record[4][j][25] += [invOffCounters[2][1][j]]
+					self.record[4][j][26] += [invOffCounters[2][2][j]]
+				else:
+					self.record[4][j][18] += [None]
+					self.record[4][j][19] += [None]
+					self.record[4][j][20] += [None]
+					self.record[4][j][21] += [None]
+					self.record[4][j][22] += [None]
+					self.record[4][j][23] += [None]
+					self.record[4][j][24] += [None]
+					self.record[4][j][25] += [None]
+					self.record[4][j][26] += [None]
 			else:
 				raise self.SimulationStateError((j,count),"Recording had an inversion counter "+\
 					"ID/key with value 0, should never happen with a counter - Inversion ID "+str(j))
@@ -2827,15 +3094,7 @@ class SAIpop(object):
 		for h in hapRange:
 			hapClassRange = self.__calcHapClassRange(h)
 			if h not in self.record[12]:
-				self.record[12][h] = [[[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange],
-											 [[] for i in hapClassRange]]
+				self.record[12][h] = [[[] for i in hapClassRange] for x in np.arange(18)]
 				assert(self.record[11][h][3] == currRecIndex), "First record of the haplotype does not match the estimated index"
 			for i in hapClassRange:
 				self.record[12][h][0][i] += [hapCounters[h][0][0][i]]
@@ -2847,6 +3106,26 @@ class SAIpop(object):
 				self.record[12][h][6][i] += [hapCounters[h][2][0][i]]
 				self.record[12][h][7][i] += [hapCounters[h][2][1][i]]
 				self.record[12][h][8][i] += [hapCounters[h][2][2][i]]
+				if recOffCounts:
+					self.record[12][h][9][i] += [hapOffCounters[h][0][0][i]/2]
+					self.record[12][h][10][i] += [hapOffCounters[h][0][1][i]]
+					self.record[12][h][11][i] += [hapOffCounters[h][0][2][i]]
+					self.record[12][h][12][i] += [hapOffCounters[h][1][0][i]/2]
+					self.record[12][h][13][i] += [hapOffCounters[h][1][1][i]]
+					self.record[12][h][14][i] += [hapOffCounters[h][1][2][i]]
+					self.record[12][h][15][i] += [hapOffCounters[h][2][0][i]/2]
+					self.record[12][h][16][i] += [hapOffCounters[h][2][1][i]]
+					self.record[12][h][17][i] += [hapOffCounters[h][2][2][i]]
+				else:
+					self.record[12][h][9][i] += [None]
+					self.record[12][h][10][i] += [None]
+					self.record[12][h][11][i] += [None]
+					self.record[12][h][12][i] += [None]
+					self.record[12][h][13][i] += [None]
+					self.record[12][h][14][i] += [None]
+					self.record[12][h][15][i] += [None]
+					self.record[12][h][16][i] += [None]
+					self.record[12][h][17][i] += [None]
 
 
 	# # Checks the record to see if all mutations/inversions are fixed
@@ -3064,7 +3343,7 @@ class SAIpop(object):
 		malePop = self.size - femalePop
 		self.record[10] += [lhs] # Life history stage
 		if lhs == "Adult":
-			# ASSUMES that the parental generation is recorded, not the subsequent adults
+			# ASSUMES that this is the parental stage being recorded
 			self.record[0] += [gen] # Parental generation
 		elif lhs == "Zygote":
 			self.record[0] += [gen] # Zygote generation
@@ -3086,6 +3365,9 @@ class SAIpop(object):
 				self.record[12][h][2][i] += [0]
 				self.record[12][h][5][i] += [0]
 				self.record[12][h][8][i] += [0]
+				self.record[12][h][11][i] += [0]
+				self.record[12][h][14][i] += [0]
+				self.record[12][h][17][i] += [0]
 				if i == fixedHapIDs[h]:
 					self.record[12][h][0][i] += [alleleCount]
 					self.record[12][h][1][i] += [self.size]
@@ -3100,6 +3382,22 @@ class SAIpop(object):
 					self.record[12][h][4][i] += [0]
 					self.record[12][h][6][i] += [0]
 					self.record[12][h][7][i] += [0]
+				if lhs == "Adult":
+					if i == fixedHapIDs[h]:
+						self.record[12][h][9][i] += [self.size]
+						self.record[12][h][10][i] += [self.size]
+						self.record[12][h][12][i] += [femalePop]
+						self.record[12][h][13][i] += [femalePop]
+						self.record[12][h][15][i] += [malePop]
+						self.record[12][h][16][i] += [malePop]
+					else:
+						self.record[12][h][9][i] += [0]
+						self.record[12][h][10][i] += [0]
+						self.record[12][h][12][i] += [0]
+						self.record[12][h][13][i] += [0]
+						self.record[12][h][15][i] += [0]
+						self.record[12][h][16][i] += [0]
+
 		return
 
 	# For simulating setSize*setNum generations sequentially, recording every setSize'th generation
@@ -3137,12 +3435,10 @@ class SAIpop(object):
 						fixedHapIDs += [self.__indexFromHap(fixedHap,hapDef)]
 						# Double check that the records have been generated?
 						if h not in self.record[12]:
-							print("WARNING - all variants fixed and padding record without simulation, "\
+							print("WARNING - all variants fixed so terminating simulation and padding record, "\
 								"but missing record for defined haplotype "+str(h)+": "+str(hapDef))
 							hapClassRange = self.__calcHapClassRange(h)
-							self.record[12][h] = [[[] for i in hapClassRange],
-														 [[] for i in hapClassRange],
-														 [[] for i in hapClassRange]]
+							self.record[12][h] = [[[] for i in hapClassRange] for x in np.arange(27)]
 					# Finish the record
 					for addRecord in range(1,numSets-s):
 						if self.recordReproductiveAdults:
@@ -3385,7 +3681,7 @@ class SAIpop(object):
 	# Functions dealing with writing output to file or the terminal, mainly from self.record
 
 	def printRecord(self):
-		print('\nRecorded Population Data at Generation '+str(self.age)+\
+		print('\n\nRecorded Population Data at Generation '+str(self.age)+\
 			'\n-----------------------------------------------------')
 		print('\nRecorded Generations:\n'+str(self.record[0]))
 		print('\nRecorded Life History Stages:\n'+str(self.record[10]))
@@ -3503,6 +3799,7 @@ class SAIpop(object):
 		return
 
 	def writePopPickle(self,out_file_name):
+		import pickle as p
 		with open(out_file_name,"wb") as outfile:
 			popBytes = p.dumps(self)
 			outfile.write(popBytes)
@@ -3521,14 +3818,13 @@ class SAIpop(object):
 	# Takes a filename and mutation ID
 	# Writes a tab delineated file of the generation and count data for that mutation, returns True
 	# If no record of the mutation was maintained, writes  no file, returns False
+	# ASSUMES 'Adult' lhs means offspring counts are recorded
 	def writeMutation(self,filename,ID,fillRecord = False):
 		# Exit if there is no record
 		if ID not in self.record[2] or len(self.record[2][ID][0]) == 0:
 			return False
 		outfile = open(filename, 'w')
-		# outfile.write('Mutation '+str(ID)+'\n')
-		# outfile.write('Generation\tCount\n')
-		outfile.write('Generation\tLifeHistoryStage\tSex\tCount\tHomozygote\tHeterozygote\n')
+		outfile.write('Generation\tLifeHistoryStage\tSex\tCountType\tCount\tHomozygote\tHeterozygote\n')
 		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[2][ID][0]) + '\n')
 		# outfile.write(str(self.record[1][ID][4]) + '\t' + str(1) + '\n')
 		# for t in range(1,len(self.record[0])):
@@ -3542,7 +3838,9 @@ class SAIpop(object):
 		while recordGen < firstGen:
 			if fillRecord:
 				for s in sexRange:
-					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[s] + '\t0\t0\t0\n')
+					outfile.write(str(recordGen)+'\t'+str(recordStage)+'\t'+recSexes[s]+'\t'+'Allele'+'\t0\t0\t0\n')
+				if recordStage == "Adult":
+					outfile.write(str(recordGen)+'\t'+str(recordStage)+'\t'+recSexes[s]+'\t'+'Offspring'+'\t0\t0\t0\n')
 			t += 1
 			recordGen = self.record[0][t]
 			recordStage = self.record[10][t]
@@ -3553,27 +3851,42 @@ class SAIpop(object):
 			recordGen = self.record[0][t]
 			recordStage = self.record[10][t]
 			for s in sexRange:
-				outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[s] + \
+				outfile.write(str(recordGen) + '\t' + str(recordStage) +'\t'+recSexes[s]+'\t'+'Allele' + \
 					'\t' + str(self.record[2][ID][s*3+0][m]) + '\t' + str(self.record[2][ID][s*3+1][m]) + \
 					'\t' + str(self.record[2][ID][s*3+2][m]) + '\n')
+			if recordStage == "Adult":
+				for s in sexRange:
+					outfile.write(str(recordGen) + '\t' + str(recordStage) +'\t'+recSexes[s]+'\t'+'Offspring' + \
+						'\t' + str(self.record[2][ID][s*3+9][m]) + '\t' + str(self.record[2][ID][s*3+10][m]) + \
+						'\t' + str(self.record[2][ID][s*3+11][m]) + '\n')
 			t += 1
 			m = t - offset
-		print(t)
-		print(self.record[0][-1])
+		# print(t)
+		# print(self.record[0][-1])
 		if fillRecord:
 			for t in range(t,len(self.record[0])):
 				recordGen = self.record[0][t]
 				recordStage = self.record[10][t]
 				if self.__locFixed[ID] and not self.__mutLost[ID]:
-					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[0] + \
+					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[0]+'\t'+'Allele' + \
 						'\t' + str(2*self.record[5][t]) + '\t' + str(self.record[5][t]) + '\t0\n')
-					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[1] + \
+					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[1]+'\t'+'Allele' + \
 						'\t' + str(2*self.record[13][t]) + '\t' + str(self.record[13][t]) + '\t0\n')
-					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[2] + \
+					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[2]+'\t'+'Allele' + \
 						'\t' + str(2*self.record[14][t]) + '\t' + str(self.record[14][t]) + '\t0\n')
+					if recordStage == "Adult":
+						outfile.write(str(recordGen) + '\t' + str(recordStage) +'\t'+recSexes[0]+'\t'+'Offspring' + \
+							'\t' + str(self.record[5][t]) + '\t' + str(self.record[5][t]) + '\t0\n')
+						outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[1]+'\t'+'Offspring' + \
+							'\t' + str(self.record[13][t]) + '\t' + str(self.record[13][t]) + '\t0\n')
+						outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[2]+'\t'+'Offspring' + \
+							'\t' + str(self.record[14][t]) + '\t' + str(self.record[14][t]) + '\t0\n')
 				else:
 					for s in sexRange:
-						outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + recSexes[s] + '\t0\t0\t0\n')
+						outfile.write(str(recordGen)+'\t'+str(recordStage)+'\t'+recSexes[s]+'\t'+'Allele'+'\t0\t0\t0\n')
+					if recordStage == "Adult":
+						for s in sexRange:
+							outfile.write(str(recordGen)+'\t'+str(recordStage)+'\t'+recSexes[s]+'\t'+'Offspring'+'\t0\t0\t0\n')
 		# offset = t
 		# if finalGen < firstGen:
 		# 	for t in range(t,len(self.record[0])):
@@ -3622,7 +3935,11 @@ class SAIpop(object):
 			+ str(self.record[4][ID][3][i]) + '\t' + str(self.record[4][ID][4][i]) + '\t'\
 			+ str(self.record[4][ID][5][i]) + '\t' + str(self.record[4][ID][6][i]) + '\t'\
 			+ str(self.record[4][ID][7][i]) + '\t' + str(self.record[4][ID][8][i]) + '\t'\
-			+ str(self.record[4][ID][9][i]) + '\n')
+			+ str(self.record[4][ID][9][i]) + '\t' + str(self.record[4][ID][18][i]) + '\t'\
+			+ str(self.record[4][ID][19][i]) + '\t' + str(self.record[4][ID][20][i]) + '\t'\
+			+ str(self.record[4][ID][21][i]) + '\t' + str(self.record[4][ID][22][i]) + '\t'\
+			+ str(self.record[4][ID][23][i]) + '\t' + str(self.record[4][ID][24][i]) + '\t'\
+			+ str(self.record[4][ID][25][i]) + '\t' + str(self.record[4][ID][26][i]) + '\n')
 
 	# Takes a filename and inversion ID
 	# Writes a tab delineated file of the generation, count, 
@@ -3636,7 +3953,10 @@ class SAIpop(object):
 		# outfile.write('Inversion '+str(ID)+'\n')
 		outfile.write('Generation\tLifeHistoryStage\tCount\tHomozygote\tHeterozygote\t'+\
 			'FemaleCount\tFemaleHomozygote\tFemaleHeterozygote\tMaleCount\tMaleHomozygote\tMaleHeterozygote\t'+\
-			'AvgNumMut\tVarNumMut\tModeNumMut\tAvgSurEff\tVarSurEff\tModeSurEff\tAvgRepEff\tVarRepEff\tModeRepEff\n')
+			'AvgNumMut\tVarNumMut\tModeNumMut\tAvgSurEff\tVarSurEff\tModeSurEff\tAvgRepEff\tVarRepEff\tModeRepEff\t'+\
+			'OffspringCount\tOffspringCountInHomozygote\tOffspringCountInHeterozygote\t'+\
+			'OffspringCountInFemale\tOffspringCountInFemaleHomozygote\tOffspringCountInFemaleHeterozygote\t'+\
+			'OffspringCountInMale\tOffspringCountInMaleHomozygote\tOffspringCountInMaleHeterozygote\n')
 		# outfile.write(str(self.record[0][0]) + '\t' + str(self.record[4][ID][0]) + '\t'\
 		# 	+ str(self.record[5][ID][0]) + '\t' + str(self.record[6][ID][0]) + '\t'\
 		# 	+ str(self.record[7][ID][0]) + '\n')
@@ -3651,7 +3971,7 @@ class SAIpop(object):
 		recordStage = self.record[10][t]
 		while recordGen < firstGen:
 			if fillRecord:
-				outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t0'*9+'\t-1'*9+'\n')
+				outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t0'*9+'\t-1'*9+'\t0'*9+'\n')
 			t += 1
 			recordGen = self.record[0][t]
 			recordStage = self.record[10][t]
@@ -3672,9 +3992,12 @@ class SAIpop(object):
 					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(2*self.record[5][t]) + \
 						'\t' + str(self.record[5][t]) + '\t0' + '\t' + str(2*self.record[13][t]) + \
 						'\t' + str(self.record[13][t]) + '\t0' + '\t' + str(2*self.record[14][t]) + \
-						'\t' + str(self.record[14][t]) + '\t0' + '\t-1'*9+'\n')
+						'\t' + str(self.record[14][t]) + '\t0' + '\t-1'*9+
+						'\t' + str(self.record[5][t]) + '\t' + str(self.record[5][t]) + '\t0' + \
+						'\t' + str(self.record[13][t]) + '\t' + str(self.record[13][t]) + '\t0' + \
+						'\t' + str(self.record[14][t]) + '\t' + str(self.record[14][t]) + '\t0' + '\n')
 				else:
-					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t0'*9 + '\t-1'*9+'\n')
+					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t0'*9+'\t-1'*9+'\t0'*9+'\n')
 		# offset = t
 		# if finalGen < firstGen:
 		# 	for t in range(t,len(self.record[0])):
@@ -3737,7 +4060,10 @@ class SAIpop(object):
 		outfile = open(filename, 'w')
 		outfile.write('Generation\tLifeHistoryStage\tCount\tHomozygote\tHeterozygote\t'+\
 			'FemaleCount\tFemaleHomozygote\tFemaleHeterozygote\tMaleCount\tMaleHomozygote\tMaleHeterozygote\t'+\
-			'AvgNumMut\tVarNumMut\tModeNumMut\tAvgSurEff\tVarSurEff\tModeSurEff\tAvgRepEff\tVarRepEff\tModeRepEff\n')
+			'AvgNumMut\tVarNumMut\tModeNumMut\tAvgSurEff\tVarSurEff\tModeSurEff\tAvgRepEff\tVarRepEff\tModeRepEff\t'+\
+			'OffspringCount\tOffspringCountInHomozygote\tOffspringCountInHeterozygote\t'+\
+			'OffspringCountInFemale\tOffspringCountInFemaleHomozygote\tOffspringCountInFemaleHeterozygote\t'+\
+			'OffspringCountInMale\tOffspringCountInMaleHomozygote\tOffspringCountInMaleHeterozygote\n')
 		for t in range(len(self.record[0])):
 			recordGen = self.record[0][t]
 			recordStage = self.record[10][t]
@@ -3768,7 +4094,7 @@ class SAIpop(object):
 
 	# Takes a filename and haplotype definition ID
 	# Writes a tab delineated file of the generation, count, 
-	#  average number of mutations in buffer, average cumulative survival,
+	#  average number of mutations in buffer, average cumulative survival, 
 	#  and average cumulative effect data for that inversion
 	def writeHaplotypes(self,filename,ID,fillRecord=False):
 		# Exit if there is no record
@@ -3787,20 +4113,23 @@ class SAIpop(object):
 		# Write the allele, homozygote, heterozygote counts, with haplotype class
 		outfile = open(filename, 'w')
 		header = 'Generation\tLifeHistoryStage\tHaplotype\tCount\tHomozygote\tHeterozygote\t'+\
-			'FemaleCount\tFemaleHomozygote\tFemaleHeterozygote\tMaleCount\tMaleHomozygote\tMaleHeterozygote\n'
+			'FemaleCount\tFemaleHomozygote\tFemaleHeterozygote\tMaleCount\tMaleHomozygote\tMaleHeterozygote\t'+\
+			'OffspringCount\tOffspringCountInHomozygote\tOffspringCountInHeterozygote\t'+\
+			'OffspringCountInFemale\tOffspringCountInFemaleHomozygote\tOffspringCountInFemaleHeterozygote\t'+\
+			'OffspringCountInMale\tOffspringCountInMaleHomozygote\tOffspringCountInMaleHeterozygote\n'
 		outfile.write(header)
 		t = 0
 		recordGen = self.record[0][t]
 		recordStage = self.record[10][t]
+		# Padding with 0's ?
 		while t < firstRec:
 			if fillRecord:
 				for hapName in hapClassNames:
-					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(hapName) + '\t0'*9+'\n')
+					outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(hapName) + '\t0'*18+'\n')
 			t += 1
 			recordGen = self.record[0][t]
 			recordStage = self.record[10][t]
 		offset = t
-		# if finalGen < firstGen:
 		for t in range(t,len(self.record[0])):
 			m = t - offset
 			recordGen = self.record[0][t]
@@ -3815,30 +4144,29 @@ class SAIpop(object):
 					'\t' + str(self.record[12][ID][2][h][m]) + '\t' + str(self.record[12][ID][3][h][m]) + \
 					'\t' + str(self.record[12][ID][4][h][m]) + '\t' + str(self.record[12][ID][5][h][m]) + \
 					'\t' + str(self.record[12][ID][6][h][m]) + '\t' + str(self.record[12][ID][7][h][m]) + \
-					'\t' + str(self.record[12][ID][8][h][m]) + '\n')
-		# else:
-		# 	while recordGen < finalGen:
-		# 		m = t - offset
-		# 		for hap in hapClassNames:
-		# 			outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(hap) + \
-		# 				'\t' + str(self.record[12][ID][0][m]) + '\t' + str(self.record[12][ID][1][m]) + \
-		# 				'\t' + str(self.record[12][ID][2][m]) + '\n')
-		# 		t += 1
-		# 		recordGen = self.record[0][t]
-		# 		recordStage = self.record[10][t]
-		# # FIXATION OF HAPLOTYPES NOT IMPLEMENTED - consider storing the fixed haplotype in record[11],
-		# # or just recording the fixation generation and checking at the end
+					'\t' + str(self.record[12][ID][8][h][m]) + '\t' + str(self.record[12][ID][8][h][m]) + \
+					'\t' + str(self.record[12][ID][10][h][m]) + '\t' + str(self.record[12][ID][11][h][m]) + \
+					'\t' + str(self.record[12][ID][12][h][m]) + '\t' + str(self.record[12][ID][13][h][m]) + \
+					'\t' + str(self.record[12][ID][14][h][m]) + '\t' + str(self.record[12][ID][15][h][m]) + \
+					'\t' + str(self.record[12][ID][16][h][m]) + '\t' + str(self.record[12][ID][17][h][m]) + '\n')
+
+		# # FIXATION OF HAPLOTYPES NOT IMPLEMENTED HERE, PADDED IN RECORD
+		# # - consider storing the fixed haplotype in record[11]
 		# if fillRecord:
-		# 	for t in range(t,len(self.record[0])):
+		# 	for t in range(t,len(self.recoaasdrd[0])):
 		# 		recordGen = self.record[0][t]
 		# 		recordStage = self.record[10][t]
 		# 		if self.__locFixed[ID] and not self.__mutLost[ID]:
 		# 			for hap in hapClassNames:
-		# 				outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(hap) + \
-		# 					'\t' + str(self.record[12][ID][0][m]) + '\t' + str(self.record[12][ID][1][m]) + \
-		# 					'\t' + str(self.record[12][ID][2][m]) + '\n')
+		# 				outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(hapName) +\
+		# 					'\t' + str(2*self.record[5][t]) + '\t' + str(self.record[5][t]) + '\t0' + \
+		# 					'\t' + str(2*self.record[13][t]) + '\t' + str(self.record[13][t]) + '\t0' + \
+		# 					'\t' + str(2*self.record[14][t]) + '\t' + str(self.record[14][t]) + '\t0' + \
+		# 					'\t' + str(self.record[5][t]) + '\t' + str(self.record[5][t]) + '\t0' + \
+		# 					'\t' + str(self.record[13][t]) + '\t' + str(self.record[13][t]) + '\t0' + \
+		# 					'\t' + str(self.record[14][t]) + '\t' + str(self.record[14][t]) + '\t0' + '\n')
 		# 		else:
-		# 			outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t0\t0\t0\n')
+		# 			outfile.write(str(recordGen) + '\t' + str(recordStage) + '\t' + str(hapName) + '\t0'*18+'\n')
 		outfile.close()
 		return True
 

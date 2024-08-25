@@ -3,7 +3,7 @@
 # SAIsim_EffectGridBatch.sh
 # A wrapper for running the SAIsim_EffectGrid.py python script 10 times
 
-# untar the python installation
+# untar the python installation and associated packages
 tar -xzf python310.tar.gz
 tar -xzf packages.tar.gz
 
@@ -11,7 +11,7 @@ tar -xzf packages.tar.gz
 # make sure the script will use the python installation
 export PATH=$(pwd)/python/bin:$PATH
 export PYTHONPATH=$PWD/packages
-# (and a good home directory?)
+# and your working directory as a home directory(?)
 export HOME=$(pwd)
 
 for batchNum in `seq 0 9`;

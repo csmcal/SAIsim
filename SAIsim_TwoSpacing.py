@@ -4,6 +4,7 @@
 
 # May be tested as:
 #  python SAIsim_TwoSpacing.py 0.525 0.86 0.11 0.2125 0.7 0.3 1 0.2125 0.55 0.5 100 500 4000 0 0 0
+#  time python SAIsim_TwoSpacing.py 0.5375 0.86 0.12 0.225 0.7 0.3 1 0.21 0.55 0.5 100 1000 1000 0 0 1
 
 import sys
 import SAIsim as sim
