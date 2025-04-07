@@ -13,6 +13,7 @@ __pycache__/
 Results/
 *Old\ Plots
 *.DS_Store
+*DS_Store*
 *home/
 Workspace/
 *.log
