@@ -11,7 +11,7 @@ This simulator models populations forward-in-time carrying variants that carry s
 
 ### Installation
 ```bash
-git clone git@github.com:csm228/SAIsim.git
+git clone git@github.com:csmcal/SAIsim.git
 ```
 <!-- 
 ## Usage
@@ -26,4 +26,4 @@ If you use SAIsim in your research, please cite:
 McAllester, C. S., & Pool, J. E. (2025). The potential of inversions to accumulate balanced sexual antagonism is supported by simulations and Drosophila experiments. *eLife*.
 
 ## License
-Licensed under GPL3, see LICENSE
+This project is licensed under GPL3 - see the [LICENSE](LICENSE) file for details.
