@@ -13,4 +13,4 @@ for invMutFreq in np.linspace(-2.5,-1,num=4):
 	outfile.write(jobLine)
 	outfile.write(varsLine)
 
-outfile.write('../CONFIG effectGridDAG.config\n')
+outfile.write('CONFIG ../effectGridDAG.config\n')

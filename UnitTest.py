@@ -3,8 +3,8 @@
 
 import SAIsim as sim
 
-# Whoops, a possibility with randomly assigned sexes is population death
-size = 100
+# Limited size for testing
+size = 10
 # given 10^-8 SAmut/base/gen and 
 mutRate = .1
 # Approximated by 
@@ -13,6 +13,8 @@ mutRateInv = .1
 mutEffectDiffSD = .2
 # Reasonable minimum length given that 1 distance unit on the chromosome = 1 Morgan
 minInvLen = .1
+# Chromosome length in M, Drosophila arms are 50 cM
+lenChrom = 1.0
 # The expected # of crossovers per chromosome arm
 # parameter = 1 gives 1 Morgan chromosome arm
 recombRate = 1 
@@ -22,7 +24,7 @@ encounterNum = 20
 choiceNoiseSD = .5
 # The probability per instance of heterozygosity that a gene undergoes conversion in a heterozygous gamete,
 #  which one is converted is selected at random, treated independently from number of crossover events
-conversionRate = 10.0**-2.0
+conversionRate = 0.5 # For easier testing
 # Inversion record buffer represents how far from inversion edges to examine mutation effects
 # CONSIDER making this a parameter of the record function (Doesn't really work as recording is simultaneous)
 invRecBuffer = .1
@@ -40,6 +42,9 @@ inv2 = [0.02,0.98,1]
 inv3 = [0.04,0.10,3]
 inv4 = [0.34,0.45,4]
 
+# Inversion Dynamic Tests
+
+# Expectation of all recombination cases observed
 def testSameInvRec():
 	print('Testing recombination between the same inversion:')
 	testGenome = [[[[mut1],[inv1]],[[mut2],[inv1]]]]
@@ -47,9 +52,10 @@ def testSameInvRec():
 	print(testGenome)
 	for i in range(10):
 		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
-			isFly,willConvert,willRecombine,testGenome)
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
 		print(fly.genGamete())
 
+# Expectation of all recombination cases observed, asthe ID isn't checked
 def testSameInvDiffLabelRec():
 	print('Testing recombination between differently labeled inversions:')
 	testGenome = [[[[mut1],[inv1]],[[mut2],[inv2]]]]
@@ -57,12 +63,126 @@ def testSameInvDiffLabelRec():
 	print(testGenome)
 	for i in range(10):
 		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
-			isFly,willConvert,willRecombine,testGenome)
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
 		print(fly.genGamete())
 
 # Run the tests
-testSameInvRec()
-testSameInvDiffLabelRec()
+# testSameInvRec()
+# testSameInvDiffLabelRec()
+
+willConvert = True
+
+# Conversion testing
+
+# Expectation no conversion
+def testConv1MSame():
+	print('Testing conversion between A/A Genotype:')
+	testGenome = [[[[mut1],[]],[[mut1],[]]]]
+	# testGenome = [[[[mut1],[inv1]],[[mut1],[inv2]]]]
+	print('Test Genome:')
+	print(testGenome)
+	print('Gametes:')
+	for i in range(10):
+		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
+		print(fly.genGamete())
+	print()
+
+# Expectation AB, A, B, - gametes
+def testConv1MDiff():
+	print('Testing conversion between A/B Genotype:')
+	testGenome = [[[[mut1],[]],[[mut2],[]]]]
+	# testGenome = [[[[mut1],[inv1]],[[mut2],[inv2]]]]
+	print('Input Genome:')
+	print(testGenome)
+	print('Gametes:')
+	for i in range(10):
+		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
+		print(fly.genGamete())
+	print()
+
+
+# Expectation no conversion
+def testConv2MSame():
+	print('Testing conversion between AB/AB Genotype:')
+	testGenome = [[[[mut1,mut2],[]],[[mut1,mut2],[]]]]
+	# testGenome = [[[[mut1,mut2],[inv1]],[[mut1,mut2],[inv2]]]]
+	print('Test Genome:')
+	print(testGenome)
+	print('Gametes:')
+	for i in range(10):
+		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
+		print(fly.genGamete())
+	print()
+
+# Expectation AB, A, B, - gametes
+def testConv2MNull():
+	print('Testing conversion between AB/- Genotype:')
+	testGenome = [[[[mut1,mut2],[]],[[],[]]]]
+	# testGenome = [[[[mut1,mut2],[inv1]],[[mut1,mut2],[inv2]]]]
+	print('Test Genome:')
+	print(testGenome)
+	print('Gametes:')
+	for i in range(10):
+		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
+		print(fly.genGamete())
+	print()
+
+# Expectation AB, A, B, - gametes
+def testConvNull2M():
+	print('Testing conversion between -/AB Genotype:')
+	testGenome = [[[[],[]],[[mut1,mut2],[]]]]
+	# testGenome = [[[[mut1,mut2],[inv1]],[[mut1,mut2],[inv2]]]]
+	print('Test Genome:')
+	print(testGenome)
+	print('Gametes:')
+	for i in range(10):
+		fly = sim.individual('F',mutEffectDiffSD,recombRate,conversionRate,minInvLen,\
+			lenChrom,isFly,willConvert,willRecombine,testGenome)
+		print(fly.genGamete())
+	print()
+
+# Run tests
+testConv1MSame()
+testConv1MDiff()
+testConv2MSame()
+# conversionRate = 1
+testConv2MNull()
+testConvNull2M()
+
+
+
+
+# # Scratch for testing mutation data change (due to shared reference)
+# def testSharedData(self):
+# 	mutCounts = [0]*self.__mutIDcount
+# 	for indiv in self.males + self.females:
+# 		for chrom in indiv.genome:
+# 			for hom in chrom:
+# 				for mut in hom[0]:
+# 					mutCounts[mut[3]] += 1
+# 	for i in range(self.__mutIDcount):
+# 		if mutCounts[i] == 2*self.size:
+# 			# self.record[1][i] = mut
+# 			# mut[2] = 'test'
+# 			print('Starting test for ID '+ str(i))
+# 			# print(mut)
+# 			# print(self.record[1][i])
+# 			firstEncounter = True
+# 			for indiv in self.males + self.females:
+# 				for chrom in indiv.genome:
+# 					for hom in chrom:
+# 						for mut in hom[0]:
+# 							if mut[3] == i:
+# 								if firstEncounter:
+# 									mut[2] = 'test'
+# 									firstEncounter = False
+# 								print(mut)
+# 	return
+
 
 
 
@@ -98,3 +218,4 @@ testSameInvDiffLabelRec()
 # # pop.printGenomes()
 # # pop.printRecord()
 # pop.writeRecordTables('testOutput/Test1')
+

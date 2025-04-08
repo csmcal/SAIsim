@@ -6,4 +6,4 @@ JOB 1.5 SAIsim_NeutralInversion.sub
 VARS 1.5 mut="-1.5"
 JOB 1.0 SAIsim_NeutralInversion.sub
 VARS 1.0 mut="-1.0"
-../CONFIG effectGridDAG.config
+CONFIG ../effectGridDAG.config

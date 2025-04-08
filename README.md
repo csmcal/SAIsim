@@ -2,18 +2,28 @@
 Sexually Antagonistic Inversion Simulator
 
 ## Purpose
-SAIsim is intended to forward model mutations that cause universal survival cost but provide male reproductive benefit and their interactions with paracentric inversions in populations.
+This simulator models populations forward-in-time carrying variants that carry survival and male reproductive benefit effects. It models paracentric inversions, and helps investigate how these factors contribute to the maintenance of inversion polymorphisms and the accumulation of sexually antagonistic variation.
 
 ## Setup
 
 ### Dependencies
 - numpy
 
-### Setup
+### Installation
+```bash
+git clone git@github.com:csmcal/SAIsim.git
 ```
-git clone git@github.com:csm228/SAIsim.git
-cd SAIsim
-```
+<!-- 
+## Usage
+ -->
 
-## Condor
-SAIsim was developed at UWMadison and the repository contains scripts for running simulations on the Center for High-Throughput Computing (CHTC) HTCondor distributed computing software and network.
+## Condor Integration
+SAIsim was developed at the University of Wisconsin-Madison and includes scripts for running simulations on the Center for High-Throughput Computing (CHTC) HTCondor distributed computing software and network.
+
+## Citation
+If you use SAIsim in your research, please cite:
+
+McAllester, C. S., & Pool, J. E. (2025). The potential of inversions to accumulate balanced sexual antagonism is supported by simulations and Drosophila experiments. *eLife*.
+
+## License
+This project is licensed under GPL3 - see the [LICENSE](LICENSE) file for details.
